@@ -7,6 +7,17 @@ import (
 	"math/rand"
 )
 
+func init(){
+	var err error
+
+	for _, sc := range prepStmtsUser{
+		sc.stmt, err = DB.Prepare(sc.q)
+		if err != nil {
+			log.Panic(err)
+		}
+	}
+}
+
 func GetUser(id int) []models.User {
 	res := []models.User{}
 	var item models.User

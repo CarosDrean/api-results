@@ -5,7 +5,7 @@ import (
 )
 
 // db es la base de datos global
-var db *sql.DB
+var DB *sql.DB
 
 // Prepared statements
 type stmtConfig struct {

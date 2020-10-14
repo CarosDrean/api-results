@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/helper"
 	routes "github.com/CarosDrean/api-results.git/router"
 	"github.com/gorilla/mux"
@@ -18,6 +19,8 @@ func main()  {
 	// r.HandleFunc("/validate", middleware.ValidateToken)
 	s := r.PathPrefix("/api").Subrouter()
 	routes.Routes(s)
+
+	db.DB = helper.Get()
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:4800"},

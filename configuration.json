@@ -1,6 +1,6 @@
 {
     "engine": "mssql",
-    "server": "DESKTOP-N4F0S07",
+    "server": "DESKTOP-QD7QM2Q\\HOLOSALUD2018",
     "port": "1433",
     "user": "sa",
     "password": "123456",
