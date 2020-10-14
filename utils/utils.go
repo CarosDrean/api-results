@@ -3,13 +3,12 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/CarosDrean/api-results.git/models"
 	"net/http"
 	"os"
-
-	"github.com/CarosDrean/api-results/models"
 )
 
-type Errorresponse struct {
+type ErrorResponse struct {
 	StatusCode   int    `json:"status"`
 	ErrorMessage string `json:"message"`
 }
@@ -18,7 +17,7 @@ func GetError(err error, w http.ResponseWriter) {
 	fmt.Fprintln(w, "Hubo un error")
 	// log.Panic(err.Error())
 	fmt.Fprintln(w, err.Error())
-	var response = Errorresponse{
+	var response = ErrorResponse{
 		ErrorMessage: err.Error(),
 		StatusCode:   http.StatusInternalServerError,
 	}

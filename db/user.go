@@ -1,5 +1,12 @@
 package db
 
+import (
+	"database/sql"
+	"github.com/CarosDrean/api-results.git/models"
+	"log"
+	"math/rand"
+)
+
 func GetUser(id int) []models.User {
 	res := []models.User{}
 	var item models.User

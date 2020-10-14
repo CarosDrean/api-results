@@ -1,5 +1,12 @@
 package controller
 
+import (
+	"encoding/json"
+	"github.com/CarosDrean/api-results.git/db"
+	"github.com/CarosDrean/api-results.git/models"
+	"net/http"
+)
+
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

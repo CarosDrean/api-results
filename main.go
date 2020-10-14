@@ -1,9 +1,20 @@
 package main
 
+import (
+	"fmt"
+	"github.com/CarosDrean/api-results.git/helper"
+	routes "github.com/CarosDrean/api-results.git/router"
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+	"log"
+	"net/http"
+	"os"
+)
+
 func main()  {
 	r := mux.NewRouter()
 	r.HandleFunc("/", indexRouter)
-	r.HandleFunc("/api/login", middleware.Login)
+	// r.HandleFunc("/api/login", middleware.Login)
 	// r.HandleFunc("/validate", middleware.ValidateToken)
 	s := r.PathPrefix("/api").Subrouter()
 	routes.Routes(s)

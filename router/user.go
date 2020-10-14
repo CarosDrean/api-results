@@ -2,8 +2,8 @@
 package routes
 
 import (
-	user "github.com/CarosDrean/api-results/controller"
 	// mid "github.com/CarosDrean/api-holosalud/middleware"
+	user "github.com/CarosDrean/api-results.git/controller"
 	"github.com/gorilla/mux"
 )
 

@@ -4,11 +4,10 @@ package helper
 import (
 	"database/sql"
 	"fmt"
+	"github.com/CarosDrean/api-results.git/utils"
 	"log"
 
 	_ "github.com/denisenkom/go-mssqldb"
-
-	"github.com/CarosDrean/api-results/utils"
 )
 
 func Get() *sql.DB {
