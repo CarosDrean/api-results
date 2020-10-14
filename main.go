@@ -14,13 +14,12 @@ import (
 
 func main()  {
 	r := mux.NewRouter()
+	db.DB = helper.Get()
 	r.HandleFunc("/", indexRouter)
 	// r.HandleFunc("/api/login", middleware.Login)
 	// r.HandleFunc("/validate", middleware.ValidateToken)
 	s := r.PathPrefix("/api").Subrouter()
 	routes.Routes(s)
-
-	db.DB = helper.Get()
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:4800"},

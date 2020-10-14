@@ -9,8 +9,8 @@ var DB *sql.DB
 
 // Prepared statements
 type stmtConfig struct {
-	stmt *sql.Stmt
-	q    string
+	Stmt *sql.Stmt
+	Q    string
 }
 
 type TableDB struct {
@@ -59,10 +59,10 @@ var user = TableDB{
 	Fields: []string{"i_SystemUserId", "v_UserName", "v_Password"},
 }
 
-var prepStmtsUser = map[string]*stmtConfig{
-	"get":    {q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = ?;"},
-	"list":   {q: "select " + fieldString(user.Fields) + " from " + user.Name + ";"},
-	"insert": {q: "insert into post (" + fieldString(user.Fields) + ") values (" + valuesString(user.Fields) + ");"},
-	"update": {q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = ?|;"},
-	"delete": {q: "delete from " + user.Name + " where " + user.Fields[0] + " = ?;"},
+var PrepStmtsUser = map[string]*stmtConfig{
+	"get":    {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = ?;"},
+	"list":   {Q: "select " + fieldString(user.Fields) + " from " + user.Name + ";"},
+	"insert": {Q: "insert into post (" + fieldString(user.Fields) + ") values (" + valuesString(user.Fields) + ");"},
+	"update": {Q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = ?|;"},
+	"delete": {Q: "delete from " + user.Name + " where " + user.Fields[0] + " = ?;"},
 }

@@ -30,5 +30,7 @@ func Get() *sql.DB {
 		log.Fatalln(err)
 	}
 
+	fmt.Println("Db is connected!")
+
 	return db
 }

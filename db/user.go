@@ -7,22 +7,11 @@ import (
 	"math/rand"
 )
 
-func init(){
-	var err error
-
-	for _, sc := range prepStmtsUser{
-		sc.stmt, err = DB.Prepare(sc.q)
-		if err != nil {
-			log.Panic(err)
-		}
-	}
-}
-
 func GetUser(id int) []models.User {
 	res := []models.User{}
 	var item models.User
 	// Obtenemos y ejecutamos el get prepared statement.
-	get := prepStmtsUser["get"].stmt
+	get := PrepStmtsUser["get"].Stmt
 	err := get.QueryRow(id).Scan(&item.ID, &item.Username, &item.Password)
 	if err != nil {
 		if err != sql.ErrNoRows {
@@ -36,7 +25,7 @@ func GetUser(id int) []models.User {
 
 func GetUsers() []models.User {
 	res := []models.User{}
-	list := prepStmtsUser["list"].stmt
+	list := PrepStmtsUser["list"].Stmt
 	rows, err := list.Query()
 	if err != nil {
 		log.Printf("user: error getting users. err: %v\n", err)
@@ -72,7 +61,7 @@ func CreateUser(item models.User) []models.User {
 	}
 
 	// Obtenemos y ejecutamos insert prepared statement.
-	insert := prepStmtsUser["insert"].stmt
+	insert := PrepStmtsUser["insert"].Stmt
 	_, err := insert.Exec(item.ID, item.Username, item.Password)
 	if err != nil {
 		log.Printf("user: error inserting user %d into DB: %v\n", item.ID, err)
@@ -82,7 +71,7 @@ func CreateUser(item models.User) []models.User {
 
 func UpdateUser(item models.User) {
 	// Obtenemos y ejecutamos update prepared statement.
-	update := prepStmtsUser["update"].stmt
+	update := PrepStmtsUser["update"].Stmt
 	_, err := update.Exec(item.ID, item.Username, item.Password)
 	if err != nil {
 		log.Printf("user: error updating user %d into DB: %v\n", item.ID, err)
@@ -91,7 +80,7 @@ func UpdateUser(item models.User) {
 
 func DeleteUser(id int) {
 	// Obtenemos y ejecutamos delete prepared statement.
-	del := prepStmtsUser["delete"].stmt
+	del := PrepStmtsUser["delete"].Stmt
 	_, err := del.Exec(id)
 	if err != nil {
 		log.Printf("user: error deleting user %d into DB: %v\n", id, err)
