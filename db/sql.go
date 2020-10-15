@@ -100,7 +100,7 @@ var PrepStmtsUser = map[string]*stmtConfig{
 
 var patient = TableDB{
 	Name:   "dbo.person",
-	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password"},
+	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName"},
 }
 
 var QueryPatient = map[string]*queryConfig{

@@ -18,4 +18,9 @@ func GetData(dni string){
 	protocol := db.GetProtocol(services[0].ProtocolID)
 	organization := db.GetOrganization(protocol.OrganizationID)
 	log.Println(organization.Name)
+
+	organizationName := organization.Name
+	personName := patients[0].Name
+	date := services[0].ServiceDate
+
 }

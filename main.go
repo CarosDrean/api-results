@@ -31,6 +31,8 @@ func main()  {
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 	})
 
+	controller.GetData("72231054")
+
 	port := os.Getenv("PORT")
 
 	if port == "" {

@@ -24,6 +24,7 @@ func GetProtocol(id string) models.Protocol {
 			return res[0]
 		} else{
 			res = append(res, item)
+			log.Println(item.OrganizationID)
 		}
 	}
 	defer rows.Close()

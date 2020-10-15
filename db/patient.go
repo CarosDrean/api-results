@@ -18,12 +18,13 @@ func GetPatientFromDNI(dni string) []models.Patient {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.DNI, &item.Password)
+		err := rows.Scan(&item.ID, &item.DNI, &item.Password, &item.Name, &item.FirstLastName, &item.SecondLastName)
 		if err != nil {
 			log.Println(err)
 			return res
 		} else{
 			res = append(res, item)
+			log.Println(item.Name)
 		}
 	}
 	defer rows.Close()

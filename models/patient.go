@@ -1,7 +1,10 @@
 package models
 
 type Patient struct {
-	ID       string
-	DNI      string
-	Password string
+	ID             string
+	DNI            string
+	Password       string
+	Name           string
+	FirstLastName  string
+	SecondLastName string
 }
