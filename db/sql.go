@@ -63,6 +63,33 @@ var user = TableDB{
 	Fields: []string{"i_SystemUserId", "v_UserName", "v_Password"},
 }
 
+var service = TableDB{
+	Name:   "dbo.service",
+	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate"},
+}
+
+var protocol = TableDB{
+	Name:   "dbo.protocol",
+	Fields: []string{"v_ProtocolId", "v_CustomerOrganizationId"},
+}
+
+var organization = TableDB{
+	Name:   "dbo.organization",
+	Fields: []string{"v_OrganizationId", "v_Name"},
+}
+
+var QueryService = map[string]*queryConfig{
+	"getPersonID": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[1] + " = '%s';"},
+}
+
+var QueryProtocol = map[string]*queryConfig{
+	"get": {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[0] + " = '%s';"},
+}
+
+var QueryOrganization = map[string]*queryConfig{
+	"get": {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where " + organization.Fields[0] + " = '%s';"},
+}
+
 var PrepStmtsUser = map[string]*stmtConfig{
 	"get":    {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = ?;"},
 	"list":   {Q: "select " + fieldString(user.Fields) + " from " + user.Name + ";"},
