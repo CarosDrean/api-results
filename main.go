@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/CarosDrean/api-results.git/controller"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/helper"
+	"github.com/CarosDrean/api-results.git/middleware"
 	routes "github.com/CarosDrean/api-results.git/router"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -16,7 +18,8 @@ func main()  {
 	r := mux.NewRouter()
 	db.DB = helper.Get()
 	r.HandleFunc("/", indexRouter)
-	// r.HandleFunc("/api/login", middleware.Login)
+	r.HandleFunc("/api/login", middleware.Login)
+	r.HandleFunc("/file", controller.DownloadPDF)
 	// r.HandleFunc("/validate", middleware.ValidateToken)
 	s := r.PathPrefix("/api").Subrouter()
 	routes.Routes(s)

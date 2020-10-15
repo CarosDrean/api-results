@@ -10,3 +10,8 @@ type UserResult struct {
 	ID   int
 	Role string
 }
+
+type UserLogin struct {
+	Email    string
+	Password string
+}
