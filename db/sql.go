@@ -7,7 +7,6 @@ import (
 // db es la base de datos global
 var DB *sql.DB
 
-// Prepared statements
 type stmtConfig struct {
 	Stmt *sql.Stmt
 	Q    string
@@ -65,4 +64,17 @@ var PrepStmtsUser = map[string]*stmtConfig{
 	"insert": {Q: "insert into post (" + fieldString(user.Fields) + ") values (" + valuesString(user.Fields) + ");"},
 	"update": {Q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = ?|;"},
 	"delete": {Q: "delete from " + user.Name + " where " + user.Fields[0] + " = ?;"},
+}
+
+var patient = TableDB{
+	Name:   "dbo.patient",
+	Fields: []string{"i_SystemUserId", "v_UserName", "v_Password"},
+}
+
+var PrepStmtsPatient = map[string]*stmtConfig{
+	"get":    {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[0] + " = ?;"},
+	"list":   {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + ";"},
+	"insert": {Q: "insert into post (" + fieldString(patient.Fields) + ") values (" + valuesString(patient.Fields) + ");"},
+	"update": {Q: "update " + patient.Name + " set " + updatesString(patient.Fields) + " where " + patient.Fields[0] + " = ?|;"},
+	"delete": {Q: "delete from " + patient.Name + " where " + patient.Fields[0] + " = ?;"},
 }

@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 )
 
-func Init(){
+func InitU(){
 	var err error
 	for _, sc := range db.PrepStmtsUser{
 		sc.Stmt, err = db.DB.Prepare(sc.Q)
@@ -18,22 +20,21 @@ func Init(){
 	}
 }
 
-
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
 	var item models.User
 	_ = json.NewDecoder(r.Body).Decode(&item)
-
 	var ic = db.CreateUser(item)
-
-	json.NewEncoder(w).Encode(ic)
+	_ = json.NewEncoder(w).Encode(ic)
 }
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
+func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	Init()
-	items := db.GetUsers()
+	var params = mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
 
-	json.NewEncoder(w).Encode(items)
+	InitU()
+
+	items := db.GetUser(id)
+	_ = json.NewEncoder(w).Encode(items)
 }

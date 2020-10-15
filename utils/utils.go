@@ -14,9 +14,9 @@ type ErrorResponse struct {
 }
 
 func GetError(err error, w http.ResponseWriter) {
-	fmt.Fprintln(w, "Hubo un error")
+	_, _ = fmt.Fprintln(w, "Hubo un error")
 	// log.Panic(err.Error())
-	fmt.Fprintln(w, err.Error())
+	_, _ = fmt.Fprintln(w, err.Error())
 	var response = ErrorResponse{
 		ErrorMessage: err.Error(),
 		StatusCode:   http.StatusInternalServerError,
@@ -25,7 +25,7 @@ func GetError(err error, w http.ResponseWriter) {
 	message, _ := json.Marshal(response)
 
 	w.WriteHeader(response.StatusCode)
-	w.Write(message)
+	_, _ = w.Write(message)
 }
 
 func GetConfiguration() (models.Configuration, error) {
