@@ -1,0 +1,11 @@
+Lo que debemos hacer
+
+- Hay que tener los modelos siguientes
+	paciente (solo para verificar existencia)
+	usuario (para crear y consultar)
+	examen (para acceder al archivo de resultado)
+
+- Verificar si el paciente existe con el DNI
+	Si existe enviar un correo con una contraseña y crear un usuario al cual enviar la contraseña
+	Si no existe informar al consultamte
+- Descargar PDF de resultado del examen (COVID de momento)
