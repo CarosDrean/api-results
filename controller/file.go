@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"strings"
+	"time"
 )
 
 func DownloadPDF(w http.ResponseWriter, r *http.Request) {
@@ -22,5 +24,12 @@ func GetData(dni string){
 	organizationName := organization.Name
 	personName := patients[0].Name
 	date := services[0].ServiceDate
+	dates := strings.Split(date, "T")
+	log.Println(dates[0])
+	layout := "2006-01-02"
+	t, _ := time.Parse(layout, dates[0])
+	log.Println(t)
 
+	namePDF := organizationName + " - " + personName + " - " + t.Format("02 Febrero, 2006") + ".pdf"
+	log.Println(namePDF)
 }
