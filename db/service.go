@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-func GetPatientFromDNI(dni string) []models.Patient {
-	res := make([]models.Patient, 0)
-	var item models.Patient
+func GetServiceWidthPersonID(id string) []models.Service{
+	res := make([]models.Service, 0)
+	var item models.Service
 
-	tsql := fmt.Sprintf(QueryPatient["getDNI"].Q, dni)
+	tsql := fmt.Sprintf(QueryService["getPersonID"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -18,16 +18,15 @@ func GetPatientFromDNI(dni string) []models.Patient {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.DNI, &item.Password, &item.Name, &item.FirstLastName, &item.SecondLastName)
+		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate)
 		if err != nil {
 			log.Println(err)
 			return res
 		} else{
 			res = append(res, item)
-			log.Println(item.Name)
+			log.Println(item.ServiceDate)
 		}
 	}
 	defer rows.Close()
-
 	return res
 }

@@ -9,3 +9,15 @@ Lo que debemos hacer
 	Si existe enviar un correo con una contraseña y crear un usuario al cual enviar la contraseña
 	Si no existe informar al consultamte
 - Descargar PDF de resultado del examen (COVID de momento)
+
+
+LO QUE DEBO DE HACER
+
+Primero validamos si el paciente existe
+Luego validamos si la contraseña es correcta o si quiere una nueva contraseña
+    Si la contraseña es correcta accedemos al sistema para descargar el PDF
+        Solo mostramos la opcion de descargar PDF
+    Si quiere contraseña nueva generamos una nueva contraseña y la enviamos por email, solo actualizaremos la contraseña
+
+
+Necesito el nombre del paciente la empresa a la que pertenece la fecha del examen y la fecha y tod eso solo con el paciente
