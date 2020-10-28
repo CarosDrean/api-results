@@ -2,17 +2,18 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/helper"
 	routes "github.com/CarosDrean/api-results.git/router"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"log"
-	"net/http"
-	"os"
 )
 
-func main()  {
+func main() {
 	r := mux.NewRouter()
 	db.DB = helper.Get()
 	r.HandleFunc("/", indexRouter)
