@@ -7,4 +7,5 @@ type Patient struct {
 	Name           string
 	FirstLastName  string
 	SecondLastName string
+	Mail           string
 }

@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/utils"
 	"io/ioutil"
@@ -25,7 +26,7 @@ func GetPatientFromDNI(dni string) []models.Patient {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.DNI, &item.Password, &item.Name, &item.FirstLastName, &item.SecondLastName)
+		err := rows.Scan(&item.ID, &item.DNI, &item.Password, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail)
 		if err != nil {
 			log.Println(err)
 			return res
@@ -36,6 +37,33 @@ func GetPatientFromDNI(dni string) []models.Patient {
 	}
 	defer rows.Close()
 	return res
+}
+
+func ValidatePatientLogin(user string, password string) (helper.State, string){
+	items := GetPatientFromDNI(user)
+	if len(items) > 0 {
+		if ValidateInitPassword(password, items[0]){
+			if len(items[0].Mail) != 0{
+				newPassword := CreateNewPasswordPatient()
+				mail := models.Mail{
+					From: items[0].Name,
+					Data: newPassword,
+				}
+				_, err := UpdatePasswordPatient(items[0].ID, newPassword)
+				if err != nil {
+					return helper.ErrorUP, ""
+				}
+				Sendmail(mail)
+				return helper.PasswordUpdate, ""
+			}
+			return helper.NotFoundMail, ""
+		}
+		if items[0].Password == password {
+			return helper.Accept, items[0].ID
+		}
+		return helper.InvalidCredentials, ""
+	}
+	return helper.NotFoundPatient, ""
 }
 
 func UpdatePasswordPatient(id string, password string) (int64, error) {

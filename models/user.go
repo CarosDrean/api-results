@@ -7,7 +7,7 @@ type User struct {
 }
 
 type UserResult struct {
-	ID   int
+	ID   string
 	Role string
 }
 
