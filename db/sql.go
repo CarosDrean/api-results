@@ -7,11 +7,6 @@ import (
 // db es la base de datos global
 var DB *sql.DB
 
-type stmtConfig struct {
-	Stmt *sql.Stmt
-	Q    string
-}
-
 type queryConfig struct {
 	Name string
 	Q    string
@@ -49,10 +44,10 @@ func valuesString(fields []string) string {
 func updatesString(fields []string) string {
 	values := ""
 	for i, field := range fields {
-		if i == 0 {
-			values = field + " = ?"
-		} else {
-			values = values + ", " + field + " = ?"
+		if i == 1 {
+			values = field + " = @" + field
+		} else if i != 0 {
+			values = values + ", " + field + " = @" + field
 		}
 	}
 	return values
@@ -90,14 +85,6 @@ var QueryOrganization = map[string]*queryConfig{
 	"get": {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where " + organization.Fields[0] + " = '%s';"},
 }
 
-var PrepStmtsUser = map[string]*stmtConfig{
-	"get":    {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = ?;"},
-	"list":   {Q: "select " + fieldString(user.Fields) + " from " + user.Name + ";"},
-	"insert": {Q: "insert into (" + fieldString(user.Fields) + ") values (" + valuesString(user.Fields) + ");"},
-	"update": {Q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = ?;"},
-	"delete": {Q: "delete from " + user.Name + " where " + user.Fields[0] + " = ?;"},
-}
-
 var patient = TableDB{
 	Name:   "dbo.person",
 	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName"},
@@ -108,15 +95,7 @@ var QueryPatient = map[string]*queryConfig{
 	"getDNI": {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[1] + " = '%s';"},
 	"list":   {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + ";"},
 	"insert": {Q: "insert into (" + fieldString(patient.Fields) + ") values (" + valuesString(patient.Fields) + ");"},
-	"update": {Q: "update " + patient.Name + " set " + updatesString(patient.Fields) + " where " + patient.Fields[0] + " = ?;"},
-	"delete": {Q: "delete from " + patient.Name + " where " + patient.Fields[0] + " = ?;"},
-}
-
-var PrepStmtsPatient = map[string]*stmtConfig{
-	"get":    {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[0] + " = ?;"},
-	"getDNI": {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[1] + " = '?';"},
-	"list":   {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + ";"},
-	"insert": {Q: "insert into (" + fieldString(patient.Fields) + ") values (" + valuesString(patient.Fields) + ");"},
-	"update": {Q: "update " + patient.Name + " set " + updatesString(patient.Fields) + " where " + patient.Fields[0] + " = ?;"},
+	"update": {Q: "update " + patient.Name + " set " + updatesString(patient.Fields) + " where " + patient.Fields[0] + " = '%s';"},
+	"updatePassword": {Q: "update " + patient.Name + " set v_Password = @Password where " + patient.Fields[0] + " = '%s';"},
 	"delete": {Q: "delete from " + patient.Name + " where " + patient.Fields[0] + " = ?;"},
 }

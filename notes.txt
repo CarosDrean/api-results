@@ -21,3 +21,10 @@ Luego validamos si la contraseña es correcta o si quiere una nueva contraseña
 
 
 Necesito el nombre del paciente la empresa a la que pertenece la fecha del examen y la fecha y tod eso solo con el paciente
+
+PASOS
+- Verificar si el paciente existe con el DNI
+- Verificar si el password es el DNI
+- De ser el caso asignar una nueva contraseña y enviar email con la nueva contraseña
+- Si no entonces entrar al sistema
+- Ver Pruebas Rapidas realizadas
