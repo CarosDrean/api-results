@@ -1,6 +1,7 @@
 package models
 
 type Mail struct {
-	From string `json:"from"`
-	Data string `json:"data"`
+	From     string `json:"from"`
+	User     string `json:"user"`
+	Password string `json:"password"`
 }

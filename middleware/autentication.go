@@ -69,29 +69,29 @@ func ValidateToken(w http.ResponseWriter, r *http.Request) string {
 			vErr := err.(*jwt.ValidationError)
 			switch vErr.Errors {
 			case jwt.ValidationErrorExpired:
-				fmt.Fprintln(w, "Su token ha expirado")
+				_, _ = fmt.Fprintln(w, "Su token ha expirado")
 				return "Error"
 			case jwt.ValidationErrorSignatureInvalid:
-				fmt.Fprintln(w, "Su firma de token no coincide")
+				_, _ = fmt.Fprintln(w, "Su firma de token no coincide")
 				return "Error"
 			default:
-				fmt.Fprintln(w, "Su token no es valido")
+				_, _ = fmt.Fprintln(w, "Su token no es valido")
 				return "Error"
 			}
 		default:
-			fmt.Fprintln(w, "Su token no es valido")
+			_, _ = fmt.Fprintln(w, "Su token no es valido")
 			return "Error"
 		}
 	}
 
 	if token.Valid {
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, "Bienvenido al sistema")
+		_, _ = fmt.Fprintf(w, "Bienvenido al sistema")
 		return "Accept"
 	}
 
 	w.WriteHeader(http.StatusUnauthorized)
-	fmt.Fprintf(w, "Su token no es valido")
+	_, _ = fmt.Fprintf(w, "Su token no es valido")
 	return "Error"
 }
 
@@ -141,7 +141,8 @@ func Login(w http.ResponseWriter, r *http.Request){
 		_, _ = fmt.Fprintf(w, "Error al leer el usuario %s\n", err)
 		return
 	}
-	stateLogin, id := db.ValidatePatientLogin(user.Email, user.Password)
+	log.Println(user)
+	stateLogin, id := db.ValidatePatientLogin(user.User, user.Password)
 	switch stateLogin {
 	case helper.Accept:
 		userResult := models.UserResult{ID: id, Role: "patient"}
@@ -170,7 +171,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		break
 	case helper.InvalidCredentials:
 		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = fmt.Fprintf(w, "¡Credenciales Invalidad!")
+		_, _ = fmt.Fprintf(w, "¡Credenciales Invalidas!")
 		break
 	case helper.PasswordUpdate:
 		w.WriteHeader(http.StatusFound)

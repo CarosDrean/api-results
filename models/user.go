@@ -12,6 +12,6 @@ type UserResult struct {
 }
 
 type UserLogin struct {
-	Email    string
+	User     string
 	Password string
 }

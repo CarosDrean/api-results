@@ -46,8 +46,9 @@ func ValidatePatientLogin(user string, password string) (helper.State, string){
 			if len(items[0].Mail) != 0{
 				newPassword := CreateNewPasswordPatient()
 				mail := models.Mail{
-					From: items[0].Name,
-					Data: newPassword,
+					From: items[0].Mail,
+					User: user,
+					Password: newPassword,
 				}
 				_, err := UpdatePasswordPatient(items[0].ID, newPassword)
 				if err != nil {
@@ -92,7 +93,7 @@ func Sendmail(mail models.Mail){
 	if err != nil {
 		fmt.Println(err)
 	}
-	resp, err := http.Post("http", "application/json", bytes.NewBuffer(data))
+	resp, err := http.Post(helper.ApiMail, "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		log.Panic(err)
 	}

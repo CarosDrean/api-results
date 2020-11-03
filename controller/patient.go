@@ -24,6 +24,6 @@ func GetPatientFromDNI(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPatientFromLogin(user models.UserLogin) []models.Patient {
-	items := db.GetPatientFromDNI(user.Email)
+	items := db.GetPatientFromDNI(user.User)
 	return items
 }
