@@ -9,8 +9,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func ValidatePatient() {
+func GetPatient(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["id"]
 
+	items := db.GetPatient(id)
+
+	_ = json.NewEncoder(w).Encode(items[0])
 }
 
 func GetPatientFromDNI(w http.ResponseWriter, r *http.Request) {

@@ -7,6 +7,7 @@ import (
 )
 
 func GetProtocol(id string) models.Protocol {
+	log.Println(id)
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
@@ -18,13 +19,13 @@ func GetProtocol(id string) models.Protocol {
 		return res[0]
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.OrganizationID)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID)
 		if err != nil {
 			log.Println(err)
 			return res[0]
 		} else{
 			res = append(res, item)
-			log.Println(item.OrganizationID)
+			log.Println(item.Name)
 		}
 	}
 	defer rows.Close()

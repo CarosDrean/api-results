@@ -7,8 +7,8 @@ type User struct {
 }
 
 type UserResult struct {
-	ID   string
-	Role string
+	ID   string `json:"_id"`
+	Role string `json:"role"`
 }
 
 type UserLogin struct {

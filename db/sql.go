@@ -65,7 +65,7 @@ var service = TableDB{
 
 var protocol = TableDB{
 	Name:   "dbo.protocol",
-	Fields: []string{"v_ProtocolId", "v_CustomerOrganizationId"},
+	Fields: []string{"v_ProtocolId", "v_Name", "v_CustomerOrganizationId"},
 }
 
 var organization = TableDB{
@@ -91,7 +91,7 @@ var patient = TableDB{
 }
 
 var QueryPatient = map[string]*queryConfig{
-	"get":    {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[0] + " = ?;"},
+	"get":    {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[0] + " = '%s';"},
 	"getDNI": {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[1] + " = '%s';"},
 	"list":   {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + ";"},
 	"insert": {Q: "insert into (" + fieldString(patient.Fields) + ") values (" + valuesString(patient.Fields) + ");"},

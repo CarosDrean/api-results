@@ -1,11 +1,11 @@
 package models
 
 type Patient struct {
-	ID             string
-	DNI            string
-	Password       string
-	Name           string
-	FirstLastName  string
-	SecondLastName string
-	Mail           string
+	ID             string `json:"_id"`
+	DNI            string `json:"dni"`
+	Password       string `json:"password"`
+	Name           string `json:"name"`
+	FirstLastName  string `json:"firstlastname"`
+	SecondLastName string `json:"secondlastname"`
+	Mail           string `json:"mail"`
 }

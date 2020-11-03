@@ -7,6 +7,8 @@ import (
 func Routes(r *mux.Router) {
 	u := r.PathPrefix("/user").Subrouter()
 	userRoutes(u)
-	// o := r.PathPrefix("/organization").Subrouter()
-	// categoryRoutes(o)
+	p := r.PathPrefix("/patient").Subrouter()
+	patientRoutes(p)
+	res := r.PathPrefix("/exams").Subrouter()
+	examsRoutes(res)
 }

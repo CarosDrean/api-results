@@ -145,7 +145,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 	stateLogin, id := db.ValidatePatientLogin(user.User, user.Password)
 	switch stateLogin {
 	case helper.Accept:
-		userResult := models.UserResult{ID: id, Role: "patient"}
+		userResult := models.UserResult{ID: id, Role: "Patient"}
 		token := GenerateJWT(userResult)
 		result := models.ResponseToken{Token: token}
 		jsonResult, err := json.Marshal(result)
@@ -171,7 +171,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		break
 	case helper.InvalidCredentials:
 		w.WriteHeader(http.StatusUnauthorized)
-		_, _ = fmt.Fprintf(w, "¡Credenciales Invalidas!")
+		_, _ = fmt.Fprintf(w, "¡Contraseña Incorrecta!")
 		break
 	case helper.PasswordUpdate:
 		w.WriteHeader(http.StatusFound)

@@ -24,7 +24,6 @@ func GetServiceWidthPersonID(id string) []models.Service{
 			return res
 		} else{
 			res = append(res, item)
-			log.Println(item.ServiceDate)
 		}
 	}
 	defer rows.Close()

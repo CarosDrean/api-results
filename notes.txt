@@ -1,30 +1,3 @@
-Lo que debemos hacer
+El archivo consta de lo siguiente
 
-- Hay que tener los modelos siguientes
-	paciente (solo para verificar existencia)
-	usuario (para crear y consultar)
-	examen (para acceder al archivo de resultado)
-
-- Verificar si el paciente existe con el DNI
-	Si existe enviar un correo con una contraseña y crear un usuario al cual enviar la contraseña
-	Si no existe informar al consultamte
-- Descargar PDF de resultado del examen (COVID de momento)
-
-
-LO QUE DEBO DE HACER
-
-Primero validamos si el paciente existe
-Luego validamos si la contraseña es correcta o si quiere una nueva contraseña
-    Si la contraseña es correcta accedemos al sistema para descargar el PDF
-        Solo mostramos la opcion de descargar PDF
-    Si quiere contraseña nueva generamos una nueva contraseña y la enviamos por email, solo actualizaremos la contraseña
-
-
-Necesito el nombre del paciente la empresa a la que pertenece la fecha del examen y la fecha y tod eso solo con el paciente
-
-PASOS
-- Verificar si el paciente existe con el DNI
-- Verificar si el password es el DNI
-- De ser el caso asignar una nueva contraseña y enviar email con la nueva contraseña
-- Si no entonces entrar al sistema
-- Ver Pruebas Rapidas realizadas
+dni-fecha-PRUEBA-RAPIDA-codigopruebarapida.pdf
