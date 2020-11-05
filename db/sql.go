@@ -60,7 +60,7 @@ var user = TableDB{
 
 var service = TableDB{
 	Name:   "dbo.service",
-	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate"},
+	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate", "i_ServiceStatusId", "i_isDeleted"},
 }
 
 var protocol = TableDB{
@@ -71,6 +71,15 @@ var protocol = TableDB{
 var organization = TableDB{
 	Name:   "dbo.organization",
 	Fields: []string{"v_OrganizationId", "v_Name"},
+}
+
+var calendar = TableDB{
+	Name:   "dbo.calendar",
+	Fields: []string{"v_CalendarId", "v_ServiceId", "i_CalendarStatusId"},
+}
+
+var QueryCalendar = map[string]*queryConfig{
+	"getServiceID": {Q: "select " + fieldString(calendar.Fields) + " from " + calendar.Name + " where " + calendar.Fields[1] + " = '%s';"},
 }
 
 var QueryService = map[string]*queryConfig{

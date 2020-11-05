@@ -22,12 +22,14 @@ func Get() *sql.DB {
 
 	db, err := sql.Open("sqlserver", dsn)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println("Error connect DB!")
+		log.Panic(err)
 	}
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatalln(err)
+		log.Println("Error connect DB!")
+		log.Panic(err)
 	}
 
 	fmt.Println("Db is connected!")

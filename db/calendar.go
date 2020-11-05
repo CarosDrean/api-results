@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-func GetProtocol(id string) models.Protocol {
-	res := make([]models.Protocol, 0)
-	var item models.Protocol
+func GetCalendarService(idService string) models.Calendar {
+	res := make([]models.Calendar, 0)
+	var item models.Calendar
 
-	tsql := fmt.Sprintf(QueryProtocol["get"].Q, id)
+	tsql := fmt.Sprintf(QueryCalendar["getServiceID"].Q, idService)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -18,7 +18,7 @@ func GetProtocol(id string) models.Protocol {
 		return res[0]
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID)
+		err := rows.Scan(&item.ID, &item.ServiceID, &item.CalendarStatusID)
 		if err != nil {
 			log.Println(err)
 			return res[0]

@@ -17,7 +17,9 @@ import (
 
 func main() {
 	r := mux.NewRouter()
+
 	db.DB = helper.Get()
+
 	r.HandleFunc("/", indexRouter)
 	r.HandleFunc("/api/login", middleware.Login)
 	r.HandleFunc("/file", controller.DownloadPDF)

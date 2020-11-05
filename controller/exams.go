@@ -20,10 +20,16 @@ func GetExams(w http.ResponseWriter, r *http.Request){
 	services := db.GetServiceWidthPersonID(patients[0].ID)
 
 	for i, e := range services {
-		item.ID = strconv.Itoa(i)
-		item.ServiceDate = e.ServiceDate
-		item.ProtocolName = db.GetProtocol(e.ProtocolID).Name
-		res = append(res, item)
+		if e.ServiceStatusId == 3 && e.IsDeleted != 1 { // culminado
+			calendar := db.GetCalendarService(e.ID)
+			if calendar.CalendarStatusID != 4 { // 4 = cancelado
+				item.ID = strconv.Itoa(i)
+				item.ServiceDate = e.ServiceDate
+				item.ProtocolName = db.GetProtocol(e.ProtocolID).Name
+				res = append(res, item)
+			}
+		}
+
 	}
 	_ = json.NewEncoder(w).Encode(res)
 }

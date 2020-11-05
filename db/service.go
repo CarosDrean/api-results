@@ -18,10 +18,9 @@ func GetServiceWidthPersonID(id string) []models.Service{
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate)
+		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate, &item.ServiceStatusId, &item.IsDeleted)
 		if err != nil {
 			log.Println(err)
-			return res
 		} else{
 			res = append(res, item)
 		}
