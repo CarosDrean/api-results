@@ -1,3 +1,4 @@
 El archivo consta de lo siguiente
 
-dni-fecha-PRUEBA-RAPIDA-codigopruebarapida.pdf
+prueba rapida: dni-fecha-PRUEBA-RAPIDA-codigopruebarapida.pdf
+interconsulta: idservice-apellidosynombres.pdf

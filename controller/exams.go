@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func GetExams(w http.ResponseWriter, r *http.Request){
@@ -26,10 +27,19 @@ func GetExams(w http.ResponseWriter, r *http.Request){
 				item.ID = strconv.Itoa(i)
 				item.ServiceDate = e.ServiceDate
 				item.ProtocolName = db.GetProtocol(e.ProtocolID).Name
-				res = append(res, item)
+				be := strings.FieldsFunc(item.ProtocolName, Split)
+				item.Business = be[0]
+				item.Exam = be[len(be)-1]
+				if strings.Contains(item.Exam, "PRUEBA RAPIDA") { // no debe ser asi...
+					res = append(res, item)
+				}
 			}
 		}
 
 	}
 	_ = json.NewEncoder(w).Encode(res)
+}
+
+func Split(r rune) bool {
+	return r == '-' || r == '/'
 }
