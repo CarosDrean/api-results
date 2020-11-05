@@ -2,7 +2,7 @@ package models
 
 type Result struct {
 	ID           string `json:"_id"`
-	IdService    string `json:"idservide"`
+	IdService    string `json:"idservice"`
 	ProtocolName string `json:"protocolname"`
 	Business     string `json:"business"`
 	Exam         string `json:"exam"`

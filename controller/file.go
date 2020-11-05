@@ -1,17 +1,53 @@
 package controller
 
 import (
+	"encoding/json"
 	"github.com/CarosDrean/api-results.git/db"
+	"github.com/CarosDrean/api-results.git/helper"
+	"github.com/CarosDrean/api-results.git/models"
 	"log"
 	"net/http"
+	"os"
 	"path"
 	"strings"
 	"time"
 )
 
 func DownloadPDF(w http.ResponseWriter, r *http.Request) {
-	fp := path.Join("\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Consolidado\\PRUEBA RAPIDA\\CONTRATISTA LOS MAGNIFICOS S.A.C. - CUNYAS VILA JEAN CARLOS - 03 septiembre,  2020.pdf")
+	w.Header().Set("Content-Type", "application/json")
+	var petition models.PetitionFile
+	_ = json.NewDecoder(r.Body).Decode(&petition)
+
+	var nameFile string
+	if strings.Contains(petition.Exam, "PRUEBA RAPIDA") {
+		nameFile = helper.RoutePruebaRapida + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-" + helper.IdPruebaRapida + ".pdf"
+	} else if strings.Contains(petition.Exam, "INTERCONSULTA"){
+		nameFile = helper.RouteInterconsulta + petition.ServiceID + "-" + petition.NameComplet + ".pdf"
+	}
+	log.Println(nameFile)
+	if len(nameFile) == 0 {
+		log.Println("no aceptado")
+		return
+	}
+	if _, err := os.Stat(nameFile); err != nil {
+		if os.IsNotExist(err) {
+			log.Println("no existe")
+			return
+		}
+	}
+
+	fp := path.Join(nameFile)
+	// fp := path.Join("\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Consolidado\\PRUEBA RAPIDA\\CONTRATISTA LOS MAGNIFICOS S.A.C. - CUNYAS VILA JEAN CARLOS - 03 septiembre,  2020.pdf")
 	http.ServeFile(w, r, fp)
+}
+
+func formatDate(date string) string {
+	data := strings.FieldsFunc(date, SplitTwo)
+	return data[2]+data[1]+data[0]
+}
+
+func SplitTwo(r rune) bool {
+	return r == '-' || r == 'T'
 }
 
 func GetData(dni string){

@@ -26,6 +26,7 @@ func GetExams(w http.ResponseWriter, r *http.Request){
 			if calendar.CalendarStatusID != 4 { // 4 = cancelado
 				item.ID = strconv.Itoa(i)
 				item.ServiceDate = e.ServiceDate
+				item.IdService = e.ID
 				item.ProtocolName = db.GetProtocol(e.ProtocolID).Name
 				be := strings.FieldsFunc(item.ProtocolName, Split)
 				item.Business = be[0]

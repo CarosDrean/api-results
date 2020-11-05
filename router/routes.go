@@ -11,4 +11,6 @@ func Routes(r *mux.Router) {
 	patientRoutes(p)
 	res := r.PathPrefix("/exams").Subrouter()
 	examsRoutes(res)
+	f := r.PathPrefix("/file").Subrouter()
+	fileRoutes(f)
 }

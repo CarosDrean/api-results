@@ -9,4 +9,5 @@ const (
 	Accept             State = "Accept"
 	InvalidCredentials State = "Invalid Credentials"
 	PasswordUpdate     State = "Password Updated"
+
 )
