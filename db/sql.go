@@ -83,7 +83,8 @@ var QueryCalendar = map[string]*queryConfig{
 }
 
 var QueryService = map[string]*queryConfig{
-	"getPersonID": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[1] + " = '%s';"},
+	"getPersonID": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[1] + " = '%s' order by " + service.Fields[3] + " desc;"},
+	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
 }
 
 var QueryProtocol = map[string]*queryConfig{

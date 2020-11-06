@@ -57,6 +57,7 @@ func GetPatientFromDNI(dni string) []models.Patient {
 		} else{
 			res = append(res, item)
 			log.Println(item.Name)
+			log.Println(item.Password)
 		}
 	}
 	defer rows.Close()

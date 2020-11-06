@@ -23,6 +23,8 @@ func DownloadPDF(w http.ResponseWriter, r *http.Request) {
 		nameFile = helper.RoutePruebaRapida + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-" + helper.IdPruebaRapida + ".pdf"
 	} else if strings.Contains(petition.Exam, "INTERCONSULTA"){
 		nameFile = helper.RouteInterconsulta + petition.ServiceID + "-" + petition.NameComplet + ".pdf"
+	} else if strings.Contains(petition.Exam, "INFORME MEDICO"){
+		nameFile = helper.RouteInformeMedico + getFileNameInformeMedico(petition.ServiceID, petition.DNI)
 	}
 	log.Println(nameFile)
 	if len(nameFile) == 0 {
@@ -50,15 +52,15 @@ func SplitTwo(r rune) bool {
 	return r == '-' || r == 'T'
 }
 
-func GetData(dni string){
+func getFileNameInformeMedico(idService string, dni string) string {
 	patients := db.GetPatientFromDNI(dni)
-	services := db.GetServiceWidthPersonID(patients[0].ID)
+	services := db.GetService(idService)
 	protocol := db.GetProtocol(services[0].ProtocolID)
 	organization := db.GetOrganization(protocol.OrganizationID)
 	log.Println(organization.Name)
 
 	organizationName := organization.Name
-	personName := patients[0].Name
+	personName := patients[0].FirstLastName + " " + patients[0].SecondLastName + " " + patients[0].Name
 	date := services[0].ServiceDate
 	dates := strings.Split(date, "T")
 	log.Println(dates[0])
@@ -66,6 +68,7 @@ func GetData(dni string){
 	t, _ := time.Parse(layout, dates[0])
 	log.Println(t)
 
-	namePDF := organizationName + " - " + personName + " - " + t.Format("02 Febrero, 2006") + ".pdf"
+	namePDF := organizationName + "-" + personName + "-FMT2-" + t.Format("02 Febrero, 2006") + ".pdf"
 	log.Println(namePDF)
+	return namePDF
 }
