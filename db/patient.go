@@ -140,10 +140,13 @@ func Sendmail(mail models.Mail){
 }
 
 func loginApiMail() string{
-	secret, err := json.Marshal(helper.SecretApiMail)
+	secret, err := json.Marshal(map[string]string{
+		"secret": helper.SecretApiMail,
+	})
 	if err != nil {
 		fmt.Println(err)
 	}
+	log.Println(secret)
 	respToken, err := http.Post(helper.ApiMail + "/login", "application/json", bytes.NewBuffer(secret))
 	if err != nil {
 		log.Panic(err)
@@ -153,6 +156,12 @@ func loginApiMail() string{
 	if err != nil {
 		log.Panic(err)
 	}
-	log.Println(body)
-	return string(body)
+	log.Println(string(body))
+	byt := []byte(string(body))
+	var dat map[string]interface{}
+	if err := json.Unmarshal(byt, &dat); err != nil {
+		panic(err)
+	}
+	fmt.Println(dat["token"])
+	return dat["token"].(string)
 }
