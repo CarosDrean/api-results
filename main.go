@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/kardianos/service"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +16,25 @@ import (
 	"github.com/rs/cors"
 )
 
+var logger service.Logger
+
+type program struct{}
+
+func (p *program) Start(s service.Service) error {
+	// Start should not block. Do the actual work async.
+	go p.run()
+	return nil
+}
+func (p *program) run() {
+	// Do work here
+}
+func (p *program) Stop(s service.Service) error {
+	// Stop should not block. Return with a few seconds.
+	return nil
+}
+
 func main() {
+	configService()
 	r := mux.NewRouter()
 
 	db.DB = helper.Get()
@@ -45,6 +64,28 @@ func main() {
 	fmt.Println("Server online!")
 
 	log.Fatal(http.ListenAndServe(":"+port, handler))
+}
+
+func configService() {
+	svcConfig := &service.Config{
+		Name:        "ApiResults",
+		DisplayName: "Api Results",
+		Description: "Este servicio permite la descarga de resultados de los examenes.",
+	}
+
+	prg := &program{}
+	s, err := service.New(prg, svcConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+	logger, err = s.Logger(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = s.Run()
+	if err != nil {
+		_ = logger.Error(err)
+	}
 }
 
 func indexRouter(w http.ResponseWriter, r *http.Request) {

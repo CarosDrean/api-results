@@ -2,7 +2,7 @@ package helper
 
 const (
 	PORT          = "8000"
-	ApiMail       = "http://localhost:3000"
+	ApiMail       = "http://161.35.105.187:3000"
 	SecretApiMail = "miclavedetokens"
 
 	IdPruebaRapida     string = "N007-ME000000491"
