@@ -1,8 +1,9 @@
 package helper
 
 const (
-	PORT    = "8000"
-	ApiMail = "http://localhost:3000/newpassword"
+	PORT          = "8000"
+	ApiMail       = "http://localhost:3000"
+	SecretApiMail = "misecrettoken"
 
 	IdPruebaRapida     string = "N007-ME000000491"
 	RoutePruebaRapida  string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Prueba Rapida\\"

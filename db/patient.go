@@ -118,7 +118,16 @@ func Sendmail(mail models.Mail){
 	if err != nil {
 		fmt.Println(err)
 	}
-	resp, err := http.Post(helper.ApiMail, "application/json", bytes.NewBuffer(data))
+	token := loginApiMail()
+
+	req, err := http.NewRequest("POST", helper.ApiMail + "/newpassword", bytes.NewBuffer(data))
+	if err != nil {
+		log.Panic(err)
+	}
+	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", token)
+	resp, err := http.DefaultClient.Do(req)
+	//resp, err := http.Post(helper.ApiMail + "/newpassword", "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -128,4 +137,22 @@ func Sendmail(mail models.Mail){
 		log.Panic(err)
 	}
 	log.Println(body)
+}
+
+func loginApiMail() string{
+	secret, err := json.Marshal(helper.SecretApiMail)
+	if err != nil {
+		fmt.Println(err)
+	}
+	respToken, err := http.Post(helper.ApiMail + "/login", "application/json", bytes.NewBuffer(secret))
+	if err != nil {
+		log.Panic(err)
+	}
+	defer respToken.Body.Close()
+	body, err := ioutil.ReadAll(respToken.Body)
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Println(body)
+	return string(body)
 }
