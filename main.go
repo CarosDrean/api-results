@@ -39,7 +39,12 @@ func api(){
 	routes.Routes(s)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4200", "http://192.241.159.224"},
+		AllowedOrigins:   []string{
+			"http://localhost:4200",
+			"http://192.241.159.224",
+			"http://resultados.holosalud.org",
+			"https://resultados.holosalud.org",
+		},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
