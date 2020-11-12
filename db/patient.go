@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func GetPatient(id string) []models.Patient {
@@ -50,7 +51,16 @@ func GetPatientFromDNI(dni string) []models.Patient {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.DNI, &item.Password, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail)
+		var pass sql.NullString
+		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail)
+		if pass.Valid {
+			item.Password = pass.String
+		} else {
+			item.Password = dni
+		}
+		if strings.Contains(item.Mail, "notiene") || strings.Contains(item.Mail, "NOTIENE"){
+			item.Mail = ""
+		}
 		if err != nil {
 			log.Println(err)
 			return res
