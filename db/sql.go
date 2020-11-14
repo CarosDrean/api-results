@@ -100,6 +100,16 @@ var patient = TableDB{
 	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName", "v_Mail"},
 }
 
+var externalUser = TableDB{
+	Name:   "dbo.systemuser",
+	Fields: []string{"i_SystemUserId", "v_PersonId", "v_UserName", "v_Password", "i_SystemUserTyoeId"},
+}
+
+var QueryExternalUser = map[string]*queryConfig{
+	"getUserName": {Q: "select " + fieldString(externalUser.Fields) + " from " + externalUser.Name + " where " + externalUser.Fields[2] + " = '%s';"},
+	"get": {Q: "select " + fieldString(externalUser.Fields) + " from " + externalUser.Name + " where " + externalUser.Fields[0] + " = '%s';"},
+}
+
 var QueryPatient = map[string]*queryConfig{
 	"get":    {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[0] + " = '%s';"},
 	"getDNI": {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[1] + " = '%s';"},
