@@ -97,9 +97,11 @@ func ValidateToken(w http.ResponseWriter, r *http.Request) string {
 
 func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		r.Header.Add("Authorization", r.Header.Get("x-token"))
 		token, err := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &models.Claim{}, func(token *jwt.Token) (interface{}, error) {
 			return publicKey, nil
 		})
+		log.Println(r.Header)
 
 		if err != nil {
 			switch err.(type) {
@@ -117,6 +119,7 @@ func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 					return
 				}
 			default:
+				log.Println(err)
 				_, _ = fmt.Fprintln(w, "Su token no es valido fin def")
 				return
 			}

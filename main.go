@@ -47,7 +47,7 @@ func api(){
 		},
 		AllowCredentials: true,
 		AllowedMethods:   []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "x-token"},
 	})
 
 	port := os.Getenv("PORT")
