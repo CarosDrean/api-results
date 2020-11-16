@@ -146,9 +146,18 @@ func Login(w http.ResponseWriter, r *http.Request){
 	}
 	log.Println(user)
 	stateLogin, id := db.ValidatePatientLogin(user.User, user.Password)
+	isSystemUser := false
+	if stateLogin == helper.NotFound {
+		stateLogin, id = db.ValidateSystemUserLogin(user.User, user.Password)
+		isSystemUser = true
+	}
 	switch stateLogin {
 	case helper.Accept:
-		userResult := models.UserResult{ID: id, Role: "Patient"}
+		userResult := models.UserResult{ID: id, Role: getRole(0)}
+		if isSystemUser {
+			systemUser := db.GetSystemUser(id)
+			userResult = models.UserResult{ID: id, Role: getRole(systemUser[0].TypeUser)}
+		}
 		token := GenerateJWT(userResult)
 		result := models.ResponseToken{Token: token}
 		jsonResult, err := json.Marshal(result)
@@ -159,7 +168,6 @@ func Login(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write(jsonResult)
-		break
 	case helper.ErrorUP:
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = fmt.Fprintf(w, "Hubo un error!")
@@ -168,10 +176,13 @@ func Login(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusForbidden)
 		_, _ = fmt.Fprintf(w, "No se encontro su direccion de correo electronico")
 		break
-	case helper.NotFoundPatient:
+	case helper.NotFound:
 		w.WriteHeader(http.StatusForbidden)
-		_, _ = fmt.Fprintf(w, "¡No existe Paciente!")
-		break
+		if isSystemUser {
+			_, _ = fmt.Fprintf(w, "¡No existe Paciente!")
+		} else {
+			_, _ = fmt.Fprintf(w, "¡No existe Usuario!")
+		}
 	case helper.InvalidCredentials:
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = fmt.Fprintf(w, "¡Contraseña Incorrecta!")
@@ -180,5 +191,20 @@ func Login(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusFound)
 		_, _ = fmt.Fprintf(w, "Consulte su correo electronico con las nuevas credenciales.")
 		break
+	}
+}
+
+func getRole(typeUser int)string{
+	switch typeUser {
+	case 0:
+		return "Patient"
+	case 1:
+		return "Internal Admin"
+	case 2:
+		return "External Admin"
+	case 3:
+		return "External Medic"
+	default:
+		return ""
 	}
 }

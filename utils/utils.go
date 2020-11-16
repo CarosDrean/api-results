@@ -1,9 +1,13 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
+	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -15,6 +19,64 @@ const charset = "abcdefghijklmnopqrstuvwxyz" +
 var seededRand *rand.Rand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
+func CreateNewPassword() string{
+	return stringPassword(8)
+}
+
+func Sendmail(mail models.Mail){
+	data, err := json.Marshal(mail)
+	if err != nil {
+		fmt.Println(err)
+	}
+	token := loginApiMail()
+
+	req, err := http.NewRequest("POST", helper.ApiMail + "/newpassword", bytes.NewBuffer(data))
+	if err != nil {
+		log.Panic(err)
+	}
+	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", token)
+	resp, err := http.DefaultClient.Do(req)
+	//resp, err := http.Post(helper.ApiMail + "/newpassword", "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		log.Panic(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Println(body)
+}
+
+func loginApiMail() string{
+	secret, err := json.Marshal(map[string]string{
+		"secret": helper.SecretApiMail,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	log.Println(secret)
+	respToken, err := http.Post(helper.ApiMail + "/login", "application/json", bytes.NewBuffer(secret))
+	if err != nil {
+		log.Panic(err)
+	}
+	defer respToken.Body.Close()
+	body, err := ioutil.ReadAll(respToken.Body)
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Println(string(body))
+	byt := []byte(string(body))
+	var dat map[string]interface{}
+	if err := json.Unmarshal(byt, &dat); err != nil {
+		panic(err)
+	}
+	fmt.Println(dat["token"])
+	return dat["token"].(string)
+}
+
+
 func StringWithCharset(length int, charset string) string {
 	b := make([]byte, length)
 	for i := range b {
@@ -23,7 +85,7 @@ func StringWithCharset(length int, charset string) string {
 	return string(b)
 }
 
-func StringPassword(length int) string {
+func stringPassword(length int) string {
 	return StringWithCharset(length, charset)
 }
 

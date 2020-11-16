@@ -53,11 +53,6 @@ func updatesString(fields []string) string {
 	return values
 }
 
-var user = TableDB{
-	Name:   "dbo.systemuser",
-	Fields: []string{"i_SystemUserId", "v_UserName", "v_Password"},
-}
-
 var service = TableDB{
 	Name:   "dbo.service",
 	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate", "i_ServiceStatusId", "i_isDeleted"},
@@ -100,14 +95,15 @@ var patient = TableDB{
 	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName", "v_Mail"},
 }
 
-var externalUser = TableDB{
+var user = TableDB{
 	Name:   "dbo.systemuser",
-	Fields: []string{"i_SystemUserId", "v_PersonId", "v_UserName", "v_Password", "i_SystemUserTyoeId"},
+	Fields: []string{"i_SystemUserId", "v_PersonId", "v_UserName", "v_Password", "i_SystemUserTypeId"},
 }
 
-var QueryExternalUser = map[string]*queryConfig{
-	"getUserName": {Q: "select " + fieldString(externalUser.Fields) + " from " + externalUser.Name + " where " + externalUser.Fields[2] + " = '%s';"},
-	"get": {Q: "select " + fieldString(externalUser.Fields) + " from " + externalUser.Name + " where " + externalUser.Fields[0] + " = '%s';"},
+var QuerySystemUser = map[string]*queryConfig{
+	"getUserName": {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[2] + " = '%s';"},
+	"get": {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = '%s';"},
+	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = '%s';"},
 }
 
 var QueryPatient = map[string]*queryConfig{

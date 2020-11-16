@@ -1,9 +1,11 @@
 package models
 
-type User struct {
-	ID       int
-	Username string
+type SystemUser struct {
+	ID       string
+	PersonID string
+	UserName string
 	Password string
+	TypeUser int
 }
 
 type UserResult struct {

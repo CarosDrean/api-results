@@ -1,17 +1,13 @@
 package db
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/utils"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"strings"
 )
 
@@ -77,9 +73,9 @@ func GetPatientFromDNI(dni string) []models.Patient {
 func ValidatePatientLogin(user string, password string) (helper.State, string){
 	items := GetPatientFromDNI(user)
 	if len(items) > 0 {
-		if ValidateInitPassword(password, items[0]){
+		if validatePasswordPatientForReset(password, items[0]){
 			if len(items[0].Mail) != 0{
-				newPassword := CreateNewPasswordPatient()
+				newPassword := utils.CreateNewPassword()
 				mail := models.Mail{
 					From: items[0].Mail,
 					User: user,
@@ -89,7 +85,7 @@ func ValidatePatientLogin(user string, password string) (helper.State, string){
 				if err != nil {
 					return helper.ErrorUP, ""
 				}
-				Sendmail(mail)
+				utils.Sendmail(mail)
 				return helper.PasswordUpdate, ""
 			}
 			return helper.NotFoundMail, ""
@@ -99,7 +95,7 @@ func ValidatePatientLogin(user string, password string) (helper.State, string){
 		}
 		return helper.InvalidCredentials, ""
 	}
-	return helper.NotFoundPatient, ""
+	return helper.NotFound, ""
 }
 
 func UpdatePasswordPatient(id string, password string) (int64, error) {
@@ -115,63 +111,7 @@ func UpdatePasswordPatient(id string, password string) (int64, error) {
 	return result.RowsAffected()
 }
 
-func ValidateInitPassword(password string, patient models.Patient) bool {
+func validatePasswordPatientForReset(password string, patient models.Patient) bool {
 	return patient.DNI == password
 }
 
-func CreateNewPasswordPatient() string{
-	return utils.StringPassword(8)
-}
-
-func Sendmail(mail models.Mail){
-	data, err := json.Marshal(mail)
-	if err != nil {
-		fmt.Println(err)
-	}
-	token := loginApiMail()
-
-	req, err := http.NewRequest("POST", helper.ApiMail + "/newpassword", bytes.NewBuffer(data))
-	if err != nil {
-		log.Panic(err)
-	}
-	req.Header.Set("Content-type", "application/json")
-	req.Header.Set("Authorization", token)
-	resp, err := http.DefaultClient.Do(req)
-	//resp, err := http.Post(helper.ApiMail + "/newpassword", "application/json", bytes.NewBuffer(data))
-	if err != nil {
-		log.Panic(err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Panic(err)
-	}
-	log.Println(body)
-}
-
-func loginApiMail() string{
-	secret, err := json.Marshal(map[string]string{
-		"secret": helper.SecretApiMail,
-	})
-	if err != nil {
-		fmt.Println(err)
-	}
-	log.Println(secret)
-	respToken, err := http.Post(helper.ApiMail + "/login", "application/json", bytes.NewBuffer(secret))
-	if err != nil {
-		log.Panic(err)
-	}
-	defer respToken.Body.Close()
-	body, err := ioutil.ReadAll(respToken.Body)
-	if err != nil {
-		log.Panic(err)
-	}
-	log.Println(string(body))
-	byt := []byte(string(body))
-	var dat map[string]interface{}
-	if err := json.Unmarshal(byt, &dat); err != nil {
-		panic(err)
-	}
-	fmt.Println(dat["token"])
-	return dat["token"].(string)
-}
