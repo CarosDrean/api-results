@@ -7,6 +7,7 @@ import (
 	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/utils"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
@@ -80,7 +81,7 @@ func ValidateSystemUserLogin(user string, password string) (helper.State, string
 			}
 			return helper.NotFoundMail, ""
 		}
-		if items[0].Password == password {
+		if comparePassword(items[0].Password, password) {
 			return helper.Accept, items[0].ID
 		}
 		return helper.InvalidCredentials, ""
@@ -94,7 +95,7 @@ func UpdatePasswordSystemUser(id string, password string) (int64, error) {
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,
-		sql.Named("Password", password))
+		sql.Named("Password", encrypt(password)))
 	if err != nil {
 		return -1, err
 	}
@@ -105,7 +106,21 @@ func validatePasswordSystemUserForReset(password string, patient models.SystemUs
 	return patient.UserName == password
 }
 
+func comparePassword(hashedPassword string, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 func encrypt(password string) string {
-	return ""
+	passwordByte := []byte(password)
+	hashedPassword, err := bcrypt.GenerateFromPassword(passwordByte, bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+		return ""
+	}
+	return string(hashedPassword)
 }
 

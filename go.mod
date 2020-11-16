@@ -9,5 +9,5 @@ require (
 	github.com/gonutz/w32 v1.0.0
 	github.com/gorilla/mux v1.8.0
 	github.com/rs/cors v1.7.0
-	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
+	golang.org/x/crypto v0.0.0-20201112155050-0c6587e931a9
 )
