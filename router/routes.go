@@ -13,4 +13,6 @@ func Routes(r *mux.Router) {
 	examsRoutes(res)
 	f := r.PathPrefix("/file").Subrouter()
 	fileRoutes(f)
+	prt := r.PathPrefix("/protocol").Subrouter()
+	protocolRoutes(prt)
 }

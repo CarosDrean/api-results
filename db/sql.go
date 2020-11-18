@@ -95,6 +95,16 @@ var patient = TableDB{
 	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName", "v_Mail"},
 }
 
+var protocolSystemUser = TableDB{
+	Name:   "dbo.protocolsystemuser",
+	Fields: []string{"v_ProtocolSystemUserId", "i_SystemUser", "v_ProtocolId"},
+}
+
+var QueryProtocolSystemUser = map[string]*queryConfig{
+	"getSystemUserID": {Q: "select " + fieldString(protocolSystemUser.Fields) + " from " + protocolSystemUser.Name + " where " + protocolSystemUser.Fields[1] + " = '%s';"},
+	"get": {Q: "select " + fieldString(protocolSystemUser.Fields) + " from " + protocolSystemUser.Name + " where " + protocolSystemUser.Fields[0] + " = '%s';"},
+}
+
 var user = TableDB{
 	Name:   "dbo.systemuser",
 	Fields: []string{"i_SystemUserId", "v_PersonId", "v_UserName", "v_Password", "i_SystemUserTypeId"},
