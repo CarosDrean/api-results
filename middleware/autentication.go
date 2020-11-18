@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -151,6 +152,17 @@ func Login(w http.ResponseWriter, r *http.Request){
 		stateLogin, id = db.ValidateSystemUserLogin(user.User, user.Password)
 		isSystemUser = true
 	}
+	isPatientParticular := false
+	if stateLogin == helper.NotFound{
+		_, err := strconv.Atoi(user.User)
+		if err == nil {
+			stateLogin = helper.NotFound
+		} else {
+			isPatientParticular = true
+			isSystemUser = false
+			stateLogin, id = patientParticular(user)
+		}
+	}
 	switch stateLogin {
 	case helper.Accept:
 		userResult := models.UserResult{ID: id, Role: getRole(0)}
@@ -178,7 +190,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		break
 	case helper.NotFound:
 		w.WriteHeader(http.StatusForbidden)
-		if isSystemUser {
+		if !isSystemUser || isPatientParticular{
 			_, _ = fmt.Fprintf(w, "¡No existe Paciente!")
 		} else {
 			_, _ = fmt.Fprintf(w, "¡No existe Usuario!")
@@ -192,6 +204,11 @@ func Login(w http.ResponseWriter, r *http.Request){
 		_, _ = fmt.Fprintf(w, "Consulte su correo electronico con las nuevas credenciales.")
 		break
 	}
+}
+
+func patientParticular(user models.UserLogin) (helper.State, string){
+	db.DB = helper.GetAux()
+	return db.ValidatePatientLogin(user.User, user.Password)
 }
 
 func getRole(typeUser int)string{
