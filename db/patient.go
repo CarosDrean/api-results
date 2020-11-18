@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/CarosDrean/api-results.git/helper"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/utils"
 	"log"
@@ -70,7 +70,7 @@ func GetPatientFromDNI(dni string) []models.Patient {
 	return res
 }
 
-func ValidatePatientLogin(user string, password string) (helper.State, string){
+func ValidatePatientLogin(user string, password string) (constants.State, string){
 	items := GetPatientFromDNI(user)
 	if len(items) > 0 {
 		if validatePasswordPatientForReset(password, items[0]){
@@ -83,19 +83,19 @@ func ValidatePatientLogin(user string, password string) (helper.State, string){
 				}
 				_, err := UpdatePasswordPatient(items[0].ID, newPassword)
 				if err != nil {
-					return helper.ErrorUP, ""
+					return constants.ErrorUP, ""
 				}
 				utils.Sendmail(mail)
-				return helper.PasswordUpdate, ""
+				return constants.PasswordUpdate, ""
 			}
-			return helper.NotFoundMail, ""
+			return constants.NotFoundMail, ""
 		}
 		if items[0].Password == password {
-			return helper.Accept, items[0].ID
+			return constants.Accept, items[0].ID
 		}
-		return helper.InvalidCredentials, ""
+		return constants.InvalidCredentials, ""
 	}
-	return helper.NotFound, ""
+	return constants.NotFound, ""
 }
 
 func UpdatePasswordPatient(id string, password string) (int64, error) {

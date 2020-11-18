@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
@@ -12,7 +13,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -102,7 +102,7 @@ func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 		token, err := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &models.Claim{}, func(token *jwt.Token) (interface{}, error) {
 			return publicKey, nil
 		})
-		log.Println(r.Header)
+		// log.Println(r.Header)
 
 		if err != nil {
 			switch err.(type) {
@@ -146,25 +146,26 @@ func Login(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	log.Println(user)
-	stateLogin, id := db.ValidatePatientLogin(user.User, user.Password)
+	var stateLogin constants.State
+	var id string
 	isSystemUser := false
-	if stateLogin == helper.NotFound {
-		stateLogin, id = db.ValidateSystemUserLogin(user.User, user.Password)
-		isSystemUser = true
-	}
 	isPatientParticular := false
-	if stateLogin == helper.NotFound{
-		_, err := strconv.Atoi(user.User)
-		if err == nil {
-			stateLogin = helper.NotFound
-		} else {
-			isPatientParticular = true
-			isSystemUser = false
-			stateLogin, id = patientParticular(user)
+	if !user.Particular {
+		stateLogin, id = patientBusiness(user)
+
+		if stateLogin == constants.NotFound {
+			stateLogin, id = db.ValidateSystemUserLogin(user.User, user.Password)
+			isSystemUser = true
 		}
+	} else {
+		isPatientParticular = true
+		isSystemUser = false
+		stateLogin, id = patientParticular(user)
 	}
+
+
 	switch stateLogin {
-	case helper.Accept:
+	case constants.Accept:
 		userResult := models.UserResult{ID: id, Role: getRole(0)}
 		if isSystemUser {
 			systemUser := db.GetSystemUser(id)
@@ -180,33 +181,39 @@ func Login(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write(jsonResult)
-	case helper.ErrorUP:
+	case constants.ErrorUP:
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = fmt.Fprintf(w, "Hubo un error!")
 		break
-	case helper.NotFoundMail:
+	case constants.NotFoundMail:
 		w.WriteHeader(http.StatusForbidden)
 		_, _ = fmt.Fprintf(w, "No se encontro su direccion de correo electronico")
 		break
-	case helper.NotFound:
+	case constants.NotFound:
 		w.WriteHeader(http.StatusForbidden)
 		if !isSystemUser || isPatientParticular{
 			_, _ = fmt.Fprintf(w, "¡No existe Paciente!")
 		} else {
 			_, _ = fmt.Fprintf(w, "¡No existe Usuario!")
 		}
-	case helper.InvalidCredentials:
+	case constants.InvalidCredentials:
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = fmt.Fprintf(w, "¡Contraseña Incorrecta!")
 		break
-	case helper.PasswordUpdate:
+	case constants.PasswordUpdate:
 		w.WriteHeader(http.StatusFound)
 		_, _ = fmt.Fprintf(w, "Consulte su correo electronico con las nuevas credenciales.")
 		break
 	}
 }
 
-func patientParticular(user models.UserLogin) (helper.State, string){
+// en las dos funciones siguientes inicializamos la bd dependiendo del caso, tambien lo dejamos en el main por si acaso
+func patientBusiness(user models.UserLogin) (constants.State, string){
+	db.DB = helper.Get()
+	return db.ValidatePatientLogin(user.User, user.Password)
+}
+
+func patientParticular(user models.UserLogin) (constants.State, string){
 	db.DB = helper.GetAux()
 	return db.ValidatePatientLogin(user.User, user.Password)
 }

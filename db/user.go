@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/CarosDrean/api-results.git/helper"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/utils"
 	"golang.org/x/crypto/bcrypt"
@@ -60,7 +60,7 @@ func GetSystemUserFromUserName(userName string) []models.SystemUser {
 	return res
 }
 
-func ValidateSystemUserLogin(user string, password string) (helper.State, string){
+func ValidateSystemUserLogin(user string, password string) (constants.State, string){
 	items := GetSystemUserFromUserName(user)
 	person := GetPatient(items[0].PersonID)
 	if len(items) > 0 {
@@ -74,19 +74,19 @@ func ValidateSystemUserLogin(user string, password string) (helper.State, string
 				}
 				_, err := UpdatePasswordSystemUser(items[0].ID, newPassword)
 				if err != nil {
-					return helper.ErrorUP, ""
+					return constants.ErrorUP, ""
 				}
 				utils.Sendmail(mail)
-				return helper.PasswordUpdate, ""
+				return constants.PasswordUpdate, ""
 			}
-			return helper.NotFoundMail, ""
+			return constants.NotFoundMail, ""
 		}
 		if comparePassword(items[0].Password, password) {
-			return helper.Accept, items[0].ID
+			return constants.Accept, items[0].ID
 		}
-		return helper.InvalidCredentials, ""
+		return constants.InvalidCredentials, ""
 	}
-	return helper.NotFound, ""
+	return constants.NotFound, ""
 }
 
 func UpdatePasswordSystemUser(id string, password string) (int64, error) {

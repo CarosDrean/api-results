@@ -2,8 +2,8 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
-	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
 	"log"
 	"net/http"
@@ -20,11 +20,11 @@ func DownloadPDF(w http.ResponseWriter, r *http.Request) {
 
 	var nameFile string
 	if strings.Contains(petition.Exam, "PRUEBA RAPIDA") {
-		nameFile = helper.RoutePruebaRapida + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-" + helper.IdPruebaRapida + ".pdf"
+		nameFile = constants.RoutePruebaRapida + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-" + constants.IdPruebaRapida + ".pdf"
 	} else if strings.Contains(petition.Exam, "INTERCONSULTA"){
-		nameFile = helper.RouteInterconsulta + petition.ServiceID + "-" + petition.NameComplet + ".pdf"
+		nameFile = constants.RouteInterconsulta + petition.ServiceID + "-" + petition.NameComplet + ".pdf"
 	} else if strings.Contains(petition.Exam, "INFORME MEDICO"){
-		nameFile = helper.RouteInformeMedico + getFileNameInformeMedico(petition.ServiceID, petition.DNI)
+		nameFile = constants.RouteInformeMedico + getFileNameInformeMedico(petition.ServiceID, petition.DNI)
 	}
 	log.Println(nameFile)
 	if len(nameFile) == 0 {

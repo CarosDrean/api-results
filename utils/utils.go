@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/CarosDrean/api-results.git/helper"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"io/ioutil"
 	"log"
@@ -30,7 +30,7 @@ func Sendmail(mail models.Mail){
 	}
 	token := loginApiMail()
 
-	req, err := http.NewRequest("POST", helper.ApiMail + "/newpassword", bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", constants.ApiMail+ "/newpassword", bytes.NewBuffer(data))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -51,13 +51,13 @@ func Sendmail(mail models.Mail){
 
 func loginApiMail() string{
 	secret, err := json.Marshal(map[string]string{
-		"secret": helper.SecretApiMail,
+		"secret": constants.SecretApiMail,
 	})
 	if err != nil {
 		fmt.Println(err)
 	}
 	log.Println(secret)
-	respToken, err := http.Post(helper.ApiMail + "/login", "application/json", bytes.NewBuffer(secret))
+	respToken, err := http.Post(constants.ApiMail+ "/login", "application/json", bytes.NewBuffer(secret))
 	if err != nil {
 		log.Panic(err)
 	}

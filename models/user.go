@@ -14,6 +14,7 @@ type UserResult struct {
 }
 
 type UserLogin struct {
-	User     string
-	Password string
+	User       string
+	Password   string
+	Particular bool
 }

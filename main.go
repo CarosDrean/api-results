@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/controller"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/helper"
@@ -53,7 +54,7 @@ func api(){
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		port = helper.PORT //localhost
+		port = constants.PORT //localhost
 	}
 
 	handler := c.Handler(r)
