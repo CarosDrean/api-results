@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -66,9 +67,11 @@ func getFileNameInformeMedico(idService string, dni string) string {
 	log.Println(dates[0])
 	layout := "2006-01-02"
 	t, _ := time.Parse(layout, dates[0])
+	year, month, day := t.Date()
+	td := strconv.Itoa(day) + " " + month.String() + ", " + strconv.Itoa(year)
 	log.Println(t)
 
-	namePDF := organizationName + "-" + personName + "-FMT2-" + t.Format("02 enero, 2006") + ".pdf"
+	namePDF := organizationName + "-" + personName + "-FMT2-" + td + ".pdf"
 	log.Println(namePDF)
 	return namePDF
 }
