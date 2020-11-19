@@ -68,7 +68,7 @@ func getFileNameInformeMedico(idService string, dni string) string {
 	layout := "2006-01-02"
 	t, _ := time.Parse(layout, dates[0])
 	year, month, day := t.Date()
-	td := strconv.Itoa(day) + " " + getMonth(month.String()) + ", " + strconv.Itoa(year)
+	td := strconv.Itoa(day) + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
 	log.Println(t)
 
 	namePDF := organizationName + "-" + personName + "-FMT2-" + td + ".pdf"
