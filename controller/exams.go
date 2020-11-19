@@ -31,9 +31,10 @@ func GetExams(w http.ResponseWriter, r *http.Request){
 				be := strings.FieldsFunc(item.ProtocolName, Split)
 				item.Business = be[0]
 				item.Exam = be[len(be)-1]
-				if strings.Contains(item.Exam, "PRUEBA RAPIDA") { // no debe ser asi...
+				res = append(res, item)
+				/*if strings.Contains(item.Exam, "PRUEBA RAPIDA") { // no debe ser asi...
 					res = append(res, item)
-				}
+				}*/
 			}
 		}
 
