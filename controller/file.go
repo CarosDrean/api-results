@@ -68,10 +68,41 @@ func getFileNameInformeMedico(idService string, dni string) string {
 	layout := "2006-01-02"
 	t, _ := time.Parse(layout, dates[0])
 	year, month, day := t.Date()
-	td := strconv.Itoa(day) + " " + month.String() + ", " + strconv.Itoa(year)
+	td := strconv.Itoa(day) + " " + getMonth(month.String()) + ", " + strconv.Itoa(year)
 	log.Println(t)
 
 	namePDF := organizationName + "-" + personName + "-FMT2-" + td + ".pdf"
 	log.Println(namePDF)
 	return namePDF
+}
+
+func getMonth(month string) string {
+	switch month {
+	case "January":
+		return "enero"
+	case "February":
+		return "febrero"
+	case "March":
+		return "marzo"
+	case "April":
+		return "abril"
+	case "May":
+		return "mayo"
+	case "June":
+		return "junio"
+	case "July":
+		return "julio"
+	case "August":
+		return "agosto"
+	case "September":
+		return "septiembre"
+	case "October":
+		return "octubre"
+	case "November":
+		return "noviembre"
+	case "December":
+		return "diciembre"
+	default:
+		return month
+	}
 }
