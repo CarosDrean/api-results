@@ -66,9 +66,10 @@ func getFileNameInformeMedico(idService string, dni string) string {
 	log.Println(dates[0])
 	layout := "2006-01-02"
 	t, _ := time.Parse(layout, dates[0])
+
 	log.Println(t)
 
-	namePDF := organizationName + "-" + personName + "-FMT2-" + t.Format("02 febrero, 2006") + ".pdf"
+	namePDF := organizationName + "-" + personName + "-FMT2-" + t.Format("dd MMMM, yyyy") + ".pdf"
 	log.Println(namePDF)
 	return namePDF
 }
