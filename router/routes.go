@@ -5,7 +5,7 @@ import (
 )
 
 func Routes(r *mux.Router) {
-	u := r.PathPrefix("/user").Subrouter()
+	u := r.PathPrefix("/systemuser").Subrouter()
 	userRoutes(u)
 	p := r.PathPrefix("/patient").Subrouter()
 	patientRoutes(p)
@@ -15,4 +15,6 @@ func Routes(r *mux.Router) {
 	fileRoutes(f)
 	prt := r.PathPrefix("/protocol").Subrouter()
 	protocolRoutes(prt)
+	l := r.PathPrefix("/location").Subrouter()
+	locationRoutes(l)
 }

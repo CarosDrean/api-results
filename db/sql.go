@@ -97,7 +97,7 @@ var patient = TableDB{
 
 var protocolSystemUser = TableDB{
 	Name:   "dbo.protocolsystemuser",
-	Fields: []string{"v_ProtocolSystemUserId", "i_SystemUser", "v_ProtocolId"},
+	Fields: []string{"v_ProtocolSystemUserId", "i_SystemUserId", "v_ProtocolId"},
 }
 
 var QueryProtocolSystemUser = map[string]*queryConfig{
@@ -105,15 +105,25 @@ var QueryProtocolSystemUser = map[string]*queryConfig{
 	"get": {Q: "select " + fieldString(protocolSystemUser.Fields) + " from " + protocolSystemUser.Name + " where " + protocolSystemUser.Fields[0] + " = '%s';"},
 }
 
+var location = TableDB{
+	Name:   "dbo.location",
+	Fields: []string{"v_LocationId", "v_OrganizationId", "v_Name", "i_IsDelete"},
+}
+
+var queryLocation = map[string]*queryConfig{
+	"getOrganizationID": {Q: "select " + fieldString(location.Fields) + " from " + location.Name + " where " + location.Fields[1] + " = '%s';"},
+	"get": {Q: "select " + fieldString(location.Fields) + " from " + location.Name + " where " + location.Fields[0] + " = '%s';"},
+}
+
 var user = TableDB{
 	Name:   "dbo.systemuser",
-	Fields: []string{"i_SystemUserId", "v_PersonId", "v_UserName", "v_Password", "i_SystemUserTypeId"},
+	Fields: []string{"i_SystemUserId", "v_PersonId", "v_UserName", "v_Password", "i_SystemUserTypeId", "i_IsDeleted"},
 }
 
 var QuerySystemUser = map[string]*queryConfig{
 	"getUserName": {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[2] + " = '%s';"},
-	"get": {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = '%s';"},
-	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = '%s';"},
+	"get": {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = %s;"},
+	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = %s;"},
 }
 
 var QueryPatient = map[string]*queryConfig{

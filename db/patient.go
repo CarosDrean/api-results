@@ -23,7 +23,13 @@ func GetPatient(id string) []models.Patient {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.DNI, &item.Password, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail)
+		var pass sql.NullString
+		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail)
+		if pass.Valid {
+			item.Password = pass.String
+		} else {
+			item.Password = ""
+		}
 		if err != nil {
 			log.Println(err)
 			return res
@@ -58,6 +64,7 @@ func GetPatientFromDNI(dni string) []models.Patient {
 			item.Mail = ""
 		}
 		if err != nil {
+			log.Println("error...........")
 			log.Println(err)
 			return res
 		} else{

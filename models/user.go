@@ -1,11 +1,13 @@
 package models
 
 type SystemUser struct {
-	ID       string `json:"_id"`
-	PersonID string `json:"personId"`
-	UserName string `json:"username"`
-	Password string `json:"password"`
-	TypeUser int    `json:"typeUser"`
+	ID             string `json:"_id"`
+	PersonID       string `json:"personId"`
+	UserName       string `json:"username"`
+	Password       string `json:"password"`
+	TypeUser       int    `json:"typeUser"`
+	OrganizationID string `json:"organizationId"`
+	IsDelete       int
 }
 
 type UserResult struct {
