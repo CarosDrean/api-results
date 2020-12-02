@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/controller"
@@ -17,6 +18,16 @@ import (
 )
 
 func main() {
+	f := flag.Bool("execTerminal", false, "to exec cmd")
+	flag.Parse()
+	if !*f {
+		hideConsole()
+	}
+
+	api()
+}
+
+func hideConsole(){
 	console := w32.GetConsoleWindow()
 	if console != 0 {
 		_, consoleProcID := w32.GetWindowThreadProcessId(console)
@@ -24,7 +35,6 @@ func main() {
 			w32.ShowWindowAsync(console, w32.SW_HIDE)
 		}
 	}
-	api()
 }
 
 func api(){
