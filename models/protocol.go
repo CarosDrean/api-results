@@ -1,8 +1,9 @@
 package models
 
 type Protocol struct {
-	ID             string
-	Name           string
+	ID             string `json:"_id"`
+	Name           string `json:"name"`
 	OrganizationID string
 	LocationID     string
+	IsDeleted      int
 }

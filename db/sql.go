@@ -24,7 +24,7 @@ var service = TableDB{
 
 var protocol = TableDB{
 	Name:   "dbo.protocol",
-	Fields: []string{"v_ProtocolId", "v_Name", "v_CustomerOrganizationId", "v_EmployerLocationId"},
+	Fields: []string{"v_ProtocolId", "v_Name", "v_CustomerOrganizationId", "v_EmployerLocationId", "i_IsDeleted"},
 }
 
 var organization = TableDB{
@@ -43,6 +43,8 @@ var QueryCalendar = map[string]*queryConfig{
 
 var QueryService = map[string]*queryConfig{
 	"getPersonID": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[1] + " = '%s' order by " + service.Fields[3] + " desc;"},
+	"getProtocol": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
+		" = '%s' and d_ServiceDate is not null order by " + service.Fields[3] + " desc;"},
 	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
 }
 

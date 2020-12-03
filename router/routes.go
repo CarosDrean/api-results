@@ -19,4 +19,6 @@ func Routes(r *mux.Router) {
 	locationRoutes(l)
 	pro := r.PathPrefix("/protocol").Subrouter()
 	protocolRoutes(pro)
+	s := r.PathPrefix("/service").Subrouter()
+	serviceRoutes(s)
 }

@@ -10,6 +10,23 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func GetPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["idProtocol"]
+
+	res := make([]models.Patient, 0)
+	var item models.Patient
+
+	services := db.GetServicesWidthProtocol(id)
+	for _, e := range services {
+		item = db.GetPatient(e.PersonID)[0]
+		res = append(res, item)
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+
 func GetPatient(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)

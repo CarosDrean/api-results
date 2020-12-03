@@ -7,6 +7,7 @@ import (
 )
 
 func patientRoutes(s *mux.Router) {
+	s.HandleFunc("/all/{idProtocol}", mid.CheckSecurity(patient.GetPatientsWithProtocol)).Methods("GET")
 	s.HandleFunc("/{id}", mid.CheckSecurity(patient.GetPatient)).Methods("GET")
 	s.HandleFunc("/{id}", mid.CheckSecurity(patient.UpdatePasswordPatient)).Methods("PUT")
 }

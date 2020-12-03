@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func GetProtocolsWidthLocation(id string) models.Protocol {
+func GetProtocolsWidthLocation(id string) []models.Protocol {
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
@@ -15,19 +15,19 @@ func GetProtocolsWidthLocation(id string) models.Protocol {
 
 	if err != nil {
 		fmt.Println("Error reading rows: " + err.Error())
-		return res[0]
+		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted)
 		if err != nil {
 			log.Println(err)
-			return res[0]
-		} else{
+			return res
+		} else {
 			res = append(res, item)
 		}
 	}
 	defer rows.Close()
-	return item
+	return res
 }
 
 func GetProtocol(id string) models.Protocol {
@@ -42,7 +42,7 @@ func GetProtocol(id string) models.Protocol {
 		return res[0]
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted)
 		if err != nil {
 			log.Println(err)
 			return res[0]
