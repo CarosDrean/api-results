@@ -6,6 +6,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func protocolRoutes(s *mux.Router) {
-	s.HandleFunc("/all/{idLocation}", mid.CheckSecurity(protocol.GetProtocolsWidthLocation)).Methods("GET")
+func protocolSystemUserRoutes(s *mux.Router) {
+	s.HandleFunc("/all/{idSystemUser}", mid.CheckSecurity(protocol.GetProtocolsWidthSystemUser)).Methods("GET")
 }
