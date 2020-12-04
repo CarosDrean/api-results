@@ -60,19 +60,16 @@ func getFileNameInformeMedicoAndCertificateSinDX(idService string, dni string, p
 	services := db.GetService(idService)
 	protocol := db.GetProtocol(services[0].ProtocolID)
 	organization := db.GetOrganization(protocol.OrganizationID)
-	log.Println(organization.Name)
 
 	organizationName := organization.Name
 	personName := patients[0].FirstLastName + " " + patients[0].SecondLastName + " " + patients[0].Name
 
 	date := services[0].ServiceDate
 	dates := strings.Split(date, "T")
-	log.Println(dates[0])
 	layout := "2006-01-02"
 	t, _ := time.Parse(layout, dates[0])
 	year, month, day := t.Date()
 	td := strconv.Itoa(day) + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
-	log.Println(t)
 
 	namePDF := organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
 	if parent == "CAPSD" {

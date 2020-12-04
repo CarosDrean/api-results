@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
 	"log"
+	"strings"
 )
 
 func GetProtocolsWidthLocation(id string) []models.Protocol {
@@ -23,11 +24,26 @@ func GetProtocolsWidthLocation(id string) []models.Protocol {
 			log.Println(err)
 			return res
 		} else {
+			// aqui quitar el nombre de la empresa del protocolo
+			item.Name = delBusinessName(item.Name)
 			res = append(res, item)
 		}
 	}
 	defer rows.Close()
 	return res
+}
+
+func delBusinessName(nameComplet string) string {
+	pr := strings.Split(nameComplet, "-")
+	name := nameComplet
+	for i, e := range pr {
+		if i == 1 {
+			name = e
+		} else if i != 0 {
+			name = name + " - " + e
+		}
+	}
+	return name
 }
 
 func GetProtocol(id string) models.Protocol {
