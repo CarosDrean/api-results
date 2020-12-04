@@ -21,7 +21,7 @@ func GetLocationsWidthOrganizationID(id string) []models.Location{
 		err := rows.Scan(&item.ID, &item.OrganizationID, &item.Name, &item.IsDeleted)
 		if err != nil {
 			log.Println(err)
-		} else{
+		} else if item.IsDeleted != 1{
 			res = append(res, item)
 		}
 	}

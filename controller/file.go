@@ -25,7 +25,9 @@ func DownloadPDF(w http.ResponseWriter, r *http.Request) {
 	} else if strings.Contains(petition.Exam, "INTERCONSULTA"){
 		nameFile = constants.RouteInterconsulta + petition.ServiceID + "-" + petition.NameComplet + ".pdf"
 	} else if strings.Contains(petition.Exam, "INFORME MEDICO"){
-		nameFile = constants.RouteInformeMedico + getFileNameInformeMedico(petition.ServiceID, petition.DNI)
+		nameFile = constants.RouteInformeMedico + getFileNameInformeMedicoAndCertificateSinDX(petition.ServiceID, petition.DNI, "FMT2")
+	} else if strings.Contains(petition.Exam, "CERTIFICADO SIN DX"){
+		nameFile = constants.RouteCertificateSinDX + getFileNameInformeMedicoAndCertificateSinDX(petition.ServiceID, petition.DNI, "CAPSD")
 	}
 	log.Println(nameFile)
 	if len(nameFile) == 0 {
@@ -53,7 +55,7 @@ func SplitTwo(r rune) bool {
 	return r == '-' || r == 'T'
 }
 
-func getFileNameInformeMedico(idService string, dni string) string {
+func getFileNameInformeMedicoAndCertificateSinDX(idService string, dni string, parent string) string {
 	patients := db.GetPatientFromDNI(dni)
 	services := db.GetService(idService)
 	protocol := db.GetProtocol(services[0].ProtocolID)
@@ -62,6 +64,7 @@ func getFileNameInformeMedico(idService string, dni string) string {
 
 	organizationName := organization.Name
 	personName := patients[0].FirstLastName + " " + patients[0].SecondLastName + " " + patients[0].Name
+
 	date := services[0].ServiceDate
 	dates := strings.Split(date, "T")
 	log.Println(dates[0])
@@ -71,7 +74,11 @@ func getFileNameInformeMedico(idService string, dni string) string {
 	td := strconv.Itoa(day) + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
 	log.Println(t)
 
-	namePDF := organizationName + "-" + personName + "-FMT2-" + td + ".pdf"
+	namePDF := organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
+	if parent == "CAPSD" {
+		personName = patients[0].FirstLastName + " " + patients[0].SecondLastName + ", " + patients[0].Name
+		namePDF = organizationName + " -" + personName + "-" + parent + "-" + td + ".pdf"
+	}
 	log.Println(namePDF)
 	return namePDF
 }

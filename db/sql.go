@@ -45,6 +45,9 @@ var QueryService = map[string]*queryConfig{
 	"getPersonID": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[1] + " = '%s' order by " + service.Fields[3] + " desc;"},
 	"getProtocol": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
 		" = '%s' and d_ServiceDate is not null order by " + service.Fields[3] + " desc;"},
+	"getProtocolFilter": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
+		" = '%s' and " + service.Fields[3] + ">= CONVERT(DATETIME, '%s', 102) and " + service.Fields[3] + "<= CONVERT(DATETIME, '%s', 102) and " + service.Fields[3] +
+		" is not null order by " + service.Fields[3] + " desc;"},
 	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
 }
 

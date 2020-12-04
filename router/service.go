@@ -8,4 +8,5 @@ import (
 
 func serviceRoutes(s *mux.Router) {
 	s.HandleFunc("/all/{idProtocol}", mid.CheckSecurity(service.GetServicesPatientsWithProtocol)).Methods("GET")
+	s.HandleFunc("/filter/", mid.CheckSecurity(service.GetServicesPatientsWithProtocolFilter)).Methods("POST")
 }
