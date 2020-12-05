@@ -18,4 +18,5 @@ type ServicePatient struct {
 	FirstLastName  string `json:"firstLastname"`
 	SecondLastName string `json:"secondLastname"`
 	Mail           string `json:"mail"`
+	Sex            int    `json:"sex"`
 }

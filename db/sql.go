@@ -62,7 +62,7 @@ var QueryOrganization = map[string]*queryConfig{
 
 var patient = TableDB{
 	Name:   "dbo.person",
-	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName", "v_Mail"},
+	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName", "v_Mail", "i_SexTypeId"},
 }
 
 var protocolSystemUser = TableDB{

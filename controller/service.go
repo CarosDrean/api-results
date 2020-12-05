@@ -27,13 +27,13 @@ func GetServicesPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
 			FirstLastName:  patient.FirstLastName,
 			SecondLastName: patient.SecondLastName,
 			Mail:           patient.Mail,
+			Sex:            patient.Sex,
 		}
 		res = append(res, item)
 	}
 
 	_ = json.NewEncoder(w).Encode(res)
 }
-
 
 func GetServicesPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -54,6 +54,7 @@ func GetServicesPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Reques
 			FirstLastName:  patient.FirstLastName,
 			SecondLastName: patient.SecondLastName,
 			Mail:           patient.Mail,
+			Sex:            patient.Sex,
 		}
 		res = append(res, item)
 	}

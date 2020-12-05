@@ -8,4 +8,5 @@ type Patient struct {
 	FirstLastName  string `json:"firstlastname"`
 	SecondLastName string `json:"secondlastname"`
 	Mail           string `json:"mail"`
+	Sex            int    `json:"sex"`
 }

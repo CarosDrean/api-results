@@ -24,7 +24,7 @@ func GetPatient(id string) []models.Patient {
 	}
 	for rows.Next(){
 		var pass sql.NullString
-		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail)
+		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail, &item.Sex)
 		if pass.Valid {
 			item.Password = pass.String
 		} else {
@@ -54,7 +54,7 @@ func GetPatientFromDNI(dni string) []models.Patient {
 	}
 	for rows.Next(){
 		var pass sql.NullString
-		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail)
+		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail, &item.Sex)
 		if pass.Valid {
 			item.Password = pass.String
 		} else {
