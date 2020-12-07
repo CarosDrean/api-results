@@ -25,9 +25,13 @@ func DownloadPDF(w http.ResponseWriter, r *http.Request) {
 	} else if strings.Contains(petition.Exam, "INTERCONSULTA"){
 		nameFile = constants.RouteInterconsulta + petition.ServiceID + "-" + petition.NameComplet + ".pdf"
 	} else if strings.Contains(petition.Exam, "INFORME MEDICO"){
-		nameFile = constants.RouteInformeMedico + getFileNameInformeMedicoAndCertificateSinDX(petition.ServiceID, petition.DNI, "FMT2")
+		nameFile = constants.RouteInformeMedico + getFileNameInformeMedicoAndCertificate(petition.ServiceID, petition.DNI, "FMT2")
 	} else if strings.Contains(petition.Exam, "CERTIFICADO SIN DX"){
-		nameFile = constants.RouteCertificateSinDX + getFileNameInformeMedicoAndCertificateSinDX(petition.ServiceID, petition.DNI, "CAPSD")
+		nameFile = constants.RouteCertificateSinDX + getFileNameInformeMedicoAndCertificate(petition.ServiceID, petition.DNI, "CAPSD")
+	} else if strings.Contains(petition.Exam, "CERTIFICADO 312"){
+		nameFile = constants.RouteCertificate312 + getFileNameInformeMedicoAndCertificate(petition.ServiceID, petition.DNI, "CAP")
+	} else if strings.Contains(petition.Exam, "HISTORIA CLINICA") {
+
 	}
 	log.Println(nameFile)
 	if len(nameFile) == 0 {
@@ -55,7 +59,7 @@ func SplitTwo(r rune) bool {
 	return r == '-' || r == 'T'
 }
 
-func getFileNameInformeMedicoAndCertificateSinDX(idService string, dni string, parent string) string {
+func getFileNameInformeMedicoAndCertificate(idService string, dni string, parent string) string {
 	patients := db.GetPatientFromDNI(dni)
 	services := db.GetService(idService)
 	protocol := db.GetProtocol(services[0].ProtocolID)
@@ -75,6 +79,10 @@ func getFileNameInformeMedicoAndCertificateSinDX(idService string, dni string, p
 	if parent == "CAPSD" {
 		personName = patients[0].FirstLastName + " " + patients[0].SecondLastName + ", " + patients[0].Name
 		namePDF = organizationName + " -" + personName + "-" + parent + "-" + td + ".pdf"
+	}
+	if  parent == "CAP" {
+		personName = patients[0].FirstLastName + " " + patients[0].SecondLastName + ", " + patients[0].Name
+		namePDF = organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
 	}
 	log.Println(namePDF)
 	return namePDF

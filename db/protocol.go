@@ -23,7 +23,7 @@ func GetProtocolsWidthLocation(id string) []models.Protocol {
 		if err != nil {
 			log.Println(err)
 			return res
-		} else {
+		} else if item.IsDeleted != 1 {
 			// aqui quitar el nombre de la empresa del protocolo
 			item.Name = delBusinessName(item.Name)
 			res = append(res, item)
