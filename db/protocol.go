@@ -33,6 +33,31 @@ func GetProtocolsWidthLocation(id string) []models.Protocol {
 	return res
 }
 
+func GetProtocolsWidthOrganization(id string) []models.Protocol {
+	res := make([]models.Protocol, 0)
+	var item models.Protocol
+
+	tsql := fmt.Sprintf(QueryProtocol["getOrganization"].Q, id)
+	rows, err := DB.Query(tsql)
+
+	if err != nil {
+		fmt.Println("Error reading rows: " + err.Error())
+		return res
+	}
+	for rows.Next(){
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted)
+		if err != nil {
+			log.Println(err)
+			return res
+		} else if item.IsDeleted != 1 {
+			item.Name = delBusinessName(item.Name)
+			res = append(res, item)
+		}
+	}
+	defer rows.Close()
+	return res
+}
+
 func delBusinessName(nameComplet string) string {
 	pr := strings.Split(nameComplet, "-")
 	name := nameComplet

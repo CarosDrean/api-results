@@ -16,3 +16,13 @@ func GetProtocolsWidthLocation(w http.ResponseWriter, r *http.Request){
 
 	_ = json.NewEncoder(w).Encode(protocols)
 }
+
+func GetProtocolsWidthOrganization(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["idOrganization"]
+
+	protocols := db.GetProtocolsWidthOrganization(id)
+
+	_ = json.NewEncoder(w).Encode(protocols)
+}

@@ -18,7 +18,7 @@ func GetPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
 	res := make([]models.Patient, 0)
 	var item models.Patient
 
-	services := db.GetServicesWidthProtocol(id)
+	services := db.GetService(id, db.NQGetServiceProtocol)
 	for _, e := range services {
 		item = db.GetPatient(e.PersonID)[0]
 		res = append(res, item)

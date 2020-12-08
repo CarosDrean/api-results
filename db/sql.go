@@ -7,6 +7,8 @@ import (
 // db es la base de datos global
 var DB *sql.DB
 
+type nameQuery string
+
 type queryConfig struct {
 	Name string
 	Q    string
@@ -15,16 +17,6 @@ type queryConfig struct {
 type TableDB struct {
 	Name   string
 	Fields []string
-}
-
-var service = TableDB{
-	Name:   "dbo.service",
-	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate", "i_ServiceStatusId", "i_isDeleted"},
-}
-
-var protocol = TableDB{
-	Name:   "dbo.protocol",
-	Fields: []string{"v_ProtocolId", "v_Name", "v_CustomerOrganizationId", "v_EmployerLocationId", "i_IsDeleted"},
 }
 
 var organization = TableDB{
@@ -41,7 +33,13 @@ var QueryCalendar = map[string]*queryConfig{
 	"getServiceID": {Q: "select " + fieldString(calendar.Fields) + " from " + calendar.Name + " where " + calendar.Fields[1] + " = '%s';"},
 }
 
-var QueryService = map[string]*queryConfig{
+var service = TableDB{
+	Name:   "dbo.service",
+	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate", "i_ServiceStatusId", "i_isDeleted",
+		"i_AptitudeStatusId"},
+}
+
+var QueryService = map[nameQuery]*queryConfig{
 	"getPersonID": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[1] + " = '%s' order by " + service.Fields[3] + " desc;"},
 	"getProtocol": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
 		" = '%s' and d_ServiceDate is not null order by " + service.Fields[3] + " desc;"},
@@ -51,8 +49,14 @@ var QueryService = map[string]*queryConfig{
 	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
 }
 
+var protocol = TableDB{
+	Name:   "dbo.protocol",
+	Fields: []string{"v_ProtocolId", "v_Name", "v_CustomerOrganizationId", "v_EmployerLocationId", "i_IsDeleted"},
+}
+
 var QueryProtocol = map[string]*queryConfig{
 	"getLocation": {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[3] + " = '%s';"},
+	"getOrganization": {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[2] + " = '%s';"},
 	"get": {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[0] + " = '%s';"},
 }
 
@@ -62,7 +66,8 @@ var QueryOrganization = map[string]*queryConfig{
 
 var patient = TableDB{
 	Name:   "dbo.person",
-	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName", "v_Mail", "i_SexTypeId"},
+	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName",
+		"v_Mail", "i_SexTypeId", "d_Birthdate"},
 }
 
 var protocolSystemUser = TableDB{

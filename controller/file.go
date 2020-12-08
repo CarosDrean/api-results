@@ -61,7 +61,7 @@ func SplitTwo(r rune) bool {
 
 func getFileNameInformeMedicoAndCertificate(idService string, dni string, parent string) string {
 	patients := db.GetPatientFromDNI(dni)
-	services := db.GetService(idService)
+	services := db.GetService(idService, db.NQGetService)
 	protocol := db.GetProtocol(services[0].ProtocolID)
 	organization := db.GetOrganization(protocol.OrganizationID)
 
