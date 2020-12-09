@@ -7,7 +7,7 @@ import (
 )
 
 func userRoutes(s *mux.Router) {
-	// s.HandleFunc("/", user.GetUsers).Methods("GET")
+	s.HandleFunc("/", mid.CheckSecurity(user.GetSystemUsersPerson)).Methods("GET")
 	s.HandleFunc("/{id}", mid.CheckSecurity(user.GetSystemUser)).Methods("GET")
 	s.HandleFunc("/{id}", mid.CheckSecurity(user.UpdatePasswordSystemUser)).Methods("PUT")
 	// s.HandleFunc("/", user.CreateUser).Methods("POST")

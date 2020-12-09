@@ -24,12 +24,18 @@ func GetPatient(id string) []models.Patient {
 	}
 	for rows.Next(){
 		var pass sql.NullString
+		var birth sql.NullString
 		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail,
-			&item.Sex, &item.Birthday)
+			&item.Sex, &birth)
 		if pass.Valid {
 			item.Password = pass.String
 		} else {
 			item.Password = ""
+		}
+		if birth.Valid {
+			item.Birthday = birth.String
+		} else {
+			item.Birthday = ""
 		}
 		if err != nil {
 			log.Println(err)

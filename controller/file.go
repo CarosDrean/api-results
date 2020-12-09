@@ -31,7 +31,7 @@ func DownloadPDF(w http.ResponseWriter, r *http.Request) {
 	} else if strings.Contains(petition.Exam, "CERTIFICADO 312"){
 		nameFile = constants.RouteCertificate312 + getFileNameInformeMedicoAndCertificate(petition.ServiceID, petition.DNI, "CAP")
 	} else if strings.Contains(petition.Exam, "HISTORIA CLINICA") {
-
+		nameFile = constants.RouteCertificate312 + getFileNameInformeMedicoAndCertificate(petition.ServiceID, petition.DNI, "HISTORIA")
 	}
 	log.Println(nameFile)
 	if len(nameFile) == 0 {
@@ -83,6 +83,10 @@ func getFileNameInformeMedicoAndCertificate(idService string, dni string, parent
 	if  parent == "CAP" {
 		personName = patients[0].FirstLastName + " " + patients[0].SecondLastName + ", " + patients[0].Name
 		namePDF = organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
+	}
+	if  parent == "HISTORIA" {
+		personName = patients[0].FirstLastName + " " + patients[0].SecondLastName + " " + patients[0].Name
+		namePDF = organizationName + " - " + personName + " - " + td + ".pdf"
 	}
 	log.Println(namePDF)
 	return namePDF

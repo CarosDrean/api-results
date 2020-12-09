@@ -13,6 +13,36 @@ import (
 	"log"
 )
 
+func GetSystemUsers() []models.SystemUser {
+	res := make([]models.SystemUser, 0)
+	var item models.SystemUser
+
+	tsql := fmt.Sprintf(QuerySystemUser["list"].Q)
+	rows, err := DB.Query(tsql)
+
+	if err != nil {
+		fmt.Println("Error reading rows: " + err.Error())
+		return res
+	}
+	for rows.Next(){
+		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
+		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(item.ID)
+		if len(protocolSystemUsers) > 0 {
+			protocol := GetProtocol(protocolSystemUsers[0].ProtocolID)
+			item.OrganizationID = GetOrganization(protocol.OrganizationID).ID
+		}
+
+		if err != nil {
+			log.Println(err)
+			return res
+		} else{
+			res = append(res, item)
+		}
+	}
+	defer rows.Close()
+	return res
+}
+
 func GetSystemUser(id string) []models.SystemUser {
 	res := make([]models.SystemUser, 0)
 	var item models.SystemUser

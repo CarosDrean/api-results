@@ -9,6 +9,32 @@ import (
 	"net/http"
 )
 
+func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	res := make([]models.UserPerson, 0)
+	items := db.GetSystemUsers()
+	for _, e := range items {
+		person := db.GetPatient(e.PersonID)[0]
+		item := models.UserPerson{
+			ID:             e.ID,
+			PersonID:       e.PersonID,
+			UserName:       e.UserName,
+			Password:       e.Password,
+			TypeUser:       e.TypeUser,
+			OrganizationID: e.OrganizationID,
+			DNI:            person.DNI,
+			Name:           person.Name,
+			FirstLastName:  person.FirstLastName,
+			SecondLastName: person.SecondLastName,
+			Mail:           person.Mail,
+		}
+		res = append(res, item)
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+
 func GetSystemUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
