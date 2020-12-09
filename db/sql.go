@@ -19,6 +19,13 @@ type TableDB struct {
 	Fields []string
 }
 
+var queryResultService = map[string]*queryConfig{
+	"get": {Q: "select scfv.v_Value1 from servicecomponent sc " +
+		"inner join servicecomponentfields scf on sc.v_ServiceComponentId = scf.v_ServiceComponentId " +
+		"inner join servicecomponentfieldvalues scfv on scf.v_ServiceComponentFieldsId = scfv.v_ServiceComponentFieldsId "+
+		"where sc.v_ServiceId = '%s' and sc.v_ComponentId = '%s' and scf.v_ComponentFieldId = '%s'"},
+}
+
 var organization = TableDB{
 	Name:   "dbo.organization",
 	Fields: []string{"v_OrganizationId", "v_Name"},

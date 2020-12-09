@@ -100,6 +100,7 @@ func ValidateSystemUserLogin(user string, password string) (constants.State, str
 func UpdatePasswordSystemUser(id string, password string) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(QuerySystemUser["updatePassword"].Q, id)
+
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/gorilla/mux"
@@ -63,6 +64,7 @@ func GetServicesPatientsWithOrganization(w http.ResponseWriter, r *http.Request)
 				Mail:             patient.Mail,
 				Sex:              patient.Sex,
 				Birthday:         patient.Birthday,
+				Result:           db.GetResultService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
 			}
 			res = append(res, item)
 		}
