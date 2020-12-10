@@ -21,4 +21,6 @@ func Routes(r *mux.Router) {
 	protocolRoutes(pro)
 	s := r.PathPrefix("/service").Subrouter()
 	serviceRoutes(s)
+	o := r.PathPrefix("/organization").Subrouter()
+	organizationRoutes(o)
 }

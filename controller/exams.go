@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/gorilla/mux"
@@ -31,10 +32,8 @@ func GetExams(w http.ResponseWriter, r *http.Request){
 				be := strings.FieldsFunc(item.ProtocolName, Split)
 				item.Business = be[0]
 				item.Exam = be[len(be)-1]
+				item.Result = db.GetResultService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 				res = append(res, item)
-				/*if strings.Contains(item.Exam, "PRUEBA RAPIDA") { // no debe ser asi...
-					res = append(res, item)
-				}*/
 			}
 		}
 

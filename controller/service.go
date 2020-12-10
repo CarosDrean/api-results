@@ -84,16 +84,18 @@ func GetServicesPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Reques
 	for _, e := range services {
 		patient := db.GetPatient(e.PersonID)[0]
 		item := models.ServicePatient{
-			ID:             e.ID,
-			PersonID:       patient.ID,
-			ServiceDate:    e.ServiceDate,
-			ProtocolID:     e.ProtocolID,
-			DNI:            patient.DNI,
-			Name:           patient.Name,
-			FirstLastName:  patient.FirstLastName,
-			SecondLastName: patient.SecondLastName,
-			Mail:           patient.Mail,
-			Sex:            patient.Sex,
+			ID:               e.ID,
+			ServiceDate:      e.ServiceDate,
+			PersonID:         patient.ID,
+			ProtocolID:       e.ProtocolID,
+			AptitudeStatusId: e.AptitudeStatusId,
+			DNI:              patient.DNI,
+			Name:             patient.Name,
+			FirstLastName:    patient.FirstLastName,
+			SecondLastName:   patient.SecondLastName,
+			Mail:             patient.Mail,
+			Sex:              patient.Sex,
+			Result:           db.GetResultService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
 		}
 		res = append(res, item)
 	}

@@ -7,4 +7,5 @@ type Result struct {
 	Business     string `json:"business"`
 	Exam         string `json:"exam"`
 	ServiceDate  string `json:"servicedate"`
+	Result       string `json:"result"`
 }
