@@ -23,7 +23,7 @@ func Routes(r *mux.Router) {
 	serviceRoutes(s)
 	o := r.PathPrefix("/organization").Subrouter()
 	organizationRoutes(o)
-	sp := r.PathPrefix("/systemparameter").Subrouter()
+	sp := r.PathPrefix("/system-parameter").Subrouter()
 	systemParameterRoutes(sp)
 	cmp := r.PathPrefix("/component").Subrouter()
 	componentRoutes(cmp)
