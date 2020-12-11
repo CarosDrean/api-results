@@ -12,4 +12,7 @@ const (
 
 	IdPruebaRapida       string = "N007-ME000000491"
 	IdResultPruebaRapida string = "N007-MF000004612"
+
+	// systemparameter
+	IdConsultings string = "116"
 )

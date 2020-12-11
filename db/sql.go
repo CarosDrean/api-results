@@ -33,6 +33,24 @@ var queryResultService = map[string]*queryConfig{
 		"where s.v_ServiceId = '%s' and pc.v_ComponentId = '%s' and scf.v_ComponentFieldId = '%s'"},
 }
 
+var systemParameter = TableDB{
+	Name:   "dbo.systemparameter",
+	Fields: []string{"i_GroupId", "i_ParameterId", "v_Value1"},
+}
+
+var querySystemParameter = map[string]*queryConfig{
+	"getGroup": {Q: "select " + fieldString(systemParameter.Fields) + " from " + systemParameter.Name + " where " + calendar.Fields[0] + " = %s;"},
+}
+
+var component = TableDB{
+	Name:   "dbo.component",
+	Fields: []string{"v_ComponentId", "v_Name", "i_CategoryId", "i_IsDeleted"},
+}
+
+var queryComponent = map[string]*queryConfig{
+	"getCategory": {Q: "select " + fieldString(component.Fields) + " from " + component.Name + " where " + calendar.Fields[2] + " = %s;"},
+}
+
 var organization = TableDB{
 	Name:   "dbo.organization",
 	Fields: []string{"v_OrganizationId", "v_Name"},
