@@ -15,7 +15,7 @@ func GetPatient(id string) []models.Patient {
 	res := make([]models.Patient, 0)
 	var item models.Patient
 
-	tsql := fmt.Sprintf(QueryPatient["get"].Q, id)
+	tsql := fmt.Sprintf(QueryPerson["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -52,7 +52,7 @@ func GetPatientFromDNI(dni string) []models.Patient {
 	res := make([]models.Patient, 0)
 	var item models.Patient
 
-	tsql := fmt.Sprintf(QueryPatient["getDNI"].Q, dni)
+	tsql := fmt.Sprintf(QueryPerson["getDNI"].Q, dni)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -115,7 +115,7 @@ func ValidatePatientLogin(user string, password string) (constants.State, string
 
 func UpdatePasswordPatient(id string, password string) (int64, error) {
 	ctx := context.Background()
-	tsql := fmt.Sprintf(QueryPatient["updatePassword"].Q, id)
+	tsql := fmt.Sprintf(QueryPerson["updatePassword"].Q, id)
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,

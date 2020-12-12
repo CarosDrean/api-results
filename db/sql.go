@@ -33,6 +33,20 @@ var queryResultService = map[string]*queryConfig{
 		"where s.v_ServiceId = '%s' and pc.v_ComponentId = '%s' and scf.v_ComponentFieldId = '%s'"},
 }
 
+var queryStatistics = map[string]*queryConfig {
+	"getDisease" : {Q: "select s." + service.Fields[0] + ", s." + service.Fields[1] + ", " +
+		"p." + person.Fields[0] + ", pr." + protocol.Fields[0] + ", s." + service.Fields[6] + ", p." + person.Fields[1] + ", p." + person.Fields[3] +
+		", p." + person.Fields[4] + ", p." + person.Fields[5] + ", p." + person.Fields[6]  + ", p."+ person.Fields[7] + ", p." + person.Fields[8] + ", d.v_Name from service s " +
+		"inner join person p on s.v_PersonId = p.v_PersonId " +
+		"left join protocol pr on s.v_ProtocolId = pr.v_ProtocolId " +
+		"left join organization o on pr.v_CustomerOrganizationId = o.v_OrganizationId " +
+		"inner join diagnosticrepository dr on s.v_ServiceId = dr.v_ServiceId " +
+		"inner join diseases d on dr.v_DiseasesId = d.v_DiseasesId " +
+		"where dr.i_IsDeleted = 0 and s.i_ServiceStatusId = 3 and pr.v_ProtocolId = '%s' " +
+		"and s.d_ServiceDate >= CONVERT(DATETIME, '%s', 102) and s.d_ServiceDate <= CONVERT(DATETIME, '%s', 102) " +
+		"order by s.d_ServiceDate desc"},
+}
+
 var systemParameter = TableDB{
 	Name:   "dbo.systemparameter",
 	Fields: []string{"i_GroupId", "i_ParameterId", "v_Value1"},
@@ -96,7 +110,7 @@ var QueryOrganization = map[string]*queryConfig{
 	"get": {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where " + organization.Fields[0] + " = '%s';"},
 }
 
-var patient = TableDB{
+var person = TableDB{
 	Name: "dbo.person",
 	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName",
 		"v_Mail", "i_SexTypeId", "d_Birthdate"},
@@ -134,12 +148,12 @@ var QuerySystemUser = map[string]*queryConfig{
 	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = %s;"},
 }
 
-var QueryPatient = map[string]*queryConfig{
-	"get":            {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[0] + " = '%s';"},
-	"getDNI":         {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + " where " + patient.Fields[1] + " = '%s';"},
-	"list":           {Q: "select " + fieldString(patient.Fields) + " from " + patient.Name + ";"},
-	"insert":         {Q: "insert into (" + fieldString(patient.Fields) + ") values (" + valuesString(patient.Fields) + ");"},
-	"update":         {Q: "update " + patient.Name + " set " + updatesString(patient.Fields) + " where " + patient.Fields[0] + " = '%s';"},
-	"updatePassword": {Q: "update " + patient.Name + " set v_Password = @Password where " + patient.Fields[0] + " = '%s';"},
-	"delete":         {Q: "delete from " + patient.Name + " where " + patient.Fields[0] + " = ?;"},
+var QueryPerson = map[string]*queryConfig{
+	"get":            {Q: "select " + fieldString(person.Fields) + " from " + person.Name + " where " + person.Fields[0] + " = '%s';"},
+	"getDNI":         {Q: "select " + fieldString(person.Fields) + " from " + person.Name + " where " + person.Fields[1] + " = '%s';"},
+	"list":           {Q: "select " + fieldString(person.Fields) + " from " + person.Name + ";"},
+	"insert":         {Q: "insert into (" + fieldString(person.Fields) + ") values (" + valuesString(person.Fields) + ");"},
+	"update":         {Q: "update " + person.Name + " set " + updatesString(person.Fields) + " where " + person.Fields[0] + " = '%s';"},
+	"updatePassword": {Q: "update " + person.Name + " set v_Password = @Password where " + person.Fields[0] + " = '%s';"},
+	"delete":         {Q: "delete from " + person.Name + " where " + person.Fields[0] + " = ?;"},
 }

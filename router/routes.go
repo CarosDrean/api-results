@@ -27,4 +27,6 @@ func Routes(r *mux.Router) {
 	systemParameterRoutes(sp)
 	cmp := r.PathPrefix("/component").Subrouter()
 	componentRoutes(cmp)
+	st := r.PathPrefix("/statistic").Subrouter()
+	statisticRoutes(st)
 }
