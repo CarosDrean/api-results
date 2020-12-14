@@ -20,7 +20,7 @@ func GetStatisticsServiceDiseaseByProtocol(filter models.Filter)[]models.Service
 	for rows.Next() {
 		err := rows.Scan(&item.ID, &item.ServiceDate, &item.PersonID, &item.ProtocolID, &item.AptitudeStatusId,
 			&item.DNI, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail, &item.Sex, &item.Birthday,
-			&item.Disease)
+			&item.Disease, &item.Component, &item.Consulting)
 		if err != nil {
 			log.Println(err)
 		} else {
