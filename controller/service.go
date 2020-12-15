@@ -73,6 +73,42 @@ func GetServicesPatientsWithOrganization(w http.ResponseWriter, r *http.Request)
 	_ = json.NewEncoder(w).Encode(res)
 }
 
+func GetServicesPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	res := make([]models.ServicePatient, 0)
+
+	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
+
+	protocols := db.GetProtocolsWidthOrganization(item.ID)
+	for _, e := range protocols {
+		services := db.GetServicesFilter(e.ID, item)
+		for _, s := range services {
+			patient := db.GetPatient(s.PersonID)[0]
+			item := models.ServicePatient{
+				ID:               s.ID,
+				ServiceDate:      s.ServiceDate,
+				PersonID:         patient.ID,
+				ProtocolID:       s.ProtocolID,
+				AptitudeStatusId: s.AptitudeStatusId,
+				DNI:              patient.DNI,
+				Name:             patient.Name,
+				FirstLastName:    patient.FirstLastName,
+				SecondLastName:   patient.SecondLastName,
+				Mail:             patient.Mail,
+				Sex:              patient.Sex,
+				Birthday:         patient.Birthday,
+				Result:           db.GetResultService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
+			}
+			res = append(res, item)
+		}
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+
 func GetServicesPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter

@@ -9,5 +9,6 @@ import (
 func serviceRoutes(s *mux.Router) {
 	s.HandleFunc("/all/{idProtocol}", mid.CheckSecurity(service.GetServicesPatientsWithProtocol)).Methods("GET")
 	s.HandleFunc("/all-organization/{id}", mid.CheckSecurity(service.GetServicesPatientsWithOrganization)).Methods("GET")
+	s.HandleFunc("/all-organization/", mid.CheckSecurity(service.GetServicesPatientsWithOrganizationFilter)).Methods("POST")
 	s.HandleFunc("/filter/", mid.CheckSecurity(service.GetServicesPatientsWithProtocolFilter)).Methods("POST")
 }
