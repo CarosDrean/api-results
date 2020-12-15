@@ -73,6 +73,60 @@ func GetSystemUser(id string) []models.SystemUser {
 	return res
 }
 
+func CreateSystemUser(item models.SystemUser) (int64, error) {
+	// hay que ver si genera en auto el id
+	ctx := context.Background()
+	tsql := fmt.Sprintf(QuerySystemUser["insert"].Q)
+	item.Password = encryptMD5(item.Password)
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("v_PersonId", item.PersonID),
+		sql.Named("v_UserName", item.UserName),
+		sql.Named("v_Password", item.Password),
+		sql.Named("i_SystemUserTypeId", item.TypeUser),
+		sql.Named("i_IsDeleted", 0))
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
+func UpdateSystemUser(item models.SystemUser) (int64, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(QuerySystemUser["update"].Q)
+	user := GetSystemUser(item.ID)[0]
+	if user.Password != item.Password {
+		item.Password = encrypt(item.Password)
+	}
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("ID", item.ID),
+		sql.Named("v_PersonId", item.PersonID),
+		sql.Named("v_UserName", item.UserName),
+		sql.Named("v_Password", item.Password),
+		sql.Named("i_SystemUserTypeId", item.TypeUser),
+		sql.Named("i_IsDeleted", 0))
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
+func DeleteSystemUser(id string) (int64, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(QuerySystemUser["delete"].Q)
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("ID", id))
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
 func GetSystemUserFromUserName(userName string) []models.SystemUser {
 	res := make([]models.SystemUser, 0)
 	var item models.SystemUser

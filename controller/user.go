@@ -22,7 +22,7 @@ func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
 			UserName:       e.UserName,
 			Password:       e.Password,
 			TypeUser:       e.TypeUser,
-			OrganizationID: e.OrganizationID,
+			OrganizationID: db.GetOrganization(e.OrganizationID).Name,
 			DNI:            person.DNI,
 			Name:           person.Name,
 			FirstLastName:  person.FirstLastName,
@@ -58,4 +58,43 @@ func UpdatePasswordSystemUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = json.NewEncoder(w).Encode(item)
+}
+
+func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.UserPerson
+	_ = json.NewDecoder(r.Body).Decode(&item)
+	// verificar si el DNI existe
+	person := db.GetPatientFromDNI(item.DNI)
+	if len(person) > 0 {
+		// solo agregar el system user
+	} else {
+		// crear la persona y agregar el system user deacuerdo al id
+	}
+}
+
+func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["id"]
+	var item models.UserPerson
+	_ = json.NewDecoder(r.Body).Decode(&item)
+	item.ID = id
+	person := db.GetPatientFromDNI(item.DNI)
+	if len(person) > 0 {
+		// solo agregar el system user
+	} else {
+		// crear la persona y agregar el system user deacuerdo al id
+	}
+}
+
+func DeleteSystemUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["id"]
+	result, err := db.DeleteSystemUser(id)
+	if err != nil {
+		log.Println(err)
+	}
+	_ = json.NewEncoder(w).Encode(result)
 }

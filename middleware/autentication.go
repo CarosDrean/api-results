@@ -228,6 +228,8 @@ func getRole(typeUser int)string{
 		return "External Admin"
 	case 3:
 		return "External Medic"
+	case 4:
+		return "External Medic"
 	default:
 		return ""
 	}

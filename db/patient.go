@@ -77,7 +77,6 @@ func GetPatientFromDNI(dni string) []models.Patient {
 			return res
 		} else{
 			res = append(res, item)
-			log.Println(item.Name)
 			log.Println(item.Password)
 		}
 	}

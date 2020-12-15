@@ -25,6 +25,18 @@ func valuesString(fields []string) string {
 	return values
 }
 
+func fieldStringInsert(fields []string) string {
+	fieldString := ""
+	for i, field := range fields {
+		if i == 1 {
+			fieldString = field
+		} else if i != 0 {
+			fieldString = fieldString + ", " + field
+		}
+	}
+	return fieldString
+}
+
 func updatesString(fields []string) string {
 	values := ""
 	for i, field := range fields {

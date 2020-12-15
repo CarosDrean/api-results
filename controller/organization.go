@@ -7,6 +7,14 @@ import (
 	"net/http"
 )
 
+func GetOrganizations(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	items := db.GetOrganizations()
+
+	_ = json.NewEncoder(w).Encode(items)
+}
+
 func GetOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)

@@ -33,10 +33,10 @@ var queryResultService = map[string]*queryConfig{
 		"where s.v_ServiceId = '%s' and pc.v_ComponentId = '%s' and scf.v_ComponentFieldId = '%s'"},
 }
 
-var queryStatistics = map[string]*queryConfig {
-	"getDisease" : {Q: "select s." + service.Fields[0] + ", s." + service.Fields[3] + ", " +
+var queryStatistics = map[string]*queryConfig{
+	"getDisease": {Q: "select s." + service.Fields[0] + ", s." + service.Fields[3] + ", " +
 		"p." + person.Fields[0] + ", pr." + protocol.Fields[0] + ", s." + service.Fields[6] + ", p." + person.Fields[1] + ", p." + person.Fields[3] +
-		", p." + person.Fields[4] + ", p." + person.Fields[5] + ", p." + person.Fields[6]  + ", p."+ person.Fields[7] + ", p." + person.Fields[8] +
+		", p." + person.Fields[4] + ", p." + person.Fields[5] + ", p." + person.Fields[6] + ", p." + person.Fields[7] + ", p." + person.Fields[8] +
 		", d.v_Name, c.v_Name, sp.v_Value1 from service s " +
 		"inner join person p on s.v_PersonId = p.v_PersonId " +
 		"left join protocol pr on s.v_ProtocolId = pr.v_ProtocolId " +
@@ -110,7 +110,8 @@ var QueryProtocol = map[string]*queryConfig{
 }
 
 var QueryOrganization = map[string]*queryConfig{
-	"get": {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where " + organization.Fields[0] + " = '%s';"},
+	"list": {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " order by " + organization.Fields[1] + " asc;"},
+	"get":  {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where " + organization.Fields[0] + " = '%s';"},
 }
 
 var person = TableDB{
@@ -148,15 +149,17 @@ var QuerySystemUser = map[string]*queryConfig{
 	"getUserName":    {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[2] + " = '%s';"},
 	"get":            {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = %s;"},
 	"list":           {Q: "select " + fieldString(user.Fields) + " from " + user.Name + ";"},
+	"insert":         {Q: "insert into (" + fieldStringInsert(user.Fields) + ") values (" + valuesString(user.Fields) + ");"},
 	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = %s;"},
+	"update":         {Q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = @ID;"},
+	"delete":         {Q: "update " + user.Name + " set " + user.Fields[0] + " = 1 where " + user.Fields[0] + " = @ID;"},
 }
 
 var QueryPerson = map[string]*queryConfig{
 	"get":            {Q: "select " + fieldString(person.Fields) + " from " + person.Name + " where " + person.Fields[0] + " = '%s';"},
 	"getDNI":         {Q: "select " + fieldString(person.Fields) + " from " + person.Name + " where " + person.Fields[1] + " = '%s';"},
 	"list":           {Q: "select " + fieldString(person.Fields) + " from " + person.Name + ";"},
-	"insert":         {Q: "insert into (" + fieldString(person.Fields) + ") values (" + valuesString(person.Fields) + ");"},
+	"insert":         {Q: "insert into (" + fieldStringInsert(person.Fields) + ") values (" + valuesString(person.Fields) + ");"},
 	"update":         {Q: "update " + person.Name + " set " + updatesString(person.Fields) + " where " + person.Fields[0] + " = '%s';"},
 	"updatePassword": {Q: "update " + person.Name + " set v_Password = @Password where " + person.Fields[0] + " = '%s';"},
-	"delete":         {Q: "delete from " + person.Name + " where " + person.Fields[0] + " = ?;"},
 }

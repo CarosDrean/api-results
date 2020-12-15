@@ -57,9 +57,9 @@ func GetPatientFromDNI(w http.ResponseWriter, r *http.Request) {
 	var params = mux.Vars(r)
 	dni, _ := params["dni"]
 
-	items := db.GetPatientFromDNI(dni)
+	item := db.GetPatientFromDNI(dni)
 
-	_ = json.NewEncoder(w).Encode(items)
+	_ = json.NewEncoder(w).Encode(item)
 }
 
 func GetPatientFromLogin(user models.UserLogin) []models.Patient {
