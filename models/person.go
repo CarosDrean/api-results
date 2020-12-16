@@ -1,6 +1,6 @@
 package models
 
-type Patient struct {
+type Person struct {
 	ID             string `json:"_id"`
 	DNI            string `json:"dni"`
 	Password       string `json:"password"`
@@ -10,4 +10,5 @@ type Patient struct {
 	Mail           string `json:"mail"`
 	Sex            int    `json:"sex"`
 	Birthday       string `json:"birthday"`
+	IsDeleted      int
 }

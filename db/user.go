@@ -99,6 +99,7 @@ func UpdateSystemUser(item models.SystemUser) (int64, error) {
 	if user.Password != item.Password {
 		item.Password = encrypt(item.Password)
 	}
+
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,
@@ -156,7 +157,7 @@ func ValidateSystemUserLogin(user string, password string) (constants.State, str
 	fmt.Println(items[0])
 	if len(items) > 0 {
 		if validatePasswordSystemUserForReset(password, items[0]){
-			person := GetPatient(items[0].PersonID)
+			person := GetPerson(items[0].PersonID)
 			if len(person[0].Mail) != 0{
 				newPassword := utils.CreateNewPassword()
 				mail := models.Mail{

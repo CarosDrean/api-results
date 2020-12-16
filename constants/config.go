@@ -11,4 +11,9 @@ const (
 	RouteCertificateSinDX string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\CERTIFICADOS\\CAMOSINDX\\"
 	RouteCertificate312   string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\CERTIFICADOS\\CAMO312\\"
 	RouteHistory          string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Historia Clinica\\"
+
+	IdNode        = 9
+	IdPersonTable = 8
+
+	PrefixPerson = "PP"
 )

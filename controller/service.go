@@ -18,7 +18,7 @@ func GetServicesPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
 
 	services := db.GetService(id, db.NQGetServiceProtocol)
 	for _, e := range services {
-		patient := db.GetPatient(e.PersonID)[0]
+		patient := db.GetPerson(e.PersonID)[0]
 		item := models.ServicePatient{
 			ID:             e.ID,
 			PersonID:       patient.ID,
@@ -50,7 +50,7 @@ func GetServicesPatientsWithOrganization(w http.ResponseWriter, r *http.Request)
 	for _, e := range protocols {
 		services := db.GetService(e.ID, db.NQGetServiceProtocol)
 		for _, s := range services {
-			patient := db.GetPatient(s.PersonID)[0]
+			patient := db.GetPerson(s.PersonID)[0]
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -86,7 +86,7 @@ func GetServicesPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Re
 	for _, e := range protocols {
 		services := db.GetServicesFilter(e.ID, item)
 		for _, s := range services {
-			patient := db.GetPatient(s.PersonID)[0]
+			patient := db.GetPerson(s.PersonID)[0]
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -118,7 +118,7 @@ func GetServicesPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Reques
 
 	services := db.GetServicesWidthProtocolFilter(item)
 	for _, e := range services {
-		patient := db.GetPatient(e.PersonID)[0]
+		patient := db.GetPerson(e.PersonID)[0]
 		item := models.ServicePatient{
 			ID:               e.ID,
 			ServiceDate:      e.ServiceDate,

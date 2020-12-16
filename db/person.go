@@ -11,9 +11,9 @@ import (
 	"strings"
 )
 
-func GetPatient(id string) []models.Patient {
-	res := make([]models.Patient, 0)
-	var item models.Patient
+func GetPerson(id string) []models.Person {
+	res := make([]models.Person, 0)
+	var item models.Person
 
 	tsql := fmt.Sprintf(QueryPerson["get"].Q, id)
 	rows, err := DB.Query(tsql)
@@ -26,7 +26,7 @@ func GetPatient(id string) []models.Patient {
 		var pass sql.NullString
 		var birth sql.NullString
 		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail,
-			&item.Sex, &birth)
+			&item.Sex, &birth, &item.IsDeleted)
 		if pass.Valid {
 			item.Password = pass.String
 		} else {
@@ -48,9 +48,9 @@ func GetPatient(id string) []models.Patient {
 	return res
 }
 
-func GetPatientFromDNI(dni string) []models.Patient {
-	res := make([]models.Patient, 0)
-	var item models.Patient
+func GetPersonFromDNI(dni string) []models.Person {
+	res := make([]models.Person, 0)
+	var item models.Person
 
 	tsql := fmt.Sprintf(QueryPerson["getDNI"].Q, dni)
 	rows, err := DB.Query(tsql)
@@ -62,7 +62,7 @@ func GetPatientFromDNI(dni string) []models.Patient {
 	for rows.Next(){
 		var pass sql.NullString
 		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail,
-			&item.Sex, &item.Birthday)
+			&item.Sex, &item.Birthday, &item.IsDeleted)
 		if pass.Valid {
 			item.Password = pass.String
 		} else {
@@ -84,8 +84,38 @@ func GetPatientFromDNI(dni string) []models.Patient {
 	return res
 }
 
+func CreatePerson(item models.Person) (string, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(QueryPerson["insert"].Q)
+	if item.Password != "" {
+		item.Password = encryptMD5(item.Password)
+	}
+
+	sequentialID := GetNextSequentialId(constants.IdNode, constants.IdPersonTable)
+	newId := GetNewID(constants.IdNode, sequentialID, constants.PrefixPerson)
+	item.ID = newId
+
+	_, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("v_PersonId", item.ID),
+		sql.Named("v_DocNumber", item.DNI),
+		sql.Named("v_Password", item.Password),
+		sql.Named("v_FirstName", item.Name),
+		sql.Named("v_FirstLastName", item.FirstLastName),
+		sql.Named("v_SecondLastName", item.SecondLastName),
+		sql.Named("v_Mail", item.Mail),
+		sql.Named("i_SexTypeId", item.Sex),
+		sql.Named("d_Birthdate", item.Birthday),
+		sql.Named("i_IsDeleted", 0))
+	if err != nil {
+		return "", err
+	}
+	return newId, nil
+}
+
 func ValidatePatientLogin(user string, password string) (constants.State, string){
-	items := GetPatientFromDNI(user)
+	items := GetPersonFromDNI(user)
 	if len(items) > 0 {
 		if validatePasswordPatientForReset(password, items[0]){
 			if len(items[0].Mail) != 0{
@@ -125,7 +155,7 @@ func UpdatePasswordPatient(id string, password string) (int64, error) {
 	return result.RowsAffected()
 }
 
-func validatePasswordPatientForReset(password string, patient models.Patient) bool {
+func validatePasswordPatientForReset(password string, patient models.Person) bool {
 	return patient.DNI == password
 }
 

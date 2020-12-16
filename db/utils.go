@@ -15,11 +15,23 @@ func fieldString(fields []string) string {
 
 func valuesString(fields []string) string {
 	values := ""
-	for i := range fields {
+	for i, field := range fields {
+		if i == 1 {
+			values = "@" + field
+		} else if i != 0 {
+			values = values + ", @" + field
+		}
+	}
+	return values
+}
+
+func valuesStringNoID(fields []string) string {
+	values := ""
+	for i, field := range fields {
 		if i == 0 {
-			values = "?"
+			values = "@" + field
 		} else {
-			values = values + ", ?"
+			values = values + ", @" + field
 		}
 	}
 	return values
@@ -48,3 +60,16 @@ func updatesString(fields []string) string {
 	}
 	return values
 }
+
+func updatesStringNoID(fields []string) string {
+	values := ""
+	for i, field := range fields {
+		if i == 0 {
+			values = field + " = @" + field
+		} else {
+			values = values + ", " + field + " = @" + field
+		}
+	}
+	return values
+}
+

@@ -22,6 +22,8 @@ type UserPerson struct {
 	FirstLastName  string `json:"firstLastname"`
 	SecondLastName string `json:"secondLastname"`
 	Mail           string `json:"mail"`
+	Sex            int    `json:"sex"`
+	Birthday       string `json:"birthday"`
 }
 
 type UserResult struct {

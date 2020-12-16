@@ -15,7 +15,7 @@ func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
 	res := make([]models.UserPerson, 0)
 	items := db.GetSystemUsers()
 	for _, e := range items {
-		person := db.GetPatient(e.PersonID)[0]
+		person := db.GetPerson(e.PersonID)[0]
 		item := models.UserPerson{
 			ID:             e.ID,
 			PersonID:       e.PersonID,
@@ -64,13 +64,47 @@ func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
-	// verificar si el DNI existe
-	person := db.GetPatientFromDNI(item.DNI)
-	if len(person) > 0 {
-		// solo agregar el system user
-	} else {
-		// crear la persona y agregar el system user deacuerdo al id
+	personID := validatePerson(item)
+	user := models.SystemUser{
+		PersonID:       personID,
+		UserName:       item.UserName,
+		Password:       item.Password,
+		TypeUser:       item.TypeUser,
+		OrganizationID: item.OrganizationID,
+		IsDelete:       0,
 	}
+	result, err := db.CreateSystemUser(user)
+	if err != nil {
+		log.Println(err)
+	}
+	_ = json.NewEncoder(w).Encode(result)
+}
+
+// verifica si exste la person y de no ser el caso crea y devuelve el ID
+func validatePerson(item models.UserPerson) string {
+	personID := item.PersonID
+	var err error
+	if item.PersonID == "" {
+		person := db.GetPersonFromDNI(item.DNI)
+		if len(person) == 0 {
+			newPerson := models.Person{
+				DNI:            item.DNI,
+				Password:       "",
+				Name:           item.Name,
+				FirstLastName:  item.FirstLastName,
+				SecondLastName: item.SecondLastName,
+				Mail:           item.Mail,
+				Sex:            item.Sex,
+				Birthday:       item.Birthday,
+				IsDeleted:      0,
+			}
+			personID, err = db.CreatePerson(newPerson)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+	}
+	return personID
 }
 
 func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
@@ -80,12 +114,22 @@ func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
 	item.ID = id
-	person := db.GetPatientFromDNI(item.DNI)
-	if len(person) > 0 {
-		// solo agregar el system user
-	} else {
-		// crear la persona y agregar el system user deacuerdo al id
+
+	personId := validatePerson(item)
+
+	user := models.SystemUser{
+		PersonID:       personId,
+		UserName:       item.UserName,
+		Password:       item.Password,
+		TypeUser:       item.TypeUser,
+		OrganizationID: item.OrganizationID,
+		IsDelete:       0,
 	}
+	result, err := db.UpdateSystemUser(user)
+	if err != nil {
+		log.Println(err)
+	}
+	_ = json.NewEncoder(w).Encode(result)
 }
 
 func DeleteSystemUser(w http.ResponseWriter, r *http.Request) {

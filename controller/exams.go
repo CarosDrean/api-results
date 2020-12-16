@@ -18,7 +18,7 @@ func GetExams(w http.ResponseWriter, r *http.Request){
 	res := make([]models.Result, 0)
 	var item models.Result
 
-	patients := db.GetPatient(id)
+	patients := db.GetPerson(id)
 	services := db.GetService(patients[0].ID, db.NQGetServicePersonID)
 
 	for i, e := range services {
