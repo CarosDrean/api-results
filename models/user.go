@@ -1,7 +1,7 @@
 package models
 
 type SystemUser struct {
-	ID             string `json:"_id"`
+	ID             int64  `json:"_id"`
 	PersonID       string `json:"personId"`
 	UserName       string `json:"username"`
 	Password       string `json:"password"`
@@ -11,12 +11,13 @@ type SystemUser struct {
 }
 
 type UserPerson struct {
-	ID             string `json:"_id"`
+	ID             int64  `json:"_id"`
 	PersonID       string `json:"personId"`
 	UserName       string `json:"username"`
 	Password       string `json:"password"`
 	TypeUser       int    `json:"typeUser"`
 	OrganizationID string `json:"organizationId"`
+	Organization   string `json:"organization"`
 	DNI            string `json:"dni"`
 	Name           string `json:"name"`
 	FirstLastName  string `json:"firstLastname"`

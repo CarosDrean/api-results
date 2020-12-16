@@ -57,7 +57,6 @@ func GetSequential(nodeId int, tableId int) []models.Sequential {
 func CreateSequential(nodeId int, tableId int) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(querySequential["insert"].Q)
-	fmt.Println(tsql)
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,

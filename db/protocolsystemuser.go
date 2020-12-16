@@ -1,7 +1,10 @@
 package db
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"log"
 )
@@ -50,4 +53,24 @@ func GetProtocolSystemUser(id string) []models.ProtocolSystemUser{
 	}
 	defer rows.Close()
 	return res
+}
+
+func CreateProtocolSystemUser(item models.ProtocolSystemUser) (int64, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(QueryProtocolSystemUser["insert"].Q)
+
+	sequentialID := GetNextSequentialId(constants.IdNode, constants.IdProtocolSystemUserTable)
+	newId := GetNewID(constants.IdNode, sequentialID, constants.PrefixProtocolSystemUser)
+	item.ID = newId
+
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("v_ProtocolSystemUserId", item.ID),
+		sql.Named("i_SystemUserId", item.SystemUserID),
+		sql.Named("v_ProtocolId", item.ProtocolID))
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
 }

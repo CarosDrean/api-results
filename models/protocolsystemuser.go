@@ -2,6 +2,6 @@ package models
 
 type ProtocolSystemUser struct {
 	ID           string
-	SystemUserID string
+	SystemUserID int64
 	ProtocolID   string
 }

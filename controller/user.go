@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
@@ -22,12 +23,15 @@ func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
 			UserName:       e.UserName,
 			Password:       e.Password,
 			TypeUser:       e.TypeUser,
-			OrganizationID: db.GetOrganization(e.OrganizationID).Name,
+			OrganizationID: e.OrganizationID,
+			Organization:   db.GetOrganization(e.OrganizationID).Name,
 			DNI:            person.DNI,
 			Name:           person.Name,
 			FirstLastName:  person.FirstLastName,
 			SecondLastName: person.SecondLastName,
 			Mail:           person.Mail,
+			Sex:            person.Sex,
+			Birthday:       person.Birthday,
 		}
 		res = append(res, item)
 	}
@@ -73,11 +77,25 @@ func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
 		OrganizationID: item.OrganizationID,
 		IsDelete:       0,
 	}
-	result, err := db.CreateSystemUser(user)
-	if err != nil {
-		log.Println(err)
+	idUser, err := db.CreateSystemUser(user)
+	checkError(err, "Created User")
+
+	if user.TypeUser != 1 {
+		createProtocolSystemUser(idUser, item.OrganizationID)
 	}
-	_ = json.NewEncoder(w).Encode(result)
+
+	_ = json.NewEncoder(w).Encode(idUser)
+}
+
+func createProtocolSystemUser(idUser int64, organizationId string) {
+	// hay que obtener el id del protocolo deacuerdo a la empresa
+	protocols := db.GetProtocolsWidthOrganization(organizationId)
+	psu := models.ProtocolSystemUser{
+		SystemUserID: idUser,
+		ProtocolID:   protocols[0].ID,
+	}
+	_, err := db.CreateProtocolSystemUser(psu)
+	checkError(err, "Created ProtocolSystemUser")
 }
 
 // verifica si exste la person y de no ser el caso crea y devuelve el ID
@@ -99,9 +117,7 @@ func validatePerson(item models.UserPerson) string {
 				IsDeleted:      0,
 			}
 			personID, err = db.CreatePerson(newPerson)
-			if err != nil {
-				log.Println(err)
-			}
+			checkError(err, "Created Person")
 		}
 	}
 	return personID
@@ -113,11 +129,16 @@ func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
 	id, _ := params["id"]
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
-	item.ID = id
+	item.ID, _ = strconv.ParseInt(id, 10, 64)
 
 	personId := validatePerson(item)
+	userDB := db.GetSystemUser(strconv.FormatInt(item.ID, 10))
+	if userDB[0].OrganizationID != item.OrganizationID {
+		createProtocolSystemUser(item.ID, item.OrganizationID)
+	}
 
 	user := models.SystemUser{
+		ID:             item.ID,
 		PersonID:       personId,
 		UserName:       item.UserName,
 		Password:       item.Password,

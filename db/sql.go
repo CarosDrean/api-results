@@ -122,6 +122,7 @@ var protocolSystemUser = TableDB{
 var QueryProtocolSystemUser = map[string]*queryConfig{
 	"getSystemUserID": {Q: "select " + fieldString(protocolSystemUser.Fields) + " from " + protocolSystemUser.Name + " where " + protocolSystemUser.Fields[1] + " = '%s';"},
 	"get":             {Q: "select " + fieldString(protocolSystemUser.Fields) + " from " + protocolSystemUser.Name + " where " + protocolSystemUser.Fields[0] + " = '%s';"},
+	"insert":          {Q: "insert into " + protocolSystemUser.Name + " (" + fieldString(protocolSystemUser.Fields) + ") values (" + valuesStringNoID(protocolSystemUser.Fields) + ");"},
 }
 
 var location = TableDB{
@@ -140,9 +141,9 @@ var sequential = TableDB{
 }
 
 var querySequential = map[string]*queryConfig{
-	"get":    {Q: "select " + fieldString(sequential.Fields) + " from " + sequential.Name + " where " + sequential.Fields[0] + " = %s and " + sequential.Fields[1] + " = %s;"},
-	"insert": {Q: "insert into (" + fieldString(sequential.Fields) + ") values (" + valuesStringNoID(sequential.Fields) + ");"},
-	"update": {Q: "update " + sequential.Name + " set " + updatesStringNoID(sequential.Fields) + " where " + sequential.Fields[0] + " = %s and " + sequential.Fields[1] + " = %s;"},
+	"get":    {Q: "select " + fieldString(sequential.Fields) + " from " + sequential.Name + " where " + sequential.Fields[0] + " = %d and " + sequential.Fields[1] + " = %d;"},
+	"insert": {Q: "insert into " + sequential.Name + " (" + fieldString(sequential.Fields) + ") values (" + valuesStringNoID(sequential.Fields) + ");"},
+	"update": {Q: "update " + sequential.Name + " set " + updatesStringNoID(sequential.Fields) + " where " + sequential.Fields[0] + " = %d and " + sequential.Fields[1] + " = %d;"},
 }
 
 var user = TableDB{
@@ -154,7 +155,7 @@ var QuerySystemUser = map[string]*queryConfig{
 	"getUserName":    {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[2] + " = '%s';"},
 	"get":            {Q: "select " + fieldString(user.Fields) + " from " + user.Name + " where " + user.Fields[0] + " = %s;"},
 	"list":           {Q: "select " + fieldString(user.Fields) + " from " + user.Name + ";"},
-	"insert":         {Q: "insert into (" + fieldStringInsert(user.Fields) + ") values (" + valuesString(user.Fields) + ");"},
+	"insert":         {Q: "insert into " + user.Name + " (" + fieldString(user.Fields) + ") values (" + valuesStringNoID(user.Fields) + ");"},
 	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = %s;"},
 	"update":         {Q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = @ID;"},
 	"delete":         {Q: "update " + user.Name + " set " + user.Fields[0] + " = 1 where " + user.Fields[0] + " = @ID;"},
@@ -170,7 +171,7 @@ var QueryPerson = map[string]*queryConfig{
 	"get":            {Q: "select " + fieldString(person.Fields) + " from " + person.Name + " where " + person.Fields[0] + " = '%s';"},
 	"getDNI":         {Q: "select " + fieldString(person.Fields) + " from " + person.Name + " where " + person.Fields[1] + " = '%s';"},
 	"list":           {Q: "select " + fieldString(person.Fields) + " from " + person.Name + ";"},
-	"insert":         {Q: "insert into (" + fieldString(person.Fields) + ") values (" + valuesString(person.Fields) + ");"},
+	"insert":         {Q: "insert into " + person.Name + " (" + fieldString(person.Fields) + ") values (" + valuesStringNoID(person.Fields) + ");"},
 	"update":         {Q: "update " + person.Name + " set " + updatesString(person.Fields) + " where " + person.Fields[0] + " = '%s';"},
 	"updatePassword": {Q: "update " + person.Name + " set v_Password = @Password where " + person.Fields[0] + " = '%s';"},
 }

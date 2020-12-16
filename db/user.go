@@ -11,6 +11,7 @@ import (
 	"github.com/CarosDrean/api-results.git/utils"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"strconv"
 )
 
 func GetSystemUsers() []models.SystemUser {
@@ -26,7 +27,7 @@ func GetSystemUsers() []models.SystemUser {
 	}
 	for rows.Next(){
 		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
-		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(item.ID)
+		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(strconv.FormatInt(item.ID, 10))
 		if len(protocolSystemUsers) > 0 {
 			protocol := GetProtocol(protocolSystemUsers[0].ProtocolID)
 			item.OrganizationID = GetOrganization(protocol.OrganizationID).ID
@@ -56,7 +57,7 @@ func GetSystemUser(id string) []models.SystemUser {
 	}
 	for rows.Next(){
 		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
-		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(item.ID)
+		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(strconv.FormatInt(item.ID, 10))
 		if len(protocolSystemUsers) > 0 {
 			protocol := GetProtocol(protocolSystemUsers[0].ProtocolID)
 			item.OrganizationID = GetOrganization(protocol.OrganizationID).ID
@@ -74,13 +75,16 @@ func GetSystemUser(id string) []models.SystemUser {
 }
 
 func CreateSystemUser(item models.SystemUser) (int64, error) {
-	// hay que ver si genera en auto el id
 	ctx := context.Background()
 	tsql := fmt.Sprintf(QuerySystemUser["insert"].Q)
+	sequentialID := GetNextSequentialId(constants.IdNode, constants.IdSystemUserTable)
 	item.Password = encryptMD5(item.Password)
-	result, err := DB.ExecContext(
+	item.ID = int64(sequentialID)
+
+	_, err := DB.ExecContext(
 		ctx,
 		tsql,
+		sql.Named("i_SystemUserId", item.ID),
 		sql.Named("v_PersonId", item.PersonID),
 		sql.Named("v_UserName", item.UserName),
 		sql.Named("v_Password", item.Password),
@@ -89,13 +93,13 @@ func CreateSystemUser(item models.SystemUser) (int64, error) {
 	if err != nil {
 		return -1, err
 	}
-	return result.RowsAffected()
+	return int64(sequentialID), nil
 }
 
 func UpdateSystemUser(item models.SystemUser) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(QuerySystemUser["update"].Q)
-	user := GetSystemUser(item.ID)[0]
+	user := GetSystemUser(strconv.FormatInt(item.ID, 10))[0]
 	if user.Password != item.Password {
 		item.Password = encrypt(item.Password)
 	}
@@ -165,7 +169,7 @@ func ValidateSystemUserLogin(user string, password string) (constants.State, str
 					User: user,
 					Password: newPassword,
 				}
-				_, err := UpdatePasswordSystemUser(items[0].ID, newPassword)
+				_, err := UpdatePasswordSystemUser(strconv.FormatInt(items[0].ID, 10), newPassword)
 				if err != nil {
 					return constants.ErrorUP, ""
 				}
@@ -175,7 +179,7 @@ func ValidateSystemUserLogin(user string, password string) (constants.State, str
 			return constants.NotFoundMail, ""
 		}
 		if comparePassword(items[0].Password, password) {
-			return constants.Accept, items[0].ID
+			return constants.Accept, strconv.FormatInt(items[0].ID, 10)
 		}
 		return constants.InvalidCredentials, ""
 	}
