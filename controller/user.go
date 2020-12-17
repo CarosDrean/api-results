@@ -2,8 +2,10 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/utils"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -83,6 +85,13 @@ func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
 	if user.TypeUser != 1 {
 		createProtocolSystemUser(idUser, item.OrganizationID)
 	}
+
+	mail := models.Mail{
+		From: item.Mail,
+		User: item.UserName,
+		Password: item.Password,
+	}
+	utils.Sendmail(mail, constants.RouteNewSystemUser)
 
 	_ = json.NewEncoder(w).Encode(idUser)
 }

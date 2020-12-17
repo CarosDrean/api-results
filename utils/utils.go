@@ -23,14 +23,14 @@ func CreateNewPassword() string{
 	return stringPassword(8)
 }
 
-func Sendmail(mail models.Mail){
+func Sendmail(mail models.Mail, route string){
 	data, err := json.Marshal(mail)
 	if err != nil {
 		fmt.Println(err)
 	}
 	token := loginApiMail()
 
-	req, err := http.NewRequest("POST", constants.ApiMail+ "/newpassword", bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", constants.ApiMail+ "/" + route, bytes.NewBuffer(data))
 	if err != nil {
 		log.Panic(err)
 	}

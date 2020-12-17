@@ -10,6 +10,9 @@ const (
 	InvalidCredentials State = "Invalid Credentials"
 	PasswordUpdate     State = "Password Updated"
 
+	RouteNewPassword   = "newpassword"
+	RouteNewSystemUser = "new-systemuser"
+
 	IdPruebaRapida       string = "N007-ME000000491"
 	IdResultPruebaRapida string = "N007-MF000004612"
 

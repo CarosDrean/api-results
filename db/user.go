@@ -173,7 +173,7 @@ func ValidateSystemUserLogin(user string, password string) (constants.State, str
 				if err != nil {
 					return constants.ErrorUP, ""
 				}
-				utils.Sendmail(mail)
+				utils.Sendmail(mail, constants.RouteNewPassword)
 				return constants.PasswordUpdate, ""
 			}
 			return constants.NotFoundMail, ""
