@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
@@ -70,6 +71,13 @@ func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	userDB := db.GetSystemUserFromUserName(item.UserName)
+	if len(userDB) > 0 {
+		_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
+		return
+	}
+
 	personID := validatePerson(item)
 	user := models.SystemUser{
 		PersonID:       personID,
@@ -142,6 +150,13 @@ func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
 
 	personId := validatePerson(item)
 	userDB := db.GetSystemUser(strconv.FormatInt(item.ID, 10))
+	if userDB[0].UserName != item.UserName {
+		userDBo := db.GetSystemUserFromUserName(item.UserName)
+		if len(userDBo) > 0 {
+			_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
+			return
+		}
+	}
 	if userDB[0].OrganizationID != item.OrganizationID {
 		createProtocolSystemUser(item.ID, item.OrganizationID)
 	}

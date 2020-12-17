@@ -56,7 +56,6 @@ func loginApiMail() string{
 	if err != nil {
 		fmt.Println(err)
 	}
-	log.Println(secret)
 	respToken, err := http.Post(constants.ApiMail+ "/login", "application/json", bytes.NewBuffer(secret))
 	if err != nil {
 		log.Panic(err)
@@ -66,13 +65,11 @@ func loginApiMail() string{
 	if err != nil {
 		log.Panic(err)
 	}
-	log.Println(string(body))
 	byt := []byte(string(body))
 	var dat map[string]interface{}
 	if err := json.Unmarshal(byt, &dat); err != nil {
 		panic(err)
 	}
-	fmt.Println(dat["token"])
 	return dat["token"].(string)
 }
 

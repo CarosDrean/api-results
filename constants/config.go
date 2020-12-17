@@ -3,6 +3,7 @@ package constants
 const (
 	PORT          = "8000"
 	ApiMail       = "https://api-mail.holosalud.org"
+	// ApiMail       = "http://localhost:2000"
 	SecretApiMail = "miclavedetokens"
 
 	RoutePruebaRapida     string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Prueba Rapida\\"

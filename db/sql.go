@@ -158,7 +158,7 @@ var QuerySystemUser = map[string]*queryConfig{
 	"insert":         {Q: "insert into " + user.Name + " (" + fieldString(user.Fields) + ") values (" + valuesStringNoID(user.Fields) + ");"},
 	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = %s;"},
 	"update":         {Q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = @ID;"},
-	"delete":         {Q: "update " + user.Name + " set " + user.Fields[0] + " = 1 where " + user.Fields[0] + " = @ID;"},
+	"delete":         {Q: "update " + user.Name + " set " + user.Fields[5] + " = 1 where " + user.Fields[0] + " = @ID;"},
 }
 
 var person = TableDB{

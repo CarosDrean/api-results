@@ -36,7 +36,7 @@ func GetSystemUsers() []models.SystemUser {
 		if err != nil {
 			log.Println(err)
 			return res
-		} else{
+		} else if item.IsDelete != 1{
 			res = append(res, item)
 		}
 	}
@@ -101,7 +101,7 @@ func UpdateSystemUser(item models.SystemUser) (int64, error) {
 	tsql := fmt.Sprintf(QuerySystemUser["update"].Q)
 	user := GetSystemUser(strconv.FormatInt(item.ID, 10))[0]
 	if user.Password != item.Password {
-		item.Password = encrypt(item.Password)
+		item.Password = encryptMD5(item.Password)
 	}
 
 	result, err := DB.ExecContext(
@@ -127,6 +127,7 @@ func DeleteSystemUser(id string) (int64, error) {
 		tsql,
 		sql.Named("ID", id))
 	if err != nil {
+		fmt.Println(err)
 		return -1, err
 	}
 	return result.RowsAffected()
