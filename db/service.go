@@ -17,8 +17,11 @@ func GetServicesWidthProtocolFilter(filter models.Filter) []models.Service {
 	res := make([]models.Service, 0)
 	var item models.Service
 
+	fmt.Println(filter)
+
 	tsql := fmt.Sprintf(QueryService[NQGetServiceProtocolFilter].Q, filter.ID, filter.DateFrom, filter.DateTo)
 	rows, err := DB.Query(tsql)
+	fmt.Println(tsql)
 
 	if err != nil {
 		fmt.Println("Error reading rows: " + err.Error())
@@ -51,6 +54,7 @@ func GetService(id string, nameQuery nameQuery) []models.Service {
 	for rows.Next() {
 		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate, &item.ServiceStatusId,
 			&item.IsDeleted, &item.AptitudeStatusId)
+
 		if err != nil {
 			log.Println(err)
 		} else if item.IsDeleted != 1 && item.ServiceStatusId == 3 { // verificar servicios no eliminados y culminados
@@ -76,6 +80,7 @@ func GetServicesFilter(id string, filter models.Filter) []models.Service {
 	for rows.Next() {
 		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate, &item.ServiceStatusId,
 			&item.IsDeleted, &item.AptitudeStatusId)
+
 		if err != nil {
 			log.Println(err)
 		} else if item.IsDeleted != 1 && item.ServiceStatusId == 3 { // verificar servicios no eliminados y culminados

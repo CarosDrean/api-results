@@ -93,7 +93,7 @@ var QueryService = map[nameQuery]*queryConfig{
 	"getProtocol": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
 		" = '%s' and d_ServiceDate is not null order by " + service.Fields[3] + " desc;"},
 	"getProtocolFilter": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
-		" = '%s' and " + service.Fields[3] + ">= CONVERT(DATETIME, '%s', 102) and " + service.Fields[3] + "<= CONVERT(DATETIME, '%s', 102) and " + service.Fields[3] +
+		" = '%s' and CAST(" + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(" + service.Fields[3] + " as date) <= CAST('%s' as date) and " + service.Fields[3] +
 		" is not null order by " + service.Fields[3] + " desc;"},
 	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
 }
