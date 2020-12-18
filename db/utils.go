@@ -13,6 +13,18 @@ func fieldString(fields []string) string {
 	return fieldString
 }
 
+func fieldStringPrefix(fields []string, prefix string) string {
+	fieldString := ""
+	for i, field := range fields {
+		if i == 0 {
+			fieldString = prefix + "." + field
+		} else {
+			fieldString = fieldString + ", " + prefix + "." + field
+		}
+	}
+	return fieldString
+}
+
 func valuesString(fields []string) string {
 	values := ""
 	for i, field := range fields {

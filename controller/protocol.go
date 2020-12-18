@@ -7,6 +7,14 @@ import (
 	"net/http"
 )
 
+func GetProtocol(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["id"]
+	protocol := db.GetProtocol(id)
+	_ = json.NewEncoder(w).Encode(protocol)
+}
+
 func GetProtocolsWidthLocation(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)

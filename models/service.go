@@ -32,6 +32,7 @@ type ServicePatientDiseases struct {
 	ServiceDate      string `json:"serviceDate"`
 	PersonID         string `json:"personId"`
 	ProtocolID       string `json:"protocolId"`
+	OrganizationID   string `json:"organizationId"`
 	AptitudeStatusId int    `json:"aptitude"`
 	DNI              string `json:"dni"`
 	Name             string `json:"name"`

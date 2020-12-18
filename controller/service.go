@@ -9,6 +9,17 @@ import (
 	"net/http"
 )
 
+
+func GetServicesFilterDate(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	services := db.GetServicesFilterDate(item)
+
+	_ = json.NewEncoder(w).Encode(services)
+}
+
 func GetServicesPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)

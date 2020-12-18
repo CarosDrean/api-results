@@ -46,7 +46,21 @@ var queryStatistics = map[string]*queryConfig{
 		"inner join systemparameter sp on sp.i_GroupId = 116 and c.i_CategoryId = sp.i_ParameterId " +
 		"inner join diseases d on dr.v_DiseasesId = d.v_DiseasesId " +
 		"where dr.i_IsDeleted = 0 and s.i_ServiceStatusId = 3 and pr.v_ProtocolId = '%s' " +
-		"and s.d_ServiceDate >= CONVERT(DATETIME, '%s', 102) and s.d_ServiceDate <= CONVERT(DATETIME, '%s', 102) " +
+		"and s.d_ServiceDate >= CAST('%s' as date) and s.d_ServiceDate <= CAST('%s' as date) " +
+		"order by s.d_ServiceDate desc"},
+	"getAllDiseaseDate": {Q: "select s." + service.Fields[0] + ", s." + service.Fields[3] + ", " +
+		"p." + person.Fields[0] + ", pr." + protocol.Fields[0] + ", s." + service.Fields[6] + ", p." + person.Fields[1] + ", p." + person.Fields[3] +
+		", p." + person.Fields[4] + ", p." + person.Fields[5] + ", p." + person.Fields[6] + ", p." + person.Fields[7] + ", p." + person.Fields[8] +
+		", d.v_Name, c.v_Name, sp.v_Value1 from service s " +
+		"inner join person p on s.v_PersonId = p.v_PersonId " +
+		"left join protocol pr on s.v_ProtocolId = pr.v_ProtocolId " +
+		"left join organization o on pr.v_CustomerOrganizationId = o.v_OrganizationId " +
+		"inner join diagnosticrepository dr on s.v_ServiceId = dr.v_ServiceId " +
+		"inner join component c on dr.v_ComponentId = c.v_ComponentId " +
+		"inner join systemparameter sp on sp.i_GroupId = 116 and c.i_CategoryId = sp.i_ParameterId " +
+		"inner join diseases d on dr.v_DiseasesId = d.v_DiseasesId " +
+		"where dr.i_IsDeleted = 0 and s.i_ServiceStatusId = 3 " +
+		"and s.d_ServiceDate >= CAST('%s' as date) and s.d_ServiceDate <= CAST('%s' as date) " +
 		"order by s.d_ServiceDate desc"},
 }
 
@@ -95,7 +109,15 @@ var QueryService = map[nameQuery]*queryConfig{
 	"getProtocolFilter": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
 		" = '%s' and CAST(" + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(" + service.Fields[3] + " as date) <= CAST('%s' as date) and " + service.Fields[3] +
 		" is not null order by " + service.Fields[3] + " desc;"},
-	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
+	"listDiseaseFilter": {Q: "select " + fieldStringPrefix(service.Fields, "s") + ", " + fieldStringPrefix(person.Fields, "pe") +
+		", d.v_Name from dbo.service s " +
+		"inner join person pe on s.v_PersonId = pe.v_PersonId " +
+		"left join diagnosticrepository dr on s.v_ServiceId = dr.v_ServiceId " +
+		"left join diseases d on dr.v_DiseasesId = d.v_DiseasesId where CAST(s." +
+		service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] + " as date) <= CAST('%s' as date) " +
+		"and s.i_ServiceStatusId = 3 and s." + service.Fields[3] +
+		" is not null;"},
+	"get":            {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
 }
 
 var protocol = TableDB{
