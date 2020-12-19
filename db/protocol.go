@@ -19,7 +19,7 @@ func GetProtocolsWidthLocation(id string) []models.Protocol {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
 		if err != nil {
 			log.Println(err)
 			return res
@@ -45,7 +45,7 @@ func GetProtocolsWidthOrganization(id string) []models.Protocol {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
 		if err != nil {
 			log.Println(err)
 			return res
@@ -83,7 +83,7 @@ func GetProtocol(id string) models.Protocol {
 		return res[0]
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
 		if err != nil {
 			log.Println(err)
 			return res[0]

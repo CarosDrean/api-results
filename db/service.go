@@ -18,6 +18,7 @@ func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases
 	res := make([]models.ServicePatientDiseases, 0)
 	var service models.Service
 	var person models.Person
+	var protocol models.Protocol
 
 	tsql := fmt.Sprintf(QueryService["listDiseaseFilter"].Q, filter.DateFrom, filter.DateTo)
 	rows, err := DB.Query(tsql)
@@ -35,6 +36,7 @@ func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
 			&person.Sex, &birth, &person.IsDeleted,
+			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType,
 			&disease)
 		if pass.Valid {
 			person.Password = pass.String
@@ -59,6 +61,7 @@ func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases
 				ServiceDate:      service.ServiceDate,
 				PersonID:         service.PersonID,
 				ProtocolID:       service.ProtocolID,
+				OrganizationID:   protocol.OrganizationID,
 				AptitudeStatusId: service.AptitudeStatusId,
 				DNI:              person.DNI,
 				Name:             person.Name,
@@ -68,6 +71,7 @@ func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases
 				Sex:              person.Sex,
 				Birthday:         person.Birthday,
 				Disease:          diseaseString,
+				EsoType:          protocol.EsoType,
 			}
 			res = append(res, item)
 		}

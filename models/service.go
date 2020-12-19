@@ -44,4 +44,5 @@ type ServicePatientDiseases struct {
 	Disease          string `json:"disease"`
 	Component        string `json:"component"`
 	Consulting       string `json:"consulting"`
+	EsoType          int    `json:"esoType"`
 }
