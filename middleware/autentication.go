@@ -221,7 +221,7 @@ func patientParticular(user models.UserLogin) (constants.State, string){
 func getRole(typeUser int)string{
 	switch typeUser {
 	case 0:
-		return "Person"
+		return "Patient"
 	case 1:
 		return "Internal Admin"
 	case 2:
