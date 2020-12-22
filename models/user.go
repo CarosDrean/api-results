@@ -1,5 +1,7 @@
 package models
 
+import "github.com/CarosDrean/api-results.git/constants"
+
 type SystemUser struct {
 	ID             int64  `json:"_id"`
 	PersonID       string `json:"personId"`
@@ -28,8 +30,8 @@ type UserPerson struct {
 }
 
 type UserResult struct {
-	ID   string `json:"_id"`
-	Role string `json:"role"`
+	ID   string         `json:"_id"`
+	Role constants.Role `json:"role"`
 }
 
 type UserLogin struct {

@@ -82,11 +82,6 @@ var queryComponent = map[string]*queryConfig{
 	"getCategory": {Q: "select " + fieldString(component.Fields) + " from " + component.Name + " where " + calendar.Fields[2] + " = %s;"},
 }
 
-var organization = TableDB{
-	Name:   "dbo.organization",
-	Fields: []string{"v_OrganizationId", "v_Name"},
-}
-
 var calendar = TableDB{
 	Name:   "dbo.calendar",
 	Fields: []string{"v_CalendarId", "v_ServiceId", "i_CalendarStatusId"},
@@ -131,6 +126,11 @@ var QueryProtocol = map[string]*queryConfig{
 	"getLocation":     {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[3] + " = '%s';"},
 	"getOrganization": {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[2] + " = '%s';"},
 	"get":             {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[0] + " = '%s';"},
+}
+
+var organization = TableDB{
+	Name:   "dbo.organization",
+	Fields: []string{"v_OrganizationId", "v_Name", "v_Mail", "v_EmailContacto", "v_EmailMedico"},
 }
 
 var QueryOrganization = map[string]*queryConfig{

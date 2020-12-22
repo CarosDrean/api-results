@@ -99,7 +99,7 @@ func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
 		User: item.UserName,
 		Password: item.Password,
 	}
-	utils.Sendmail(mail, constants.RouteNewSystemUser)
+	utils.SendMail(mail, constants.RouteNewSystemUser)
 
 	_ = json.NewEncoder(w).Encode(idUser)
 }

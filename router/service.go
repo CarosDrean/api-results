@@ -11,5 +11,5 @@ func serviceRoutes(s *mux.Router) {
 	s.HandleFunc("/all-organization/{id}", mid.CheckSecurity(service.GetServicesPatientsWithOrganization)).Methods("GET")
 	s.HandleFunc("/all-organization/", mid.CheckSecurity(service.GetServicesPatientsWithOrganizationFilter)).Methods("POST")
 	s.HandleFunc("/filter/", mid.CheckSecurity(service.GetServicesPatientsWithProtocolFilter)).Methods("POST")
-	s.HandleFunc("/filter-date/", mid.CheckSecurity(service.GetServicesFilterDate)).Methods("POST")
+	s.HandleFunc("/filter-date/", mid.CheckSecurityInternalAdmin(service.GetServicesFilterDate)).Methods("POST")
 }

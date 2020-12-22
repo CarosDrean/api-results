@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
 	"log"
@@ -18,7 +19,13 @@ func GetOrganizations() []models.Organization {
 		return res
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name)
+		var mailMedic sql.NullString
+		err := rows.Scan(&item.ID, &item.Name, &item.Mail, &item.MailContact, &mailMedic)
+		if mailMedic.Valid {
+			item.MailMedic = mailMedic.String
+		} else {
+			item.MailMedic = ""
+		}
 		if err != nil {
 			log.Println(err)
 			return res
@@ -42,7 +49,13 @@ func GetOrganization(id string) models.Organization {
 		return res[0]
 	}
 	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name)
+		var mailMedic sql.NullString
+		err := rows.Scan(&item.ID, &item.Name, &item.Mail, &item.MailContact, &mailMedic)
+		if mailMedic.Valid {
+			item.MailMedic = mailMedic.String
+		} else {
+			item.MailMedic = ""
+		}
 		if err != nil {
 			log.Println(err)
 			return res[0]

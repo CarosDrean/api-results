@@ -9,4 +9,5 @@ import (
 func organizationRoutes(s *mux.Router) {
 	s.HandleFunc("/", mid.CheckSecurity(organization.GetOrganizations)).Methods("GET")
 	s.HandleFunc("/{id}", mid.CheckSecurity(organization.GetOrganization)).Methods("GET")
+	s.HandleFunc("/send-mail", mid.CheckSecurityInternalAdmin(organization.SendURLTokenForExternalUser)).Methods("POST")
 }
