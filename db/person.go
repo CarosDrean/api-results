@@ -9,6 +9,7 @@ import (
 	"github.com/CarosDrean/api-results.git/utils"
 	"log"
 	"strings"
+	"time"
 )
 
 func GetPerson(id string) []models.Person {
@@ -95,6 +96,8 @@ func CreatePerson(item models.Person) (string, error) {
 	newId := GetNewID(constants.IdNode, sequentialID, constants.PrefixPerson)
 	item.ID = newId
 
+	date, _ := time.Parse(time.RFC3339, item.Birthday + "T05:00:00Z")
+
 	_, err := DB.ExecContext(
 		ctx,
 		tsql,
@@ -106,7 +109,7 @@ func CreatePerson(item models.Person) (string, error) {
 		sql.Named("v_SecondLastName", item.SecondLastName),
 		sql.Named("v_Mail", item.Mail),
 		sql.Named("i_SexTypeId", item.Sex),
-		sql.Named("d_Birthdate", item.Birthday),
+		sql.Named("d_Birthdate", date),
 		sql.Named("i_IsDeleted", 0))
 	if err != nil {
 		return "", err

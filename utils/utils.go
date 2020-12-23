@@ -23,7 +23,7 @@ func CreateNewPassword() string{
 	return stringPassword(8)
 }
 
-func SendMail(mail models.Mail, route string){
+func SendMail(mail models.Mail, route string) error{
 	data, err := json.Marshal(mail)
 	if err != nil {
 		fmt.Println(err)
@@ -44,9 +44,17 @@ func SendMail(mail models.Mail, route string){
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Panic(err)
+		log.Println(err)
+		return err
 	}
-	log.Println(body)
+	byt := []byte(string(body))
+	var dat map[string]interface{}
+	if err := json.Unmarshal(byt, &dat); err != nil {
+		log.Println(err)
+		return err
+	}
+	fmt.Println(dat)
+	return nil
 }
 
 func loginApiMail() string{

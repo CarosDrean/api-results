@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	mid "github.com/CarosDrean/api-results.git/middleware"
@@ -43,7 +44,11 @@ func SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
 		From: item.Mail,
 		Data: URL,
 	}
-	// aqui debemos validar si el envio del correo se realizo satisfactoriamente o no
-	utils.SendMail(objectMail, constants.RouteUserLink)
+
+	err := utils.SendMail(objectMail, constants.RouteUserLink)
+	if err != nil {
+		_, _ = fmt.Fprintf(w, "¡Hubo un error al procesar la solicitud!")
+		return
+	}
 	_ = json.NewEncoder(w).Encode(URL)
 }

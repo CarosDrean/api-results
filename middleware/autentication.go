@@ -119,7 +119,6 @@ func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constant
 	token, err := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &claim, func(token *jwt.Token) (interface{}, error) {
 		return publicKey, nil
 	})
-	fmt.Println(claim.Role)
 
 	if err != nil {
 		switch err.(type) {
