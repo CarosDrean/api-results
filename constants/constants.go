@@ -24,6 +24,16 @@ const (
 	IdConsultings string = "116"
 
 	// roles
-	RoleTemp    Role = "Temp"
-	RolePatient Role = "Patient"
+	RoleTemp          Role = "Temp"
+	RolePatient       Role = "Patient"
+	RoleInternalAdmin Role = "Internal Admin"
+	RoleExternalAdmin Role = "External Admin"
+	RoleExternalMedic Role = "External Medic"
+
+	// code role
+	CodeRolePatient             = 0
+	CodeRoleInternalAdmin       = 1
+	CodeRoleExternalAdmin       = 2
+	CodeRoleExternalMedic       = 3
+	CodeRoleExternalMedicNoData = 4
 )
