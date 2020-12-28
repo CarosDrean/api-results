@@ -110,12 +110,24 @@ func ValidateToken(w http.ResponseWriter, r *http.Request) string {
 	return "Error"
 }
 
-func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constants.Role) {
+func validateToken(w http.ResponseWriter, r *http.Request, temp bool) (*jwt.Token, constants.Role) {
 	r.Header.Add("Authorization", r.Header.Get("x-token"))
-	var claim models.Claim
-	token, err := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &claim, func(token *jwt.Token) (interface{}, error) {
-		return publicKey, nil
-	})
+	var err error
+	var token  *jwt.Token
+	var role constants.Role
+	if !temp {
+		var claim models.Claim
+		token, err = request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &claim, func(token *jwt.Token) (interface{}, error) {
+			return publicKey, nil
+		})
+		role = claim.Role
+	} else {
+		var claim models.ClaimExternal
+		token, err = request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &claim, func(token *jwt.Token) (interface{}, error) {
+			return publicKey, nil
+		})
+		role = claim.Role
+	}
 
 	if err != nil {
 		switch err.(type) {
@@ -137,12 +149,12 @@ func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constant
 			return nil, ""
 		}
 	}
-	return token, claim.Role
+	return token, role
 }
 
 func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token, _ := validateToken(w, r)
+		token, _ := validateToken(w, r, false)
 		if token == nil {
 			return
 		}

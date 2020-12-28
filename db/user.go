@@ -151,6 +151,7 @@ func GetSystemUserFromUserName(userName string) []models.SystemUser {
 			log.Println(err)
 			return res
 		} else if item.IsDelete != 1{
+			fmt.Println(item)
 			res = append(res, item)
 		}
 	}

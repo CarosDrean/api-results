@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
+	"io"
 	"net/http"
 )
 
 func RoleInternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token, role := validateToken(w, r)
+		token, role := validateToken(w, r, false)
 		if token == nil {
 			return
 		}
@@ -35,7 +36,7 @@ func RoleInternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 
 func RoleInternalAdminOrTempOrExternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token, role := validateToken(w, r)
+		token, role := validateToken(w, r, true)
 		if token == nil {
 			return
 		}
@@ -44,7 +45,7 @@ func RoleInternalAdminOrTempOrExternalAdmin(next http.HandlerFunc) http.HandlerF
 			w.WriteHeader(http.StatusAccepted)
 			if role == constants.Roles.InternalAdmin{
 				next(w, r)
-			} else if (role == constants.Roles.Temp || role == constants.Roles.ExternalAdmin) && validateCreationForTempOrExternalAdmin(r) {
+			} else if role == constants.Roles.Temp || role == constants.Roles.ExternalAdmin {
 				next(w, r)
 			} else {
 				w.WriteHeader(http.StatusUnauthorized)
@@ -60,11 +61,14 @@ func RoleInternalAdminOrTempOrExternalAdmin(next http.HandlerFunc) http.HandlerF
 	}
 }
 
-func validateCreationForTempOrExternalAdmin(r *http.Request) bool {
+func validateCreationForTempOrExternalAdmin(body io.ReadCloser) bool {
 	var item models.UserPerson
-	_ = json.NewDecoder(r.Body).Decode(&item)
-	if item.TypeUser != constants.CodeRoles.ExternalAdmin && item.TypeUser != constants.CodeRoles.ExternalMedicNoData {
-		return false
+
+	_ = json.NewDecoder(body).Decode(&item)
+	fmt.Println("hey")
+	fmt.Println(item)
+	if item.TypeUser == constants.CodeRoles.ExternalAdmin || item.TypeUser == constants.CodeRoles.ExternalMedicNoData {
+		return true
 	}
-	return true
+	return false
 }
