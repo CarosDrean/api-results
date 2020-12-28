@@ -23,7 +23,7 @@ func GetExams(w http.ResponseWriter, r *http.Request){
 
 	for i, e := range services {
 		if e.ServiceStatusId == 3 && e.IsDeleted != 1 { // culminado
-			calendar := db.GetCalendarService(e.ID)
+			calendar, _ := db.CalendarDB{}.GetService(e.ID)
 			if calendar.CalendarStatusID != 4 { // 4 = cancelado
 				item.ID = strconv.Itoa(i)
 				item.ServiceDate = e.ServiceDate

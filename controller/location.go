@@ -7,12 +7,20 @@ import (
 	"net/http"
 )
 
-func GetLocationsWidthOrganizationID(w http.ResponseWriter, r *http.Request) {
+type LocationController struct {
+	DB db.LocationDB
+}
+
+func (c LocationController) GetAllOrganizationID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idOrganization"]
 
-	res := db.GetLocationsWidthOrganizationID(id)
+	res, err := c.DB.GetAllOrganizationID(id)
+	if err != nil {
+		returnErr(w, err, "obtener todos Organization")
+		return
+	}
 
 	_ = json.NewEncoder(w).Encode(res)
 }

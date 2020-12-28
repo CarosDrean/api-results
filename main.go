@@ -23,7 +23,6 @@ func main() {
 	if !*f {
 		hideConsole()
 	}
-
 	api()
 }
 

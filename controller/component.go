@@ -7,12 +7,20 @@ import (
 	"net/http"
 )
 
-func GetComponentsCategoryId(w http.ResponseWriter, r *http.Request) {
+type ComponentController struct {
+	DB db.ComponentDB
+}
+
+func (c ComponentController) GetAllCategoryId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
 
-	res := db.GetComponentsCategoryId(id)
+	res, err := c.DB.GetAllCategoryId(id)
+	if err != nil {
+		returnErr(w, err, "obtener todos category")
+		return
+	}
 
 	_ = json.NewEncoder(w).Encode(res)
 }

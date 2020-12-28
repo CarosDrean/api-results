@@ -12,21 +12,31 @@ import (
 	"net/http"
 )
 
-func GetOrganizations(w http.ResponseWriter, r *http.Request) {
+type OrganizationController struct {
+	DB db.OrganizationDB
+}
+
+func (c OrganizationController) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	items := db.GetOrganizations()
-
+	items, err := c.DB.GetAll()
+	if err != nil {
+		returnErr(w, err, "obtener todos")
+		return
+	}
 	_ = json.NewEncoder(w).Encode(items)
 }
 
-func GetOrganization(w http.ResponseWriter, r *http.Request) {
+func (c OrganizationController) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
 
-	item := db.GetOrganization(id)
-
+	item, err := c.DB.Get(id)
+	if err != nil {
+		returnErr(w, err, "obtener")
+		return
+	}
 	_ = json.NewEncoder(w).Encode(item)
 }
 

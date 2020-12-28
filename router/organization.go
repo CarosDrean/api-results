@@ -2,12 +2,14 @@ package routes
 
 import (
 	organization "github.com/CarosDrean/api-results.git/controller"
+	"github.com/CarosDrean/api-results.git/db"
 	mid "github.com/CarosDrean/api-results.git/middleware"
 	"github.com/gorilla/mux"
 )
 
 func organizationRoutes(s *mux.Router) {
-	s.HandleFunc("/", mid.CheckSecurity(organization.GetOrganizations)).Methods("GET")
-	s.HandleFunc("/{id}", mid.CheckSecurity(organization.GetOrganization)).Methods("GET")
+	ctrl := organization.OrganizationController{DB: db.OrganizationDB{}}
+	s.HandleFunc("/", mid.CheckSecurity(ctrl.GetAll)).Methods("GET")
+	s.HandleFunc("/{id}", mid.CheckSecurity(ctrl.Get)).Methods("GET")
 	s.HandleFunc("/send-mail", mid.RoleInternalAdmin(organization.SendURLTokenForExternalUser)).Methods("POST")
 }
