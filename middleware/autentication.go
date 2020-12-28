@@ -93,16 +93,16 @@ func patientParticular(user models.UserLogin) (constants.State, string){
 
 func getRole(typeUser int)constants.Role{
 	switch typeUser {
-	case constants.CodeRolePatient:
-		return constants.RolePatient
-	case constants.CodeRoleInternalAdmin:
-		return constants.RoleInternalAdmin
-	case constants.CodeRoleExternalAdmin:
-		return constants.RoleExternalAdmin
-	case 3:
-		return constants.RoleExternalMedic
-	case 4:
-		return constants.RoleExternalMedic
+	case constants.CodeRoles.Patient:
+		return constants.Roles.Patient
+	case constants.CodeRoles.InternalAdmin:
+		return constants.Roles.InternalAdmin
+	case constants.CodeRoles.ExternalAdmin:
+		return constants.Roles.ExternalAdmin
+	case constants.CodeRoles.ExternalMedic:
+		return constants.Roles.ExternalMedic
+	case constants.CodeRoles.ExternalMedicNoData:
+		return constants.Roles.ExternalMedic
 	default:
 		return ""
 	}

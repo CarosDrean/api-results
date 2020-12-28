@@ -17,7 +17,7 @@ func RoleInternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 
 		if token.Valid {
 			w.WriteHeader(http.StatusAccepted)
-			if role == constants.RoleInternalAdmin {
+			if role == constants.Roles.InternalAdmin {
 				next(w, r)
 			} else {
 				w.WriteHeader(http.StatusUnauthorized)
@@ -33,7 +33,7 @@ func RoleInternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func RoleInternalAdminOrTemp(next http.HandlerFunc) http.HandlerFunc {
+func RoleInternalAdminOrTempOrExternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token, role := validateToken(w, r)
 		if token == nil {
@@ -42,9 +42,9 @@ func RoleInternalAdminOrTemp(next http.HandlerFunc) http.HandlerFunc {
 
 		if token.Valid {
 			w.WriteHeader(http.StatusAccepted)
-			if role == constants.RoleInternalAdmin{
+			if role == constants.Roles.InternalAdmin{
 				next(w, r)
-			} else if role == constants.RoleTemp && validateCreationForTemp(r) {
+			} else if (role == constants.Roles.Temp || role == constants.Roles.ExternalAdmin) && validateCreationForTempOrExternalAdmin(r) {
 				next(w, r)
 			} else {
 				w.WriteHeader(http.StatusUnauthorized)
@@ -60,10 +60,10 @@ func RoleInternalAdminOrTemp(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func validateCreationForTemp(r *http.Request) bool {
+func validateCreationForTempOrExternalAdmin(r *http.Request) bool {
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
-	if item.TypeUser != constants.CodeRoleExternalAdmin && item.TypeUser != constants.CodeRoleExternalMedic {
+	if item.TypeUser != constants.CodeRoles.ExternalAdmin && item.TypeUser != constants.CodeRoles.ExternalMedicNoData {
 		return false
 	}
 	return true

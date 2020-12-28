@@ -22,18 +22,37 @@ const (
 
 	// systemparameter
 	IdConsultings string = "116"
-
-	// roles
-	RoleTemp          Role = "Temp"
-	RolePatient       Role = "Patient"
-	RoleInternalAdmin Role = "Internal Admin"
-	RoleExternalAdmin Role = "External Admin"
-	RoleExternalMedic Role = "External Medic"
-
-	// code role
-	CodeRolePatient             = 0
-	CodeRoleInternalAdmin       = 1
-	CodeRoleExternalAdmin       = 2
-	CodeRoleExternalMedic       = 3
-	CodeRoleExternalMedicNoData = 4
 )
+
+var (
+	Roles = RolesModel{
+		Temp:          "Temp",
+		Patient:       "Patient",
+		InternalAdmin: "Internal Admin",
+		ExternalAdmin: "External Admin",
+		ExternalMedic: "External Medic",
+	}
+	CodeRoles = CodeRolesModel{
+		Patient:             0,
+		InternalAdmin:       1,
+		ExternalAdmin:       2,
+		ExternalMedic:       3,
+		ExternalMedicNoData: 4,
+	}
+)
+
+type RolesModel struct {
+	Temp          Role
+	Patient       Role
+	InternalAdmin Role
+	ExternalAdmin Role
+	ExternalMedic Role
+}
+
+type CodeRolesModel struct {
+	Patient             int
+	InternalAdmin       int
+	ExternalAdmin       int
+	ExternalMedic       int
+	ExternalMedicNoData int
+}

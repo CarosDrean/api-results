@@ -36,7 +36,7 @@ func SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&item)
 	claim := models.External{
 		OrganizationID: item.ID,
-		Role:           constants.RoleTemp,
+		Role:           constants.Roles.Temp,
 	}
 	token := mid.GenerateJWTExternal(claim)
 	URL := constants.ClientURL + "temp/create-external-user/" + token
