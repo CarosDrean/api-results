@@ -2,12 +2,13 @@ package db
 
 import (
 	"fmt"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
 func GetResultService(idService string, idExam string, idResult string) string {
 	item := ""
-	tsql := fmt.Sprintf(queryResultService["get"].Q, idService, idExam, idResult)
+	tsql := fmt.Sprintf(query.ResultService["get"].Q, idService, idExam, idResult)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

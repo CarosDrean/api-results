@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 	"strings"
 )
@@ -11,7 +12,7 @@ func GetProtocolsWidthLocation(id string) []models.Protocol {
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
-	tsql := fmt.Sprintf(QueryProtocol["getLocation"].Q, id)
+	tsql := fmt.Sprintf(query.Protocol["getLocation"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -37,7 +38,7 @@ func GetProtocolsWidthOrganization(id string) []models.Protocol {
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
-	tsql := fmt.Sprintf(QueryProtocol["getOrganization"].Q, id)
+	tsql := fmt.Sprintf(query.Protocol["getOrganization"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -75,7 +76,7 @@ func GetProtocol(id string) models.Protocol {
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
-	tsql := fmt.Sprintf(QueryProtocol["get"].Q, id)
+	tsql := fmt.Sprintf(query.Protocol["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

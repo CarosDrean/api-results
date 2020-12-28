@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -10,7 +11,7 @@ func GetSystemParametersByGroupID(idGroup string) []models.SystemParameter {
 	res := make([]models.SystemParameter, 0)
 	var item models.SystemParameter
 
-	tsql := fmt.Sprintf(querySystemParameter["getGroup"].Q, idGroup)
+	tsql := fmt.Sprintf(query.SystemParameter["getGroup"].Q, idGroup)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

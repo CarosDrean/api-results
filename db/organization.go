@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -11,7 +12,7 @@ func GetOrganizations() []models.Organization {
 	res := make([]models.Organization, 0)
 	var item models.Organization
 
-	tsql := fmt.Sprintf(QueryOrganization["list"].Q)
+	tsql := fmt.Sprintf(query.Organization["list"].Q)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -41,7 +42,7 @@ func GetOrganization(id string) models.Organization {
 	res := make([]models.Organization, 0)
 	var item models.Organization
 
-	tsql := fmt.Sprintf(QueryOrganization["get"].Q, id)
+	tsql := fmt.Sprintf(query.Organization["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

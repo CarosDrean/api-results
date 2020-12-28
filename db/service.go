@@ -4,14 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
 const (
-	NQGetServicePersonID       nameQuery = "getPersonID"
-	NQGetServiceProtocol       nameQuery = "getProtocol"
-	NQGetServiceProtocolFilter nameQuery = "getProtocolFilter"
-	NQGetService               nameQuery = "get"
+	NQGetServicePersonID       = "getPersonID"
+	NQGetServiceProtocol       = "getProtocol"
+	NQGetServiceProtocolFilter = "getProtocolFilter"
+	NQGetService               = "get"
 )
 
 func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases {
@@ -20,7 +21,7 @@ func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases
 	var person models.Person
 	var protocol models.Protocol
 
-	tsql := fmt.Sprintf(QueryService["listDiseaseFilter"].Q, filter.DateFrom, filter.DateTo)
+	tsql := fmt.Sprintf(query.Service["listDiseaseFilter"].Q, filter.DateFrom, filter.DateTo)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -86,7 +87,7 @@ func GetServicesWidthProtocolFilter(filter models.Filter) []models.Service {
 
 	fmt.Println(filter)
 
-	tsql := fmt.Sprintf(QueryService[NQGetServiceProtocolFilter].Q, filter.ID, filter.DateFrom, filter.DateTo)
+	tsql := fmt.Sprintf(query.Service[NQGetServiceProtocolFilter].Q, filter.ID, filter.DateFrom, filter.DateTo)
 	rows, err := DB.Query(tsql)
 	fmt.Println(tsql)
 
@@ -107,11 +108,11 @@ func GetServicesWidthProtocolFilter(filter models.Filter) []models.Service {
 	return res
 }
 
-func GetService(id string, nameQuery nameQuery) []models.Service {
+func GetService(id string, nameQuery string) []models.Service {
 	res := make([]models.Service, 0)
 	var item models.Service
 
-	tsql := fmt.Sprintf(QueryService[nameQuery].Q, id)
+	tsql := fmt.Sprintf(query.Service[nameQuery].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -137,7 +138,7 @@ func GetServicesFilter(id string, filter models.Filter) []models.Service {
 	res := make([]models.Service, 0)
 	var item models.Service
 
-	tsql := fmt.Sprintf(QueryService[NQGetServiceProtocolFilter].Q, id, filter.DateFrom, filter.DateTo)
+	tsql := fmt.Sprintf(query.Service[NQGetServiceProtocolFilter].Q, id, filter.DateFrom, filter.DateTo)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

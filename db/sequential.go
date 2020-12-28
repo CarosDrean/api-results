@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -35,7 +36,7 @@ func GetSequential(nodeId int, tableId int) []models.Sequential {
 	res := make([]models.Sequential, 0)
 	var item models.Sequential
 
-	tsql := fmt.Sprintf(querySequential["get"].Q, nodeId, tableId)
+	tsql := fmt.Sprintf(query.Sequential["get"].Q, nodeId, tableId)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -56,7 +57,7 @@ func GetSequential(nodeId int, tableId int) []models.Sequential {
 
 func CreateSequential(nodeId int, tableId int) (int64, error) {
 	ctx := context.Background()
-	tsql := fmt.Sprintf(querySequential["insert"].Q)
+	tsql := fmt.Sprintf(query.Sequential["insert"].Q)
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,
@@ -71,7 +72,7 @@ func CreateSequential(nodeId int, tableId int) (int64, error) {
 
 func UpdateSequential(item models.Sequential)(int64, error){
 	ctx := context.Background()
-	tsql := fmt.Sprintf(querySequential["update"].Q, item.NodeID, item.TableID)
+	tsql := fmt.Sprintf(query.Sequential["update"].Q, item.NodeID, item.TableID)
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,

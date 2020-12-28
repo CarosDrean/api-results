@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -13,7 +14,7 @@ func GetProtocolSystemUserWidthSystemUserID(id string) []models.ProtocolSystemUs
 	res := make([]models.ProtocolSystemUser, 0)
 	var item models.ProtocolSystemUser
 
-	tsql := fmt.Sprintf(QueryProtocolSystemUser["getSystemUserID"].Q, id)
+	tsql := fmt.Sprintf(query.ProtocolSystemUser["getSystemUserID"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -36,7 +37,7 @@ func GetProtocolSystemUser(id string) []models.ProtocolSystemUser{
 	res := make([]models.ProtocolSystemUser, 0)
 	var item models.ProtocolSystemUser
 
-	tsql := fmt.Sprintf(QueryProtocolSystemUser["get"].Q, id)
+	tsql := fmt.Sprintf(query.ProtocolSystemUser["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -57,7 +58,7 @@ func GetProtocolSystemUser(id string) []models.ProtocolSystemUser{
 
 func CreateProtocolSystemUser(item models.ProtocolSystemUser) (int64, error) {
 	ctx := context.Background()
-	tsql := fmt.Sprintf(QueryProtocolSystemUser["insert"].Q)
+	tsql := fmt.Sprintf(query.ProtocolSystemUser["insert"].Q)
 
 	sequentialID := GetNextSequentialId(constants.IdNode, constants.IdProtocolSystemUserTable)
 	newId := GetNewID(constants.IdNode, sequentialID, constants.PrefixProtocolSystemUser)

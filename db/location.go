@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -10,7 +11,7 @@ func GetLocationsWidthOrganizationID(id string) []models.Location{
 	res := make([]models.Location, 0)
 	var item models.Location
 
-	tsql := fmt.Sprintf(queryLocation["getOrganizationID"].Q, id)
+	tsql := fmt.Sprintf(query.Location["getOrganizationID"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -33,7 +34,7 @@ func GetLocation(id string) []models.Location{
 	res := make([]models.Location, 0)
 	var item models.Location
 
-	tsql := fmt.Sprintf(queryLocation["get"].Q, id)
+	tsql := fmt.Sprintf(query.Location["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

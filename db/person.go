@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"github.com/CarosDrean/api-results.git/utils"
 	"log"
 	"strings"
@@ -16,7 +17,7 @@ func GetPerson(id string) []models.Person {
 	res := make([]models.Person, 0)
 	var item models.Person
 
-	tsql := fmt.Sprintf(QueryPerson["get"].Q, id)
+	tsql := fmt.Sprintf(query.Person["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -53,7 +54,7 @@ func GetPersonFromDNI(dni string) []models.Person {
 	res := make([]models.Person, 0)
 	var item models.Person
 
-	tsql := fmt.Sprintf(QueryPerson["getDNI"].Q, dni)
+	tsql := fmt.Sprintf(query.Person["getDNI"].Q, dni)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -87,7 +88,7 @@ func GetPersonFromDNI(dni string) []models.Person {
 
 func CreatePerson(item models.Person) (string, error) {
 	ctx := context.Background()
-	tsql := fmt.Sprintf(QueryPerson["insert"].Q)
+	tsql := fmt.Sprintf(query.Person["insert"].Q)
 	if item.Password != "" {
 		item.Password = encryptMD5(item.Password)
 	}
@@ -147,7 +148,7 @@ func ValidatePatientLogin(user string, password string) (constants.State, string
 
 func UpdatePasswordPatient(id string, password string) (int64, error) {
 	ctx := context.Background()
-	tsql := fmt.Sprintf(QueryPerson["updatePassword"].Q, id)
+	tsql := fmt.Sprintf(query.Person["updatePassword"].Q, id)
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,

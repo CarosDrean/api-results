@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -10,7 +11,7 @@ func GetStatisticsServiceDiseaseByProtocol(filter models.Filter)[]models.Service
 	res := make([]models.ServicePatientDiseases, 0)
 	var item models.ServicePatientDiseases
 
-	tsql := fmt.Sprintf(queryStatistics["getDisease"].Q, filter.ID, filter.DateFrom, filter.DateTo)
+	tsql := fmt.Sprintf(query.Statistics["getDisease"].Q, filter.ID, filter.DateFrom, filter.DateTo)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -10,7 +11,7 @@ func GetCalendarService(idService string) models.Calendar {
 	res := make([]models.Calendar, 0)
 	var item models.Calendar
 
-	tsql := fmt.Sprintf(QueryCalendar["getServiceID"].Q, idService)
+	tsql := fmt.Sprintf(query.Calendar["getServiceID"].Q, idService)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {

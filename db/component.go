@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/query"
 	"log"
 )
 
@@ -10,7 +11,7 @@ func GetComponentsCategoryId(idCategory string) []models.Component{
 	res := make([]models.Component, 0)
 	var item models.Component
 
-	tsql := fmt.Sprintf(queryComponent["getCategory"].Q, idCategory)
+	tsql := fmt.Sprintf(query.Component["getCategory"].Q, idCategory)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
