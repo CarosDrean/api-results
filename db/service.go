@@ -8,14 +8,37 @@ import (
 	"log"
 )
 
-const (
-	NQGetServicePersonID       = "getPersonID"
-	NQGetServiceProtocol       = "getProtocol"
-	NQGetServiceProtocolFilter = "getProtocolFilter"
-	NQGetService               = "get"
-)
+type ServiceDB struct {}
 
-func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases {
+func (db ServiceDB) GetAllPerson(id string) ([]models.Service, error)  {
+	res := make([]models.Service, 0)
+
+	tsql := fmt.Sprintf(query.Service["getPersonID"].Q, id)
+	rows, err := DB.Query(tsql)
+
+	err = db.scan(rows, err, &res, "Service DB", "GetAll Person")
+	if err != nil {
+		return res, err
+	}
+	defer rows.Close()
+	return res, nil
+}
+
+func (db ServiceDB) GetAllProtocol(id string) ([]models.Service, error)  {
+	res := make([]models.Service, 0)
+
+	tsql := fmt.Sprintf(query.Service["getProtocol"].Q, id)
+	rows, err := DB.Query(tsql)
+
+	err = db.scan(rows, err, &res, "Service DB", "GetAll Person")
+	if err != nil {
+		return res, err
+	}
+	defer rows.Close()
+	return res, nil
+}
+
+func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.ServicePatientDiseases {
 	res := make([]models.ServicePatientDiseases, 0)
 	var service models.Service
 	var person models.Person
@@ -81,80 +104,67 @@ func GetServicesFilterDate(filter models.Filter) []models.ServicePatientDiseases
 	return res
 }
 
-func GetServicesWidthProtocolFilter(filter models.Filter) []models.Service {
+func (db ServiceDB) GetAll() ([]models.Service, error) {
 	res := make([]models.Service, 0)
-	var item models.Service
 
-	fmt.Println(filter)
-
-	tsql := fmt.Sprintf(query.Service[NQGetServiceProtocolFilter].Q, filter.ID, filter.DateFrom, filter.DateTo)
+	tsql := fmt.Sprintf(query.Service["list"].Q)
 	rows, err := DB.Query(tsql)
-	fmt.Println(tsql)
 
+	err = db.scan(rows, err, &res, "Service DB", "GetAll")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
-	}
-	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate, &item.ServiceStatusId,
-			&item.IsDeleted, &item.AptitudeStatusId)
-		if err != nil {
-			log.Println(err)
-		} else {
-			res = append(res, item)
-		}
+		return res, err
 	}
 	defer rows.Close()
-	return res
+	return res, nil
 }
 
-func GetService(id string, nameQuery string) []models.Service {
+func (db ServiceDB) Get(id string) (models.Service, error) {
 	res := make([]models.Service, 0)
-	var item models.Service
 
-	tsql := fmt.Sprintf(query.Service[nameQuery].Q, id)
+	tsql := fmt.Sprintf(query.Service["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
+	err = db.scan(rows, err, &res, "Service DB", "Get")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
+		return models.Service{}, err
+	}
+	if len(res) == 0 {
+		return models.Service{}, nil
+	}
+	defer rows.Close()
+	return res[0], nil
+}
+
+func (db ServiceDB) GetAllProtocolFilter(id string, filter models.Filter) ([]models.Service, error) {
+	res := make([]models.Service, 0)
+
+	tsql := fmt.Sprintf(query.Service["getProtocolFilter"].Q, id, filter.DateFrom, filter.DateTo)
+	rows, err := DB.Query(tsql)
+
+	err = db.scan(rows, err, &res, "Service DB", "GetAll protocol")
+	if err != nil {
+		return res, err
+	}
+	defer rows.Close()
+	return res, nil
+}
+
+func (db ServiceDB) scan(rows *sql.Rows, err error, res *[]models.Service, ctx string, situation string) error {
+	var item models.Service
+	if err != nil {
+		checkError(err, situation, ctx, "Reading rows")
+		return err
 	}
 	for rows.Next() {
 		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate, &item.ServiceStatusId,
 			&item.IsDeleted, &item.AptitudeStatusId)
-
 		if err != nil {
-			log.Println(err)
+			checkError(err, situation, ctx, "Scan rows")
+			return err
 		} else if item.IsDeleted != 1 && item.ServiceStatusId == 3 { // verificar servicios no eliminados y culminados
-			res = append(res, item)
+			*res = append(*res, item)
 		}
 	}
-	defer rows.Close()
-	return res
+	return nil
 }
 
-// esta funcion es para la peticion de estadisticas
-func GetServicesFilter(id string, filter models.Filter) []models.Service {
-	res := make([]models.Service, 0)
-	var item models.Service
-
-	tsql := fmt.Sprintf(query.Service[NQGetServiceProtocolFilter].Q, id, filter.DateFrom, filter.DateTo)
-	rows, err := DB.Query(tsql)
-
-	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
-	}
-	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.PersonID, &item.ProtocolID, &item.ServiceDate, &item.ServiceStatusId,
-			&item.IsDeleted, &item.AptitudeStatusId)
-
-		if err != nil {
-			log.Println(err)
-		} else if item.IsDeleted != 1 && item.ServiceStatusId == 3 { // verificar servicios no eliminados y culminados
-			res = append(res, item)
-		}
-	}
-	defer rows.Close()
-	return res
-}

@@ -9,27 +9,30 @@ import (
 	"net/http"
 )
 
+type ServiceController struct {
+	DB db.ServiceDB
+}
 
-func GetServicesFilterDate(w http.ResponseWriter, r *http.Request) {
+func (c ServiceController) GetAllDiseaseFilterDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
-	services := db.GetServicesFilterDate(item)
+	services := c.DB.GetAllDiseaseFilterDate(item)
 
 	_ = json.NewEncoder(w).Encode(services)
 }
 
-func GetServicesPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
+func (c ServiceController) GetAllPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idProtocol"]
 
 	res := make([]models.ServicePatient, 0)
 
-	services := db.GetService(id, db.NQGetServiceProtocol)
+	services, _ := c.DB.GetAllProtocol(id)
 	for _, e := range services {
-		patient := db.GetPerson(e.PersonID)[0]
+		patient, _ := db.PersonDB{}.Get(e.PersonID)
 		item := models.ServicePatient{
 			ID:             e.ID,
 			PersonID:       patient.ID,
@@ -48,7 +51,7 @@ func GetServicesPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func GetServicesPatientsWithOrganization(w http.ResponseWriter, r *http.Request) {
+func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
@@ -59,9 +62,9 @@ func GetServicesPatientsWithOrganization(w http.ResponseWriter, r *http.Request)
 
 	protocols := db.GetProtocolsWidthOrganization(id)
 	for _, e := range protocols {
-		services := db.GetService(e.ID, db.NQGetServiceProtocol)
+		services, _ := c.DB.GetAllProtocol(e.ID)
 		for _, s := range services {
-			patient := db.GetPerson(s.PersonID)[0]
+			patient, _ := db.PersonDB{}.Get(s.PersonID)
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -84,7 +87,7 @@ func GetServicesPatientsWithOrganization(w http.ResponseWriter, r *http.Request)
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func GetServicesPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request){
+func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
@@ -95,9 +98,9 @@ func GetServicesPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Re
 
 	protocols := db.GetProtocolsWidthOrganization(item.ID)
 	for _, e := range protocols {
-		services := db.GetServicesFilter(e.ID, item)
+		services, _ := c.DB.GetAllProtocolFilter(e.ID, item)
 		for _, s := range services {
-			patient := db.GetPerson(s.PersonID)[0]
+			patient, _ := db.PersonDB{}.Get(s.PersonID)
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -120,16 +123,16 @@ func GetServicesPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Re
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func GetServicesPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Request) {
+func (c ServiceController) GetAllPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
 	res := make([]models.ServicePatient, 0)
 
-	services := db.GetServicesWidthProtocolFilter(item)
+	services, _ := c.DB.GetAllProtocolFilter(item.ID, item)
 	for _, e := range services {
-		patient := db.GetPerson(e.PersonID)[0]
+		patient, _ := db.PersonDB{}.Get(e.PersonID)
 		item := models.ServicePatient{
 			ID:               e.ID,
 			ServiceDate:      e.ServiceDate,

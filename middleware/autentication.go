@@ -27,7 +27,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		stateLogin, id = patientBusiness(user)
 
 		if stateLogin == constants.NotFound {
-			stateLogin, id = db.ValidateSystemUserLogin(user.User, user.Password)
+			stateLogin, id = db.UserDB{}.ValidateLogin(user.User, user.Password)
 			isSystemUser = true
 		}
 	} else {
@@ -41,8 +41,8 @@ func Login(w http.ResponseWriter, r *http.Request){
 	case constants.Accept:
 		userResult := models.UserResult{ID: id, Role: getRole(0)}
 		if isSystemUser {
-			systemUser := db.GetSystemUser(id)
-			userResult = models.UserResult{ID: id, Role: getRole(systemUser[0].TypeUser)}
+			systemUser, _ := db.UserDB{}.Get(id)
+			userResult = models.UserResult{ID: id, Role: getRole(systemUser.TypeUser)}
 		}
 		token := GenerateJWT(userResult)
 		result := models.ResponseToken{Token: token}
@@ -83,12 +83,12 @@ func Login(w http.ResponseWriter, r *http.Request){
 // en las dos funciones siguientes inicializamos la bd dependiendo del caso, tambien lo dejamos en el main por si acaso
 func patientBusiness(user models.UserLogin) (constants.State, string){
 	db.DB = helper.Get()
-	return db.ValidatePatientLogin(user.User, user.Password)
+	return db.PersonDB{}.ValidateLogin(user.User, user.Password)
 }
 
 func patientParticular(user models.UserLogin) (constants.State, string){
 	db.DB = helper.GetAux()
-	return db.ValidatePatientLogin(user.User, user.Password)
+	return db.PersonDB{}.ValidateLogin(user.User, user.Password)
 }
 
 func getRole(typeUser int)constants.Role{

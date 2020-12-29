@@ -34,6 +34,7 @@ func RoleInternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// ver la manera de concatenar middlewares con ||
 func RoleInternalAdminOrTempOrExternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token, role := validateToken(w, r, true)
@@ -43,6 +44,7 @@ func RoleInternalAdminOrTempOrExternalAdmin(next http.HandlerFunc) http.HandlerF
 
 		if token.Valid {
 			w.WriteHeader(http.StatusAccepted)
+			fmt.Println(role)
 			if role == constants.Roles.InternalAdmin{
 				next(w, r)
 			} else if role == constants.Roles.Temp || role == constants.Roles.ExternalAdmin {

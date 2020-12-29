@@ -10,7 +10,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
+type PersonController struct {
+	DB db.PersonDB
+}
+
+func (c PersonController) GetAllProtocol(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idProtocol"]
@@ -18,32 +22,32 @@ func GetPatientsWithProtocol(w http.ResponseWriter, r *http.Request) {
 	res := make([]models.Person, 0)
 	var item models.Person
 
-	services := db.GetService(id, db.NQGetServiceProtocol)
+	services, _ := db.ServiceDB{}.GetAllProtocol(id)
 	for _, e := range services {
-		item = db.GetPerson(e.PersonID)[0]
+		item, _ = c.DB.Get(e.PersonID)
 		res = append(res, item)
 	}
 
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func GetPatient(w http.ResponseWriter, r *http.Request) {
+func (c PersonController) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
 
-	items := db.GetPerson(id)
+	item, _ := c.DB.Get(id)
 
-	_ = json.NewEncoder(w).Encode(items[0])
+	_ = json.NewEncoder(w).Encode(item)
 }
 
-func UpdatePasswordPatient(w http.ResponseWriter, r *http.Request) {
+func (c PersonController) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
 	var patient models.Person
 	_ = json.NewDecoder(r.Body).Decode(&patient)
-	_, err := db.UpdatePasswordPatient(id, patient.Password)
+	_, err := c.DB.UpdatePassword(id, patient.Password)
 	if err != nil {
 		log.Println(err)
 		return
@@ -52,17 +56,17 @@ func UpdatePasswordPatient(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(patient)
 }
 
-func GetPatientFromDNI(w http.ResponseWriter, r *http.Request) {
+func (c PersonController) GetFromDNI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	dni, _ := params["dni"]
 
-	item := db.GetPersonFromDNI(dni)
+	item, err := c.DB.GetFromDNI(dni)
+	if err != nil {
+		returnErr(w, err, "obtener por dnni")
+		return
+	}
 
 	_ = json.NewEncoder(w).Encode(item)
 }
 
-func GetPatientFromLogin(user models.UserLogin) []models.Person {
-	items := db.GetPersonFromDNI(user.User)
-	return items
-}

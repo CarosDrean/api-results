@@ -7,23 +7,26 @@ import (
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/utils"
+	"github.com/google/go-cmp/cmp"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"strconv"
 )
 
-type UserController struct {}
+type UserController struct{
+	DB db.UserDB
+}
 
 func (c UserController) GetAllOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	idOrganization, _ := params["id"]
 	res := make([]models.UserPerson, 0)
-	items := db.GetSystemUsers()
+	items, _ := c.DB.GetAll()
 	for _, e := range items {
 		if e.OrganizationID == idOrganization {
-			person := db.GetPerson(e.PersonID)[0]
+			person, _ := db.PersonDB{}.Get(e.PersonID)
 			item := models.UserPerson{
 				ID:             e.ID,
 				PersonID:       e.PersonID,
@@ -46,13 +49,14 @@ func (c UserController) GetAllOrganization(w http.ResponseWriter, r *http.Reques
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
+func (c UserController) GetAllPerson(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	res := make([]models.UserPerson, 0)
-	items := db.GetSystemUsers()
+	items, _ := c.DB.GetAll()
 	for _, e := range items {
-		person := db.GetPerson(e.PersonID)[0]
+		person, _ := db.PersonDB{}.Get(e.PersonID)
+		organization, _ := db.OrganizationDB{}.Get(e.OrganizationID)
 		item := models.UserPerson{
 			ID:             e.ID,
 			PersonID:       e.PersonID,
@@ -60,7 +64,7 @@ func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
 			Password:       e.Password,
 			TypeUser:       e.TypeUser,
 			OrganizationID: e.OrganizationID,
-			Organization:   db.GetOrganization(e.OrganizationID).Name,
+			Organization:   organization.Name,
 			DNI:            person.DNI,
 			Name:           person.Name,
 			FirstLastName:  person.FirstLastName,
@@ -75,23 +79,23 @@ func GetSystemUsersPerson(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func GetSystemUser(w http.ResponseWriter, r *http.Request) {
+func (c UserController) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
 
-	items := db.GetSystemUser(id)
+	item, _ := c.DB.Get(id)
 
-	_ = json.NewEncoder(w).Encode(items[0])
+	_ = json.NewEncoder(w).Encode(item)
 }
 
-func UpdatePasswordSystemUser(w http.ResponseWriter, r *http.Request) {
+func (c UserController) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
 	var item models.SystemUser
 	_ = json.NewDecoder(r.Body).Decode(&item)
-	_, err := db.UpdatePasswordSystemUser(id, item.Password)
+	_, err := c.DB.UpdatePassword(id, item.Password)
 	if err != nil {
 		log.Println(err)
 		return
@@ -100,13 +104,13 @@ func UpdatePasswordSystemUser(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(item)
 }
 
-func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
+func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
-	userDB := db.GetSystemUserFromUserName(item.UserName)
-	if len(userDB) > 0 {
+	userDB, _ := c.DB.GetFromUserName(item.UserName)
+	if userDB.PersonID != "" && userDB.UserName != "" {
 		_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
 		return
 	}
@@ -120,7 +124,7 @@ func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
 		OrganizationID: item.OrganizationID,
 		IsDelete:       0,
 	}
-	idUser, err := db.CreateSystemUser(user)
+	idUser, err := c.DB.Create(user)
 	checkError(err, "Created User")
 
 	if user.TypeUser != 1 {
@@ -128,8 +132,8 @@ func CreateSystemUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mail := models.Mail{
-		From: item.Mail,
-		User: item.UserName,
+		From:     item.Mail,
+		User:     item.UserName,
 		Password: item.Password,
 	}
 	utils.SendMail(mail, constants.RouteNewSystemUser)
@@ -152,28 +156,34 @@ func createProtocolSystemUser(idUser int64, organizationId string) {
 func validatePerson(item models.UserPerson) string {
 	personID := item.PersonID
 	var err error
+	newPerson := models.Person{
+		DNI:            item.DNI,
+		Password:       item.Password,
+		Name:           item.Name,
+		FirstLastName:  item.FirstLastName,
+		SecondLastName: item.SecondLastName,
+		Mail:           item.Mail,
+		Sex:            item.Sex,
+		Birthday:       item.Birthday,
+		IsDeleted:      0,
+	}
 	if item.PersonID == "" {
-		person := db.GetPersonFromDNI(item.DNI)
-		if len(person) == 0 {
-			newPerson := models.Person{
-				DNI:            item.DNI,
-				Password:       "",
-				Name:           item.Name,
-				FirstLastName:  item.FirstLastName,
-				SecondLastName: item.SecondLastName,
-				Mail:           item.Mail,
-				Sex:            item.Sex,
-				Birthday:       item.Birthday,
-				IsDeleted:      0,
-			}
-			personID, err = db.CreatePerson(newPerson)
+		person, _ := db.PersonDB{}.GetFromDNI(item.DNI)
+		if person.Name == "" && person.DNI == "" {
+			personID, err = db.PersonDB{}.Create(newPerson)
 			checkError(err, "Created Person")
+		}
+	} else {
+		person, _ := db.PersonDB{}.Get(personID)
+		if !cmp.Equal(person, newPerson) {
+			fmt.Println("actualizando")
+			_, _ = db.PersonDB{}.Update(personID, newPerson)
 		}
 	}
 	return personID
 }
 
-func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
+func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
@@ -182,15 +192,15 @@ func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
 	item.ID, _ = strconv.ParseInt(id, 10, 64)
 
 	personId := validatePerson(item)
-	userDB := db.GetSystemUser(strconv.FormatInt(item.ID, 10))
-	if userDB[0].UserName != item.UserName {
-		userDBo := db.GetSystemUserFromUserName(item.UserName)
-		if len(userDBo) > 0 {
+	userDB, _ := c.DB.Get(strconv.FormatInt(item.ID, 10))
+	if userDB.UserName != item.UserName {
+		userDBo, _ := c.DB.GetFromUserName(item.UserName)
+		if userDBo.UserName != "" && userDBo.PersonID != ""{
 			_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
 			return
 		}
 	}
-	if userDB[0].OrganizationID != item.OrganizationID {
+	if userDB.OrganizationID != item.OrganizationID {
 		createProtocolSystemUser(item.ID, item.OrganizationID)
 	}
 
@@ -203,18 +213,18 @@ func UpdateSystemUser(w http.ResponseWriter, r *http.Request) {
 		OrganizationID: item.OrganizationID,
 		IsDelete:       0,
 	}
-	result, err := db.UpdateSystemUser(user)
+	result, err := c.DB.Update(user)
 	if err != nil {
 		log.Println(err)
 	}
 	_ = json.NewEncoder(w).Encode(result)
 }
 
-func DeleteSystemUser(w http.ResponseWriter, r *http.Request) {
+func (c UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
-	result, err := db.DeleteSystemUser(id)
+	result, err := c.DB.Delete(id)
 	if err != nil {
 		log.Println(err)
 	}

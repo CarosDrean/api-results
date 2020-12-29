@@ -2,14 +2,16 @@ package routes
 
 import (
 	service "github.com/CarosDrean/api-results.git/controller"
+	"github.com/CarosDrean/api-results.git/db"
 	mid "github.com/CarosDrean/api-results.git/middleware"
 	"github.com/gorilla/mux"
 )
 
 func serviceRoutes(s *mux.Router) {
-	s.HandleFunc("/all/{idProtocol}", mid.CheckSecurity(service.GetServicesPatientsWithProtocol)).Methods("GET")
-	s.HandleFunc("/all-organization/{id}", mid.CheckSecurity(service.GetServicesPatientsWithOrganization)).Methods("GET")
-	s.HandleFunc("/all-organization/", mid.CheckSecurity(service.GetServicesPatientsWithOrganizationFilter)).Methods("POST")
-	s.HandleFunc("/filter/", mid.CheckSecurity(service.GetServicesPatientsWithProtocolFilter)).Methods("POST")
-	s.HandleFunc("/filter-date/", mid.RoleInternalAdmin(service.GetServicesFilterDate)).Methods("POST")
+	ctrl := service.ServiceController{DB: db.ServiceDB{}}
+	s.HandleFunc("/all/{idProtocol}", mid.CheckSecurity(ctrl.GetAllPatientsWithProtocol)).Methods("GET")
+	s.HandleFunc("/all-organization/{id}", mid.CheckSecurity(ctrl.GetAllPatientsWithOrganization)).Methods("GET")
+	s.HandleFunc("/all-organization/", mid.CheckSecurity(ctrl.GetAllPatientsWithOrganizationFilter)).Methods("POST")
+	s.HandleFunc("/filter/", mid.CheckSecurity(ctrl.GetAllPatientsWithProtocolFilter)).Methods("POST")
+	s.HandleFunc("/filter-date/", mid.RoleInternalAdmin(ctrl.GetAllDiseaseFilterDate)).Methods("POST")
 }

@@ -11,74 +11,46 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 	"github.com/CarosDrean/api-results.git/utils"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"strconv"
 )
 
-func GetSystemUsers() []models.SystemUser {
+type UserDB struct {}
+
+func (db UserDB) GetAll() ([]models.SystemUser, error) {
 	res := make([]models.SystemUser, 0)
-	var item models.SystemUser
 
 	tsql := fmt.Sprintf(query.SystemUser["list"].Q)
 	rows, err := DB.Query(tsql)
 
+	err = db.scan(rows, err, &res, "User DB", "Get")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
-	}
-	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
-		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(strconv.FormatInt(item.ID, 10))
-		if len(protocolSystemUsers) > 0 {
-			protocol := GetProtocol(protocolSystemUsers[0].ProtocolID)
-			item.OrganizationID = GetOrganization(protocol.OrganizationID).ID
-		}
-
-		if err != nil {
-			log.Println(err)
-			return res
-		} else if item.IsDelete != 1{
-			res = append(res, item)
-		}
+		return res, err
 	}
 	defer rows.Close()
-	return res
+	return res, nil
 }
 
-func GetSystemUser(id string) []models.SystemUser {
+func (db UserDB) Get(id string) (models.SystemUser, error) {
 	res := make([]models.SystemUser, 0)
-	var item models.SystemUser
 
 	tsql := fmt.Sprintf(query.SystemUser["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
+	err = db.scan(rows, err, &res, "User DB", "Get")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
+		return models.SystemUser{}, err
 	}
-	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
-		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(strconv.FormatInt(item.ID, 10))
-		if len(protocolSystemUsers) > 0 {
-			protocol := GetProtocol(protocolSystemUsers[0].ProtocolID)
-			item.OrganizationID = GetOrganization(protocol.OrganizationID).ID
-		}
-
-		if err != nil {
-			log.Println(err)
-			return res
-		} else{
-			res = append(res, item)
-		}
+	if len(res) == 0 {
+		return models.SystemUser{}, nil
 	}
 	defer rows.Close()
-	return res
+	return res[0], nil
 }
 
-func CreateSystemUser(item models.SystemUser) (int64, error) {
+func (db UserDB) Create(item models.SystemUser) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.SystemUser["insert"].Q)
-	sequentialID := GetNextSequentialId(constants.IdNode, constants.IdSystemUserTable)
+	sequentialID := SequentialDB{}.NextSequentialId(constants.IdNode, constants.IdSystemUserTable)
 	item.Password = encryptMD5(item.Password)
 	item.ID = int64(sequentialID)
 
@@ -97,10 +69,10 @@ func CreateSystemUser(item models.SystemUser) (int64, error) {
 	return int64(sequentialID), nil
 }
 
-func UpdateSystemUser(item models.SystemUser) (int64, error) {
+func (db UserDB) Update(item models.SystemUser) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.SystemUser["update"].Q)
-	user := GetSystemUser(strconv.FormatInt(item.ID, 10))[0]
+	user, _ := db.Get(strconv.FormatInt(item.ID, 10))
 	if user.Password != item.Password {
 		item.Password = encryptMD5(item.Password)
 	}
@@ -120,7 +92,7 @@ func UpdateSystemUser(item models.SystemUser) (int64, error) {
 	return result.RowsAffected()
 }
 
-func DeleteSystemUser(id string) (int64, error) {
+func (db UserDB) Delete(id string) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.SystemUser["delete"].Q)
 	result, err := DB.ExecContext(
@@ -134,62 +106,56 @@ func DeleteSystemUser(id string) (int64, error) {
 	return result.RowsAffected()
 }
 
-func GetSystemUserFromUserName(userName string) []models.SystemUser {
+func (db UserDB) GetFromUserName(userName string) (models.SystemUser, error) {
 	res := make([]models.SystemUser, 0)
-	var item models.SystemUser
-
 	tsql := fmt.Sprintf(query.SystemUser["getUserName"].Q, userName)
 	rows, err := DB.Query(tsql)
 
+	err = db.scan(rows, err, &res, "User DB", "Get")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
+		return models.SystemUser{}, err
 	}
-	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
-		if err != nil {
-			log.Println(err)
-			return res
-		} else if item.IsDelete != 1{
-			fmt.Println(item)
-			res = append(res, item)
-		}
+	if len(res) == 0 {
+		return models.SystemUser{}, nil
 	}
 	defer rows.Close()
-	return res
+	return res[0], nil
 }
 
-func ValidateSystemUserLogin(user string, password string) (constants.State, string){
-	items := GetSystemUserFromUserName(user)
-	fmt.Println(items[0])
-	if len(items) > 0 {
-		if validatePasswordSystemUserForReset(password, items[0]){
-			person := GetPerson(items[0].PersonID)
-			if len(person[0].Mail) != 0{
-				newPassword := utils.CreateNewPassword()
-				mail := models.Mail{
-					From: person[0].Mail,
-					User: user,
-					Password: newPassword,
-				}
-				_, err := UpdatePasswordSystemUser(strconv.FormatInt(items[0].ID, 10), newPassword)
-				if err != nil {
-					return constants.ErrorUP, ""
-				}
-				utils.SendMail(mail, constants.RouteNewPassword)
-				return constants.PasswordUpdate, ""
-			}
-			return constants.NotFoundMail, ""
-		}
-		if comparePassword(items[0].Password, password) {
-			return constants.Accept, strconv.FormatInt(items[0].ID, 10)
-		}
-		return constants.InvalidCredentials, ""
+func (db UserDB) ValidateLogin(user string, password string) (constants.State, string){
+	item, err := db.GetFromUserName(user)
+	if err != nil {
+		return constants.NotFound, ""
 	}
-	return constants.NotFound, ""
+	if item.UserName == "" && item.PersonID == "" {
+		return constants.NotFound, ""
+	}
+	if validatePasswordSystemUserForReset(password, item){
+		person, _ := PersonDB{}.Get(item.PersonID)
+		if len(person.Mail) != 0{
+			newPassword := utils.CreateNewPassword()
+			mail := models.Mail{
+				From: person.Mail,
+				User: user,
+				Password: newPassword,
+			}
+			_, err := db.UpdatePassword(strconv.FormatInt(item.ID, 10), newPassword)
+			if err != nil {
+				return constants.ErrorUP, ""
+			}
+			_ = utils.SendMail(mail, constants.RouteNewPassword)
+			return constants.PasswordUpdate, ""
+		}
+		return constants.NotFoundMail, ""
+	}
+	if comparePassword(item.Password, password) {
+		return constants.Accept, strconv.FormatInt(item.ID, 10)
+	}
+	return constants.InvalidCredentials, ""
+
 }
 
-func UpdatePasswordSystemUser(id string, password string) (int64, error) {
+func (db UserDB) UpdatePassword(id string, password string) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.SystemUser["updatePassword"].Q, id)
 
@@ -241,5 +207,29 @@ func encrypt(password string) string {
 		return ""
 	}
 	return string(hashedPassword)
+}
+
+func (db UserDB) scan(rows *sql.Rows, err error, res *[]models.SystemUser, ctx string, situation string) error {
+	var item models.SystemUser
+	if err != nil {
+		checkError(err, situation, ctx, "Reading rows")
+		return err
+	}
+	for rows.Next() {
+		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
+		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(strconv.FormatInt(item.ID, 10))
+		if len(protocolSystemUsers) > 0 {
+			protocol := GetProtocol(protocolSystemUsers[0].ProtocolID)
+			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
+			item.OrganizationID = organization.ID
+		}
+		if err != nil {
+			checkError(err, situation, ctx, "Scan rows")
+			return err
+		} else if item.IsDelete != 1{
+			*res = append(*res, item)
+		}
+	}
+	return nil
 }
 

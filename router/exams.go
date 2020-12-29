@@ -7,5 +7,6 @@ import (
 )
 
 func examsRoutes(s *mux.Router) {
-	s.HandleFunc("/all/{id}", mid.CheckSecurity(exam.GetExams)).Methods("GET")
+	ctrl := exam.ExamController{}
+	s.HandleFunc("/all/{id}", mid.CheckSecurity(ctrl.GetAllPerson)).Methods("GET")
 }

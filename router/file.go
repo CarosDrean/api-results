@@ -7,5 +7,6 @@ import (
 )
 
 func fileRoutes(s *mux.Router) {
-	s.HandleFunc("/", mid.CheckSecurity(file.DownloadPDF)).Methods("POST")
+	ctrl := file.FileController{}
+	s.HandleFunc("/", mid.CheckSecurity(ctrl.DownloadPDF)).Methods("POST")
 }

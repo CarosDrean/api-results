@@ -60,8 +60,9 @@ func CreateProtocolSystemUser(item models.ProtocolSystemUser) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.ProtocolSystemUser["insert"].Q)
 
-	sequentialID := GetNextSequentialId(constants.IdNode, constants.IdProtocolSystemUserTable)
-	newId := GetNewID(constants.IdNode, sequentialID, constants.PrefixProtocolSystemUser)
+	sqdb := SequentialDB{}
+	sequentialID := sqdb.NextSequentialId(constants.IdNode, constants.IdProtocolSystemUserTable)
+	newId := sqdb.NewID(constants.IdNode, sequentialID, constants.PrefixProtocolSystemUser)
 	item.ID = newId
 
 	result, err := DB.ExecContext(

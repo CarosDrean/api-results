@@ -43,7 +43,7 @@ func api(){
 
 	r.HandleFunc("/", indexRouter)
 	r.HandleFunc("/api/login", middleware.Login)
-	r.HandleFunc("/file", controller.DownloadPDF)
+	r.HandleFunc("/file", controller.FileController{}.DownloadPDF)
 	// r.HandleFunc("/validate", middleware.ValidateToken)
 	s := r.PathPrefix("/api").Subrouter()
 	routes.Routes(s)

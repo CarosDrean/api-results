@@ -13,6 +13,6 @@ var Person = models.QueryDB{
 	"getDNI":         {Q: "select " + fieldString(person.Fields) + " from " + person.Name + " where " + person.Fields[1] + " = '%s';"},
 	"list":           {Q: "select " + fieldString(person.Fields) + " from " + person.Name + ";"},
 	"insert":         {Q: "insert into " + person.Name + " (" + fieldString(person.Fields) + ") values (" + valuesStringNoID(person.Fields) + ");"},
-	"update":         {Q: "update " + person.Name + " set " + updatesString(person.Fields) + " where " + person.Fields[0] + " = '%s';"},
+	"update":         {Q: "update " + person.Name + " set " + updatesString(person.Fields) + " where " + person.Fields[0] + " = @ID;"},
 	"updatePassword": {Q: "update " + person.Name + " set v_Password = @Password where " + person.Fields[0] + " = '%s';"},
 }

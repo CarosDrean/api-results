@@ -29,12 +29,15 @@ func (db OrganizationDB) Get(id string) (models.Organization, error) {
 	tsql := fmt.Sprintf(query.Organization["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
-	err = db.scan(rows, err, &res, "Organization DB", "GetAll")
+	err = db.scan(rows, err, &res, "Organization DB", "Get")
 	if err != nil {
 		return models.Organization{}, err
 	}
+	if len(res) == 0 {
+		return models.Organization{}, nil
+	}
 	defer rows.Close()
-	return res[0], err
+	return res[0], nil
 }
 
 func (db OrganizationDB) scan(rows *sql.Rows, err error, res *[]models.Organization, ctx string, situation string) error {
