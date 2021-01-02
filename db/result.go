@@ -6,14 +6,16 @@ import (
 	"log"
 )
 
-func GetResultService(idService string, idExam string, idResult string) string {
+type ResultDB struct {}
+
+func (db ResultDB) GetService(idService string, idExam string, idResult string) (string, error) {
 	item := ""
 	tsql := fmt.Sprintf(query.ResultService["get"].Q, idService, idExam, idResult)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
 		fmt.Println("Error reading rows: " + err.Error())
-		return item
+		return item, err
 	}
 	for rows.Next() {
 		err := rows.Scan(&item)
@@ -22,5 +24,5 @@ func GetResultService(idService string, idExam string, idResult string) string {
 		}
 	}
 	defer rows.Close()
-	return item
+	return item, nil
 }

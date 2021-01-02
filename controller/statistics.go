@@ -14,7 +14,12 @@ func (c StatisticController) GetServiceDiseaseByProtocol(w http.ResponseWriter, 
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
-	items := db.GetStatisticsServiceDiseaseByProtocol(item)
+	items, err := db.StatisticDB{}.GetServiceDiseaseByProtocol(item)
+	if err != nil {
+		returnErr(w, err, "obtener statistic")
+		return
+	}
+
 
 	_ = json.NewEncoder(w).Encode(items)
 }

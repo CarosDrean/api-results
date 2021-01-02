@@ -8,7 +8,9 @@ import (
 	"net/http"
 )
 
-type ProtocolSystemUserController struct {}
+type ProtocolSystemUserController struct {
+	DB db.ProtocolSystemUserDB
+}
 
 func (c ProtocolSystemUserController) GetSystemUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -18,9 +20,13 @@ func (c ProtocolSystemUserController) GetSystemUser(w http.ResponseWriter, r *ht
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
-	protocolsSystemUser := db.GetProtocolSystemUserWidthSystemUserID(id)
+	protocolsSystemUser, err := c.DB.GetAllSystemUserID(id)
+	if err != nil {
+		returnErr(w, err, "obtener todos")
+		return
+	}
 	for _, e := range protocolsSystemUser {
-		item = db.ProtocolDB{}.Get(e.ProtocolID)
+		item, _ = db.ProtocolDB{}.Get(e.ProtocolID)
 		res = append(res, item)
 	}
 

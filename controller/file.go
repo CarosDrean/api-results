@@ -55,7 +55,7 @@ func (c FileController) getFileNameReportMedicoAndCertificate(idService string, 
 	fmt.Println(idService)
 	person, _ := db.PersonDB{}.GetFromDNI(dni)
 	service, _ := db.ServiceDB{}.Get(idService)
-	protocol := db.ProtocolDB{}.Get(service.ProtocolID)
+	protocol, _ := db.ProtocolDB{}.Get(service.ProtocolID)
 	organization, _ := db.OrganizationDB{}.Get(protocol.OrganizationID)
 
 	organizationName := organization.Name

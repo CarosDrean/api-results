@@ -7,7 +7,9 @@ import (
 	"log"
 )
 
-func GetStatisticsServiceDiseaseByProtocol(filter models.Filter)[]models.ServicePatientDiseases {
+type StatisticDB struct {}
+
+func (db StatisticDB) GetServiceDiseaseByProtocol(filter models.Filter)([]models.ServicePatientDiseases, error) {
 	res := make([]models.ServicePatientDiseases, 0)
 	var item models.ServicePatientDiseases
 
@@ -16,7 +18,7 @@ func GetStatisticsServiceDiseaseByProtocol(filter models.Filter)[]models.Service
 
 	if err != nil {
 		fmt.Println("Error reading rows: " + err.Error())
-		return res
+		return res, err
 	}
 	for rows.Next() {
 		err := rows.Scan(&item.ID, &item.ServiceDate, &item.PersonID, &item.ProtocolID, &item.AptitudeStatusId,
@@ -29,5 +31,5 @@ func GetStatisticsServiceDiseaseByProtocol(filter models.Filter)[]models.Service
 		}
 	}
 	defer rows.Close()
-	return res
+	return res, nil
 }
