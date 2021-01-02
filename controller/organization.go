@@ -42,11 +42,12 @@ func (c OrganizationController) Get(w http.ResponseWriter, r *http.Request) {
 
 func SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var item models.OrganizationForMail
+	var item models.OrganizationForMailCreateUser
 	_ = json.NewDecoder(r.Body).Decode(&item)
-	claim := models.External{
-		OrganizationID: item.ID,
-		Role:           constants.Roles.Temp,
+	claim := models.ClaimResult{
+		ID:   item.ID,
+		Role: constants.Roles.Temp,
+		Data: item.TypeUser,
 	}
 
 	token := mid.GenerateJWTExternal(claim)

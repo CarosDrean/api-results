@@ -6,16 +6,12 @@ import (
 )
 
 type Claim struct {
-	UserResult `json:"user"`
+	ClaimResult `json:"result"`
 	jwt.StandardClaims
 }
 
-type ClaimExternal struct {
-	External `json:"external"`
-	jwt.StandardClaims
-}
-
-type External struct {
-	OrganizationID string         `json:"organizationId"`
-	Role           constants.Role `json:"role"`
+type ClaimResult struct {
+	ID   string         `json:"_id"`
+	Role constants.Role `json:"role"`
+	Data string         `json:"data"`
 }

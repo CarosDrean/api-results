@@ -8,7 +8,8 @@ type Organization struct {
 	MailMedic   string `json:"mailMedic"`
 }
 
-type OrganizationForMail struct {
-	ID          string `json:"_id"`
-	Mail        string `json:"mail"`
+type OrganizationForMailCreateUser struct {
+	ID       string `json:"_id"`
+	Mail     string `json:"mail"`
+	TypeUser string `json:"typeUser"`
 }

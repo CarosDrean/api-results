@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
@@ -103,7 +104,11 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	personID := c.validateAndCreateOrUpdatePerson(item)
+	personID, err := c.validateAndCreateOrUpdatePerson(item)
+	if err != nil {
+		_, _ = fmt.Fprintf(w, "¡Error!")
+		return
+	}
 	user := models.SystemUser{
 		PersonID:       personID,
 		UserName:       item.UserName,
@@ -133,14 +138,8 @@ func (c UserController) permitCreateUser(idOrganization string) bool {
 	if idOrganization == "" {
 		return true
 	}
-	res := make([]models.UserPerson, 0)
 	users, _ := c.usersOrganization(idOrganization)
-	for _, e := range users{
-		if e.TypeUser != constants.CodeRoles.InternalAdmin {
-			res = append(res, e)
-		}
-	}
-	if len(res) >= constants.MaxUsersOrganization {
+	if len(users) >= constants.MaxUsersOrganization {
 	 	return false
 	}
 	return true
@@ -153,7 +152,7 @@ func (c UserController) usersOrganization(idOrganization string) ([]models.UserP
 		return res, err
 	}
 	for _, e := range items {
-		if e.OrganizationID == idOrganization {
+		if e.OrganizationID == idOrganization && e.TypeUser != constants.CodeRoles.InternalAdmin {
 			person, _ := db.PersonDB{}.Get(e.PersonID)
 			item := models.UserPerson{
 				ID:             e.ID,
@@ -208,7 +207,7 @@ func (c UserController) validateAndCreateOrUpdateMedic(item models.UserPerson) {
 }
 
 // verifica si exste la person y de no ser el caso crea y devuelve el ID
-func (c UserController) validateAndCreateOrUpdatePerson(item models.UserPerson) string {
+func (c UserController) validateAndCreateOrUpdatePerson(item models.UserPerson) (string, error) {
 	personID := item.PersonID
 	var err error
 	newPerson := models.Person{
@@ -240,10 +239,13 @@ func (c UserController) validateAndCreateOrUpdatePerson(item models.UserPerson) 
 	}
 
 	if item.TypeUser == constants.CodeRoles.ExternalMedic || item.TypeUser == constants.CodeRoles.ExternalMedicNoData {
+		if item.CodeProfessional == "" {
+			return personID, errors.New("code professional invalid")
+		}
 		c.validateAndCreateOrUpdateMedic(item)
 	}
 
-	return personID
+	return personID, nil
 }
 
 func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
@@ -254,7 +256,11 @@ func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&item)
 	item.ID, _ = strconv.ParseInt(id, 10, 64)
 
-	personId := c.validateAndCreateOrUpdatePerson(item)
+	personId, err := c.validateAndCreateOrUpdatePerson(item)
+	if err != nil {
+		_, _ = fmt.Fprintf(w, "¡Error!")
+		return
+	}
 	userDB, _ := c.DB.Get(strconv.FormatInt(item.ID, 10))
 	if userDB.UserName != item.UserName {
 		userDBo, _ := c.DB.GetFromUserName(item.UserName)

@@ -39,10 +39,10 @@ func Login(w http.ResponseWriter, r *http.Request){
 
 	switch stateLogin {
 	case constants.Accept:
-		userResult := models.UserResult{ID: id, Role: getRole(0)}
+		userResult := models.ClaimResult{ID: id, Role: getRole(0)}
 		if isSystemUser {
 			systemUser, _ := db.UserDB{}.Get(id)
-			userResult = models.UserResult{ID: id, Role: getRole(systemUser.TypeUser)}
+			userResult = models.ClaimResult{ID: id, Role: getRole(systemUser.TypeUser)}
 		}
 		token := GenerateJWT(userResult)
 		result := models.ResponseToken{Token: token}

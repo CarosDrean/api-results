@@ -39,11 +39,11 @@ func init() {
 	}
 }
 
-func GenerateJWTExternal(item models.External) string {
-	claims := models.ClaimExternal{
-		External: item,
+func GenerateJWTExternal(item models.ClaimResult) string {
+	claims := models.Claim{
+		ClaimResult: item,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24 * 5).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 24 * 3).Unix(),
 			Issuer:    "External",
 		},
 	}
@@ -56,9 +56,9 @@ func GenerateJWTExternal(item models.External) string {
 	return result
 }
 
-func GenerateJWT(userResult models.UserResult) string {
+func GenerateJWT(userResult models.ClaimResult) string {
 	claims := models.Claim{
-		UserResult: userResult,
+		ClaimResult: userResult,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 			Issuer:    "Admin",
@@ -110,24 +110,14 @@ func ValidateToken(w http.ResponseWriter, r *http.Request) string {
 	return "Error"
 }
 
-func validateToken(w http.ResponseWriter, r *http.Request, temp bool) (*jwt.Token, constants.Role) {
+func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constants.Role) {
 	r.Header.Add("Authorization", r.Header.Get("x-token"))
-	var err error
-	var token  *jwt.Token
-	var role constants.Role
-	if !temp {
-		var claim models.Claim
-		token, err = request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &claim, func(token *jwt.Token) (interface{}, error) {
-			return publicKey, nil
-		})
-		role = claim.Role
-	} else {
-		var claim models.ClaimExternal
-		token, err = request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &claim, func(token *jwt.Token) (interface{}, error) {
-			return publicKey, nil
-		})
-		role = claim.Role
-	}
+
+	var claim models.Claim
+	token, err := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &claim, func(token *jwt.Token) (interface{}, error) {
+		return publicKey, nil
+	})
+	role := claim.Role
 
 	if err != nil {
 		switch err.(type) {
@@ -154,7 +144,7 @@ func validateToken(w http.ResponseWriter, r *http.Request, temp bool) (*jwt.Toke
 
 func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token, _ := validateToken(w, r, false)
+		token, _ := validateToken(w, r)
 		if token == nil {
 			return
 		}
