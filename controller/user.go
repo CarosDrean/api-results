@@ -106,7 +106,7 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 
 	personID, err := c.validateAndCreateOrUpdatePerson(item)
 	if err != nil {
-		_, _ = fmt.Fprintf(w, "¡Error!")
+		returnErr(w, err, "create")
 		return
 	}
 	user := models.SystemUser{
@@ -239,6 +239,7 @@ func (c UserController) validateAndCreateOrUpdatePerson(item models.UserPerson) 
 	}
 
 	if item.TypeUser == constants.CodeRoles.ExternalMedic || item.TypeUser == constants.CodeRoles.ExternalMedicNoData {
+		fmt.Println(item.CodeProfessional)
 		if item.CodeProfessional == "" {
 			return personID, errors.New("code professional invalid")
 		}
@@ -258,7 +259,7 @@ func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	personId, err := c.validateAndCreateOrUpdatePerson(item)
 	if err != nil {
-		_, _ = fmt.Fprintf(w, "¡Error!")
+		returnErr(w, err, "update")
 		return
 	}
 	userDB, _ := c.DB.Get(strconv.FormatInt(item.ID, 10))

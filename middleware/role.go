@@ -43,7 +43,6 @@ func RoleInternalAdminOrTemp(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		if token.Valid {
-			fmt.Println(role)
 			if role == constants.Roles.InternalAdmin || role == constants.Roles.Temp{
 				w.WriteHeader(http.StatusAccepted)
 				next(w, r)
