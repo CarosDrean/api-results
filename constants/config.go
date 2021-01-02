@@ -20,4 +20,6 @@ const (
 
 	PrefixPerson             = "PP"
 	PrefixProtocolSystemUser = "PU"
+
+	MaxUsersOrganization = 4
 )

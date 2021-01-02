@@ -12,9 +12,10 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
-type UserController struct{
+type UserController struct {
 	DB db.UserDB
 }
 
@@ -22,28 +23,10 @@ func (c UserController) GetAllOrganization(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	idOrganization, _ := params["id"]
-	res := make([]models.UserPerson, 0)
-	items, _ := c.DB.GetAll()
-	for _, e := range items {
-		if e.OrganizationID == idOrganization {
-			person, _ := db.PersonDB{}.Get(e.PersonID)
-			item := models.UserPerson{
-				ID:             e.ID,
-				PersonID:       e.PersonID,
-				UserName:       e.UserName,
-				Password:       e.Password,
-				TypeUser:       e.TypeUser,
-				OrganizationID: e.OrganizationID,
-				DNI:            person.DNI,
-				Name:           person.Name,
-				FirstLastName:  person.FirstLastName,
-				SecondLastName: person.SecondLastName,
-				Mail:           person.Mail,
-				Sex:            person.Sex,
-				Birthday:       person.Birthday,
-			}
-			res = append(res, item)
-		}
+	res, err := c.usersOrganization(idOrganization)
+	if err != nil {
+		returnErr(w, err, "obtener todos user")
+		return
 	}
 
 	_ = json.NewEncoder(w).Encode(res)
@@ -109,13 +92,18 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
+	if !c.permitCreateUser(item.OrganizationID) {
+		_, _ = fmt.Fprintf(w, "¡Ya tiene el maximo de usuarios creados!")
+		return
+	}
+
 	userDB, _ := c.DB.GetFromUserName(item.UserName)
 	if userDB.PersonID != "" && userDB.UserName != "" {
 		_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
 		return
 	}
 
-	personID := validatePerson(item)
+	personID := c.validateAndCreateOrUpdatePerson(item)
 	user := models.SystemUser{
 		PersonID:       personID,
 		UserName:       item.UserName,
@@ -141,6 +129,53 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(idUser)
 }
 
+func (c UserController) permitCreateUser(idOrganization string) bool {
+	if idOrganization == "" {
+		return true
+	}
+	res := make([]models.UserPerson, 0)
+	users, _ := c.usersOrganization(idOrganization)
+	for _, e := range users{
+		if e.TypeUser != constants.CodeRoles.InternalAdmin {
+			res = append(res, e)
+		}
+	}
+	if len(res) >= constants.MaxUsersOrganization {
+	 	return false
+	}
+	return true
+}
+
+func (c UserController) usersOrganization(idOrganization string) ([]models.UserPerson, error) {
+	res := make([]models.UserPerson, 0)
+	items, err := c.DB.GetAll()
+	if err != nil {
+		return res, err
+	}
+	for _, e := range items {
+		if e.OrganizationID == idOrganization {
+			person, _ := db.PersonDB{}.Get(e.PersonID)
+			item := models.UserPerson{
+				ID:             e.ID,
+				PersonID:       e.PersonID,
+				UserName:       e.UserName,
+				Password:       e.Password,
+				TypeUser:       e.TypeUser,
+				OrganizationID: e.OrganizationID,
+				DNI:            person.DNI,
+				Name:           person.Name,
+				FirstLastName:  person.FirstLastName,
+				SecondLastName: person.SecondLastName,
+				Mail:           person.Mail,
+				Sex:            person.Sex,
+				Birthday:       person.Birthday,
+			}
+			res = append(res, item)
+		}
+	}
+	return res, nil
+}
+
 func createProtocolSystemUser(idUser int64, organizationId string) {
 	// hay que obtener el id del protocolo deacuerdo a la empresa
 	protocols := db.GetProtocolsWidthOrganization(organizationId)
@@ -152,8 +187,28 @@ func createProtocolSystemUser(idUser int64, organizationId string) {
 	checkError(err, "Created ProtocolSystemUser")
 }
 
+func (c UserController) validateAndCreateOrUpdateMedic(item models.UserPerson) {
+	personID := item.PersonID
+	professional, _ := db.ProfessionalDB{}.Get(personID)
+	newProfessional := models.Professional{
+		PersonID:     personID,
+		ProfessionID: 32, // es medico
+		Code:         item.CodeProfessional,
+		IsDeleted:    0,
+	}
+	if professional.Code == "" && professional.ProfessionID == 0 {
+		_, err := db.ProfessionalDB{}.Create(newProfessional)
+		checkError(err, "Created Professional")
+	} else {
+		if !cmp.Equal(professional, newProfessional) {
+			_, err := db.ProfessionalDB{}.Update(personID, newProfessional)
+			checkError(err, "Updated Professional")
+		}
+	}
+}
+
 // verifica si exste la person y de no ser el caso crea y devuelve el ID
-func validatePerson(item models.UserPerson) string {
+func (c UserController) validateAndCreateOrUpdatePerson(item models.UserPerson) string {
 	personID := item.PersonID
 	var err error
 	newPerson := models.Person{
@@ -175,11 +230,19 @@ func validatePerson(item models.UserPerson) string {
 		}
 	} else {
 		person, _ := db.PersonDB{}.Get(personID)
-		if !cmp.Equal(person, newPerson) {
+		personCompare := newPerson
+		date, _ := time.Parse(time.RFC3339, personCompare.Birthday+"T05:00:00Z")
+		personCompare.Birthday = date.String()
+		if !cmp.Equal(person, personCompare) {
 			fmt.Println("actualizando")
 			_, _ = db.PersonDB{}.Update(personID, newPerson)
 		}
 	}
+
+	if item.TypeUser == constants.CodeRoles.ExternalMedic || item.TypeUser == constants.CodeRoles.ExternalMedicNoData {
+		c.validateAndCreateOrUpdateMedic(item)
+	}
+
 	return personID
 }
 
@@ -191,11 +254,11 @@ func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&item)
 	item.ID, _ = strconv.ParseInt(id, 10, 64)
 
-	personId := validatePerson(item)
+	personId := c.validateAndCreateOrUpdatePerson(item)
 	userDB, _ := c.DB.Get(strconv.FormatInt(item.ID, 10))
 	if userDB.UserName != item.UserName {
 		userDBo, _ := c.DB.GetFromUserName(item.UserName)
-		if userDBo.UserName != "" && userDBo.PersonID != ""{
+		if userDBo.UserName != "" && userDBo.PersonID != "" {
 			_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
 			return
 		}
