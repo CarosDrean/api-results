@@ -7,7 +7,9 @@ import (
 	"net/http"
 )
 
-func GetStatisticsServiceDiseaseByProtocol(w http.ResponseWriter, r *http.Request) {
+type StatisticController struct {}
+
+func (c StatisticController) GetServiceDiseaseByProtocol(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)

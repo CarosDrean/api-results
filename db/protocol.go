@@ -8,7 +8,9 @@ import (
 	"strings"
 )
 
-func GetProtocolsWidthLocation(id string) []models.Protocol {
+type ProtocolDB struct {}
+
+func (db ProtocolDB) GetAllLocation(id string) []models.Protocol {
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
@@ -26,7 +28,7 @@ func GetProtocolsWidthLocation(id string) []models.Protocol {
 			return res
 		} else if item.IsDeleted != 1 {
 			// aqui quitar el nombre de la empresa del protocolo
-			item.Name = delBusinessName(item.Name)
+			item.Name = db.delBusinessName(item.Name)
 			res = append(res, item)
 		}
 	}
@@ -34,7 +36,7 @@ func GetProtocolsWidthLocation(id string) []models.Protocol {
 	return res
 }
 
-func GetProtocolsWidthOrganization(id string) []models.Protocol {
+func (db ProtocolDB) GetAllOrganization(id string) []models.Protocol {
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 
@@ -51,7 +53,7 @@ func GetProtocolsWidthOrganization(id string) []models.Protocol {
 			log.Println(err)
 			return res
 		} else if item.IsDeleted != 1 {
-			item.Name = delBusinessName(item.Name)
+			item.Name = db.delBusinessName(item.Name)
 			res = append(res, item)
 		}
 	}
@@ -59,7 +61,7 @@ func GetProtocolsWidthOrganization(id string) []models.Protocol {
 	return res
 }
 
-func delBusinessName(nameComplet string) string {
+func (db ProtocolDB) delBusinessName(nameComplet string) string {
 	pr := strings.Split(nameComplet, "-")
 	name := nameComplet
 	for i, e := range pr {
@@ -72,7 +74,7 @@ func delBusinessName(nameComplet string) string {
 	return name
 }
 
-func GetProtocol(id string) models.Protocol {
+func (db ProtocolDB) Get(id string) models.Protocol {
 	res := make([]models.Protocol, 0)
 	var item models.Protocol
 

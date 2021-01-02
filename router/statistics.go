@@ -7,5 +7,6 @@ import (
 )
 
 func statisticRoutes(s *mux.Router) {
-	s.HandleFunc("/filter/", mid.CheckSecurity(statistic.GetStatisticsServiceDiseaseByProtocol)).Methods("POST")
+	ctrl := statistic.StatisticController{}
+	s.HandleFunc("/filter/", mid.CheckSecurity(ctrl.GetServiceDiseaseByProtocol)).Methods("POST")
 }

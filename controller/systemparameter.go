@@ -7,7 +7,9 @@ import (
 	"net/http"
 )
 
-func GetConsultings(w http.ResponseWriter, r *http.Request) {
+type SystemParameterController struct {}
+
+func (c SystemParameterController) GetConsultingS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	res := db.GetSystemParametersByGroupID(constants.IdConsultings)

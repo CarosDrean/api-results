@@ -7,30 +7,34 @@ import (
 	"net/http"
 )
 
-func GetProtocol(w http.ResponseWriter, r *http.Request) {
+type ProtocolController struct {
+	DB db.ProtocolDB
+}
+
+func (c ProtocolController) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["id"]
-	protocol := db.GetProtocol(id)
+	protocol := c.DB.Get(id)
 	_ = json.NewEncoder(w).Encode(protocol)
 }
 
-func GetProtocolsWidthLocation(w http.ResponseWriter, r *http.Request){
+func (c ProtocolController) GetAllLocation(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idLocation"]
 
-	protocols := db.GetProtocolsWidthLocation(id)
+	protocols := c.DB.GetAllLocation(id)
 
 	_ = json.NewEncoder(w).Encode(protocols)
 }
 
-func GetProtocolsWidthOrganization(w http.ResponseWriter, r *http.Request){
+func (c ProtocolController) GetAllOrganization(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idOrganization"]
 
-	protocols := db.GetProtocolsWidthOrganization(id)
+	protocols := c.DB.GetAllOrganization(id)
 
 	_ = json.NewEncoder(w).Encode(protocols)
 }

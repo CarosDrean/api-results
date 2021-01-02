@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/CarosDrean/api-results.git/db"
@@ -22,7 +21,11 @@ func (c PersonController) GetAllProtocol(w http.ResponseWriter, r *http.Request)
 	res := make([]models.Person, 0)
 	var item models.Person
 
-	services, _ := db.ServiceDB{}.GetAllProtocol(id)
+	services, err := db.ServiceDB{}.GetAllProtocol(id)
+	if err != nil {
+		returnErr(w, err, "obtener todos")
+		return
+	}
 	for _, e := range services {
 		item, _ = c.DB.Get(e.PersonID)
 		res = append(res, item)
@@ -36,7 +39,11 @@ func (c PersonController) Get(w http.ResponseWriter, r *http.Request) {
 	var params = mux.Vars(r)
 	id, _ := params["id"]
 
-	item, _ := c.DB.Get(id)
+	item, err := c.DB.Get(id)
+	if err != nil {
+		returnErr(w, err, "obtener")
+		return
+	}
 
 	_ = json.NewEncoder(w).Encode(item)
 }
@@ -49,7 +56,7 @@ func (c PersonController) UpdatePassword(w http.ResponseWriter, r *http.Request)
 	_ = json.NewDecoder(r.Body).Decode(&patient)
 	_, err := c.DB.UpdatePassword(id, patient.Password)
 	if err != nil {
-		log.Println(err)
+		returnErr(w, err, "updated password")
 		return
 	}
 

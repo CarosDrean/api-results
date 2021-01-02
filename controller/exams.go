@@ -30,7 +30,7 @@ func (c ExamController) GetAllPerson(w http.ResponseWriter, r *http.Request){
 				item.ID = strconv.Itoa(i)
 				item.ServiceDate = e.ServiceDate
 				item.IdService = e.ID
-				item.ProtocolName = db.GetProtocol(e.ProtocolID).Name
+				item.ProtocolName = db.ProtocolDB{}.Get(e.ProtocolID).Name
 				be := strings.FieldsFunc(item.ProtocolName, c.split)
 				item.Business = be[0]
 				item.Exam = be[len(be)-1]

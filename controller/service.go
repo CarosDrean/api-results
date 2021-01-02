@@ -60,7 +60,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 
 	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
 
-	protocols := db.GetProtocolsWidthOrganization(id)
+	protocols := db.ProtocolDB{}.GetAllOrganization(id)
 	for _, e := range protocols {
 		services, _ := c.DB.GetAllProtocol(e.ID)
 		for _, s := range services {
@@ -96,7 +96,7 @@ func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseW
 
 	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
 
-	protocols := db.GetProtocolsWidthOrganization(item.ID)
+	protocols := db.ProtocolDB{}.GetAllOrganization(item.ID)
 	for _, e := range protocols {
 		services, _ := c.DB.GetAllProtocolFilter(e.ID, item)
 		for _, s := range services {

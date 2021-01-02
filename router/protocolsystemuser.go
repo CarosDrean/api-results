@@ -7,5 +7,6 @@ import (
 )
 
 func protocolSystemUserRoutes(s *mux.Router) {
-	s.HandleFunc("/all/{idSystemUser}", mid.CheckSecurity(protocol.GetProtocolsWidthSystemUser)).Methods("GET")
+	ctrl := protocol.ProtocolSystemUserController{}
+	s.HandleFunc("/all/{idSystemUser}", mid.CheckSecurity(ctrl.GetSystemUser)).Methods("GET")
 }

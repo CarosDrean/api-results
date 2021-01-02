@@ -8,7 +8,9 @@ import (
 	"net/http"
 )
 
-func GetProtocolsWidthSystemUser(w http.ResponseWriter, r *http.Request) {
+type ProtocolSystemUserController struct {}
+
+func (c ProtocolSystemUserController) GetSystemUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idSystemUser"]
@@ -18,7 +20,7 @@ func GetProtocolsWidthSystemUser(w http.ResponseWriter, r *http.Request) {
 
 	protocolsSystemUser := db.GetProtocolSystemUserWidthSystemUserID(id)
 	for _, e := range protocolsSystemUser {
-		item = db.GetProtocol(e.ProtocolID)
+		item = db.ProtocolDB{}.Get(e.ProtocolID)
 		res = append(res, item)
 	}
 

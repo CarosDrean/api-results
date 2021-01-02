@@ -7,5 +7,6 @@ import (
 )
 
 func systemParameterRoutes(s *mux.Router) {
-	s.HandleFunc("/consultings", mid.CheckSecurity(systemParameter.GetConsultings)).Methods("GET")
+	ctrl := systemParameter.SystemParameterController{}
+	s.HandleFunc("/consultings", mid.CheckSecurity(ctrl.GetConsultingS)).Methods("GET")
 }

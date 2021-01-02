@@ -177,7 +177,7 @@ func (c UserController) usersOrganization(idOrganization string) ([]models.UserP
 
 func createProtocolSystemUser(idUser int64, organizationId string) {
 	// hay que obtener el id del protocolo deacuerdo a la empresa
-	protocols := db.GetProtocolsWidthOrganization(organizationId)
+	protocols := db.ProtocolDB{}.GetAllOrganization(organizationId)
 	psu := models.ProtocolSystemUser{
 		SystemUserID: idUser,
 		ProtocolID:   protocols[0].ID,
