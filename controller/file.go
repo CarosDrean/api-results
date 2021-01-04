@@ -8,6 +8,7 @@ import (
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/utils"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -21,9 +22,16 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 	w.Header().Set("Content-Type", "application/json")
 	var filter models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&filter)
-	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter)
+	var err error
+	res := make([]models.ServicePatient, 0)
+	if filter.ID == "all" {
+		res, err = db.ServiceDB{}.GetAllPatientsWithLocationFilter(filter.DataTwo, filter)
+	} else {
+		res, err = db.ServiceDB{}.GetAllPatientsWithProtocolFilter(filter.ID, filter)
+	}
+
 	if err != nil {
-		returnErr(w, err, "obtener todos organization filter")
+		log.Println(err)
 		return
 	}
 	paths := make([]string, 0)
@@ -40,13 +48,18 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 			paths = append(paths, path)
 		}
 	}
-	output := "\\temp\\" + filter.Data + strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
+	if len(paths) == 0 {
+		log.Println("Sin elementos")
+		return
+	}
+	output := "temp\\" + filter.Data + strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
 	err = utils.ZipFiles(output, paths)
 	if err != nil {
-		returnErr(w, err, "crear zip")
+		log.Println(fmt.Sprintf("Comprimir %s", err))
 		return
 	}
 	http.ServeFile(w, r, output)
+	_ = os.Remove(output)
 }
 
 func (c FileController) DownloadPDF(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +69,7 @@ func (c FileController) DownloadPDF(w http.ResponseWriter, r *http.Request) {
 
 	filePath, err := c.assemblyFilePath(petition)
 	if err != nil {
-		returnErr(w, err, "obtener tarchivos")
+		log.Println(err)
 		return
 	}
 	http.ServeFile(w, r, filePath)
@@ -90,7 +103,6 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 }
 
 func (c FileController) assemblyFileNameExtra(idService string, dni string, parent string) string {
-	fmt.Println(idService)
 	person, _ := db.PersonDB{}.GetFromDNI(dni)
 	service, _ := db.ServiceDB{}.Get(idService)
 	protocol, _ := db.ProtocolDB{}.Get(service.ProtocolID)

@@ -5,4 +5,5 @@ type Filter struct {
 	DateFrom string `json:"dateFrom"`
 	DateTo   string `json:"dateTo"`
 	Data     string `json:"data"`
+	DataTwo  string `json:"dataTwo"`
 }

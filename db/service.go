@@ -9,9 +9,9 @@ import (
 	"log"
 )
 
-type ServiceDB struct {}
+type ServiceDB struct{}
 
-func (db ServiceDB) GetAllPerson(id string) ([]models.Service, error)  {
+func (db ServiceDB) GetAllPerson(id string) ([]models.Service, error) {
 	res := make([]models.Service, 0)
 
 	tsql := fmt.Sprintf(query.Service["getPersonID"].Q, id)
@@ -25,7 +25,7 @@ func (db ServiceDB) GetAllPerson(id string) ([]models.Service, error)  {
 	return res, nil
 }
 
-func (db ServiceDB) GetAllProtocol(id string) ([]models.Service, error)  {
+func (db ServiceDB) GetAllProtocol(id string) ([]models.Service, error) {
 	res := make([]models.Service, 0)
 
 	tsql := fmt.Sprintf(query.Service["getProtocol"].Q, id)
@@ -150,12 +150,25 @@ func (db ServiceDB) GetAllProtocolFilter(id string, filter models.Filter) ([]mod
 	return res, nil
 }
 
-
 // deacuerdo al id de la empresa obtiene todos sus protocolos y va armando el objeto ServicePatient
-func (db ServiceDB) GetAllPatientsWithOrganizationFilter (filter models.Filter) ([]models.ServicePatient, error){
+func (db ServiceDB) GetAllPatientsWithOrganizationFilter(filter models.Filter) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
 	protocols, err := ProtocolDB{}.GetAllOrganization(filter.ID)
+	if err != nil {
+		return res, err
+	}
+	for _, e := range protocols {
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter)
+		res = append(res, sp...)
+	}
+	return res, nil
+}
+
+func (db ServiceDB) GetAllPatientsWithLocationFilter(idLocation string, filter models.Filter) ([]models.ServicePatient, error) {
+	res := make([]models.ServicePatient, 0)
+
+	protocols, err := ProtocolDB{}.GetAllLocation(idLocation)
 	if err != nil {
 		return res, err
 	}
@@ -181,6 +194,7 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 			ServiceDate:      e.ServiceDate,
 			PersonID:         patient.ID,
 			ProtocolID:       e.ProtocolID,
+			Birthday:         patient.Birthday,
 			AptitudeStatusId: e.AptitudeStatusId,
 			DNI:              patient.DNI,
 			Name:             patient.Name,
@@ -213,4 +227,3 @@ func (db ServiceDB) scan(rows *sql.Rows, err error, res *[]models.Service, ctx s
 	}
 	return nil
 }
-
