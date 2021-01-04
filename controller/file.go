@@ -17,6 +17,10 @@ import (
 
 type FileController struct {}
 
+func (c FileController) DownloadZIP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+}
+
 func (c FileController) DownloadPDF(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var petition models.PetitionFile
@@ -48,6 +52,7 @@ func (c FileController) DownloadPDF(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fp := path.Join(nameFile)
+	// esta respuesta debe estar en otro lado
 	http.ServeFile(w, r, fp)
 }
 

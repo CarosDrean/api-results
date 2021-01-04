@@ -123,14 +123,43 @@ func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseW
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func (c ServiceController) GetAllPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var item models.Filter
-	_ = json.NewDecoder(r.Body).Decode(&item)
-
+func (c ServiceController) getAllPatientsWithOrganizationFilter (filter models.Filter){
 	res := make([]models.ServicePatient, 0)
 
-	services, _ := c.DB.GetAllProtocolFilter(item.ID, item)
+	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
+
+	protocols := db.ProtocolDB{}.GetAllOrganization(filter.ID)
+	for _, e := range protocols {
+		services, _ := c.DB.GetAllProtocolFilter(e.ID, filter)
+		for _, s := range services {
+			patient, _ := db.PersonDB{}.Get(s.PersonID)
+			item := models.ServicePatient{
+				ID:               s.ID,
+				ServiceDate:      s.ServiceDate,
+				PersonID:         patient.ID,
+				ProtocolID:       s.ProtocolID,
+				AptitudeStatusId: s.AptitudeStatusId,
+				DNI:              patient.DNI,
+				Name:             patient.Name,
+				FirstLastName:    patient.FirstLastName,
+				SecondLastName:   patient.SecondLastName,
+				Mail:             patient.Mail,
+				Sex:              patient.Sex,
+				Birthday:         patient.Birthday,
+				Result:           db.GetResultService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
+			}
+			res = append(res, item)
+		}
+	}
+}
+
+func (c ServiceController) getAllPatientsWithProtocolFilter(idProtocol string, filter models.Filter) ([]models.ServicePatient, error) {
+	res := make([]models.ServicePatient, 0)
+
+	services, err := c.DB.GetAllProtocolFilter(idProtocol, filter)
+	if err != nil {
+		return res, err
+	}
 	for _, e := range services {
 		patient, _ := db.PersonDB{}.Get(e.PersonID)
 		item := models.ServicePatient{
@@ -148,6 +177,19 @@ func (c ServiceController) GetAllPatientsWithProtocolFilter(w http.ResponseWrite
 			Result:           db.GetResultService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
 		}
 		res = append(res, item)
+	}
+	return res, nil
+}
+
+func (c ServiceController) GetAllPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	res, err := c.getAllPatientsWithProtocolFilter(item.ID, item)
+	if err != nil {
+		returnErr(w, err, "obtener todos patients")
+		return
 	}
 
 	_ = json.NewEncoder(w).Encode(res)

@@ -1,4 +1,7 @@
-El archivo consta de lo siguiente
+DESCARGAR ZIP DE TODOS LOS EXAMENES
 
-prueba rapida: dni-fecha-PRUEBA-RAPIDA-codigopruebarapida.pdf
-interconsulta: idservice-apellidosynombres.pdf
+- Hacer la peticion para obtener todos los examenes
+- Con esos examenes ir recorriendo los archivos que existen para crear el array de nombres
+- Crear el zip de manera temporal en un carpeta temporal (el nombre del archivo debe ser con la marca de tiempo
+    para que no se mezcle con otros procesos) y pasarlo al front
+- Completada la tarea eliminar el zip (con defer)
