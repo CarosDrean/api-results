@@ -177,12 +177,12 @@ func (c UserController) usersOrganization(idOrganization string) ([]models.UserP
 
 func createProtocolSystemUser(idUser int64, organizationId string) {
 	// hay que obtener el id del protocolo deacuerdo a la empresa
-	protocols := db.ProtocolDB{}.GetAllOrganization(organizationId)
+	protocols, _ := db.ProtocolDB{}.GetAllOrganization(organizationId)
 	psu := models.ProtocolSystemUser{
 		SystemUserID: idUser,
 		ProtocolID:   protocols[0].ID,
 	}
-	_, err := db.CreateProtocolSystemUser(psu)
+	_, err := db.ProtocolSystemUserDB{}.Create(psu)
 	checkError(err, "Created ProtocolSystemUser")
 }
 

@@ -60,11 +60,16 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 
 	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
 
-	protocols := db.ProtocolDB{}.GetAllOrganization(id)
+	protocols, err := db.ProtocolDB{}.GetAllOrganization(id)
+	if err != nil {
+		returnErr(w, err, "obtener todos organization")
+		return
+	}
 	for _, e := range protocols {
 		services, _ := c.DB.GetAllProtocol(e.ID)
 		for _, s := range services {
 			patient, _ := db.PersonDB{}.Get(s.PersonID)
+			result, _ := db.ResultDB{}.GetService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -78,7 +83,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 				Mail:             patient.Mail,
 				Sex:              patient.Sex,
 				Birthday:         patient.Birthday,
-				Result:           db.GetResultService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
+				Result:           result,
 			}
 			res = append(res, item)
 		}
@@ -96,11 +101,16 @@ func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseW
 
 	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
 
-	protocols := db.ProtocolDB{}.GetAllOrganization(item.ID)
+	protocols, err := db.ProtocolDB{}.GetAllOrganization(item.ID)
+	if err != nil {
+		returnErr(w, err, "obtener todos organization filter")
+		return
+	}
 	for _, e := range protocols {
 		services, _ := c.DB.GetAllProtocolFilter(e.ID, item)
 		for _, s := range services {
 			patient, _ := db.PersonDB{}.Get(s.PersonID)
+			result, _ := db.ResultDB{}.GetService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -114,7 +124,7 @@ func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseW
 				Mail:             patient.Mail,
 				Sex:              patient.Sex,
 				Birthday:         patient.Birthday,
-				Result:           db.GetResultService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
+				Result:           result,
 			}
 			res = append(res, item)
 		}
@@ -162,6 +172,7 @@ func (c ServiceController) getAllPatientsWithProtocolFilter(idProtocol string, f
 	}
 	for _, e := range services {
 		patient, _ := db.PersonDB{}.Get(e.PersonID)
+		result, _ := db.ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 		item := models.ServicePatient{
 			ID:               e.ID,
 			ServiceDate:      e.ServiceDate,
@@ -174,7 +185,7 @@ func (c ServiceController) getAllPatientsWithProtocolFilter(idProtocol string, f
 			SecondLastName:   patient.SecondLastName,
 			Mail:             patient.Mail,
 			Sex:              patient.Sex,
-			Result:           db.GetResultService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida),
+			Result:           result,
 		}
 		res = append(res, item)
 	}

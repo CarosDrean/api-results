@@ -217,9 +217,9 @@ func (db UserDB) scan(rows *sql.Rows, err error, res *[]models.SystemUser, ctx s
 	}
 	for rows.Next() {
 		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
-		protocolSystemUsers := GetProtocolSystemUserWidthSystemUserID(strconv.FormatInt(item.ID, 10))
+		protocolSystemUsers, _ := ProtocolSystemUserDB{}.GetAllSystemUserID(strconv.FormatInt(item.ID, 10))
 		if len(protocolSystemUsers) > 0 {
-			protocol := ProtocolDB{}.Get(protocolSystemUsers[0].ProtocolID)
+			protocol, _ := ProtocolDB{}.Get(protocolSystemUsers[0].ProtocolID)
 			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
 			item.OrganizationID = organization.ID
 		}

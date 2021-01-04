@@ -1,64 +1,41 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/query"
-	"log"
 	"strings"
 )
 
 type ProtocolDB struct {}
 
-func (db ProtocolDB) GetAllLocation(id string) []models.Protocol {
+func (db ProtocolDB) GetAllLocation(id string) ([]models.Protocol, error) {
 	res := make([]models.Protocol, 0)
-	var item models.Protocol
 
 	tsql := fmt.Sprintf(query.Protocol["getLocation"].Q, id)
 	rows, err := DB.Query(tsql)
 
+	err = db.scan(rows, err, &res, "Protocol DB", "GetAll")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
-	}
-	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
-		if err != nil {
-			log.Println(err)
-			return res
-		} else if item.IsDeleted != 1 {
-			// aqui quitar el nombre de la empresa del protocolo
-			item.Name = db.delBusinessName(item.Name)
-			res = append(res, item)
-		}
+		return res, err
 	}
 	defer rows.Close()
-	return res
+	return res, nil
 }
 
-func (db ProtocolDB) GetAllOrganization(id string) []models.Protocol {
+func (db ProtocolDB) GetAllOrganization(id string) ([]models.Protocol, error) {
 	res := make([]models.Protocol, 0)
-	var item models.Protocol
 
 	tsql := fmt.Sprintf(query.Protocol["getOrganization"].Q, id)
 	rows, err := DB.Query(tsql)
 
+	err = db.scan(rows, err, &res, "Protocol DB", "GetAll")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res
-	}
-	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
-		if err != nil {
-			log.Println(err)
-			return res
-		} else if item.IsDeleted != 1 {
-			item.Name = db.delBusinessName(item.Name)
-			res = append(res, item)
-		}
+		return res, err
 	}
 	defer rows.Close()
-	return res
+	return res, nil
 }
 
 func (db ProtocolDB) delBusinessName(nameComplet string) string {
@@ -74,26 +51,38 @@ func (db ProtocolDB) delBusinessName(nameComplet string) string {
 	return name
 }
 
-func (db ProtocolDB) Get(id string) models.Protocol {
+func (db ProtocolDB) Get(id string) (models.Protocol, error) {
 	res := make([]models.Protocol, 0)
-	var item models.Protocol
 
 	tsql := fmt.Sprintf(query.Protocol["get"].Q, id)
 	rows, err := DB.Query(tsql)
 
+	err = db.scan(rows, err, &res, "Location DB", "GetAll")
 	if err != nil {
-		fmt.Println("Error reading rows: " + err.Error())
-		return res[0]
+		return models.Protocol{}, err
 	}
-	for rows.Next(){
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
-		if err != nil {
-			log.Println(err)
-			return res[0]
-		} else{
-			res = append(res, item)
-		}
+	if len(res) == 0 {
+		return models.Protocol{}, nil
 	}
 	defer rows.Close()
-	return item
+	return res[0], nil
+}
+
+func (db ProtocolDB) scan(rows *sql.Rows, err error, res *[]models.Protocol, ctx string, situation string) error {
+	var item models.Protocol
+	if err != nil {
+		checkError(err, situation, ctx, "Reading rows")
+		return err
+	}
+	for rows.Next() {
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
+		if err != nil {
+			checkError(err, situation, ctx, "Scan rows")
+			return err
+		} else if item.IsDeleted == 0 {
+			item.Name = db.delBusinessName(item.Name)
+			*res = append(*res, item)
+		}
+	}
+	return nil
 }
