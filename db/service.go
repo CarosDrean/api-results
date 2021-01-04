@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/query"
 	"log"
@@ -146,6 +147,51 @@ func (db ServiceDB) GetAllProtocolFilter(id string, filter models.Filter) ([]mod
 		return res, err
 	}
 	defer rows.Close()
+	return res, nil
+}
+
+
+// deacuerdo al id de la empresa obtiene todos sus protocolos y va armando el objeto ServicePatient
+func (db ServiceDB) GetAllPatientsWithOrganizationFilter (filter models.Filter) ([]models.ServicePatient, error){
+	res := make([]models.ServicePatient, 0)
+
+	protocols, err := ProtocolDB{}.GetAllOrganization(filter.ID)
+	if err != nil {
+		return res, err
+	}
+	for _, e := range protocols {
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter)
+		res = append(res, sp...)
+	}
+	return res, nil
+}
+
+func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter models.Filter) ([]models.ServicePatient, error) {
+	res := make([]models.ServicePatient, 0)
+
+	services, err := db.GetAllProtocolFilter(idProtocol, filter)
+	if err != nil {
+		return res, err
+	}
+	for _, e := range services {
+		patient, _ := PersonDB{}.Get(e.PersonID)
+		result, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
+		item := models.ServicePatient{
+			ID:               e.ID,
+			ServiceDate:      e.ServiceDate,
+			PersonID:         patient.ID,
+			ProtocolID:       e.ProtocolID,
+			AptitudeStatusId: e.AptitudeStatusId,
+			DNI:              patient.DNI,
+			Name:             patient.Name,
+			FirstLastName:    patient.FirstLastName,
+			SecondLastName:   patient.SecondLastName,
+			Mail:             patient.Mail,
+			Sex:              patient.Sex,
+			Result:           result,
+		}
+		res = append(res, item)
+	}
 	return res, nil
 }
 
