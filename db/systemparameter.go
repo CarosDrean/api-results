@@ -24,6 +24,20 @@ func (db SystemParameterDB) GetAllByGroupID(idGroup string) ([]models.SystemPara
 	return res, nil
 }
 
+func (db SystemParameterDB) GetAll() ([]models.SystemParameter, error) {
+	res := make([]models.SystemParameter, 0)
+
+	tsql := fmt.Sprintf(query.SystemParameter["list"].Q)
+	rows, err := DB.Query(tsql)
+
+	err = db.scan(rows, err, &res, "SystemParameter DB", "GetAll")
+	if err != nil {
+		return res, err
+	}
+	defer rows.Close()
+	return res, nil
+}
+
 func (db SystemParameterDB) Create(item models.SystemParameter) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.SystemParameter["insert"].Q)
@@ -78,7 +92,9 @@ func (db SystemParameterDB) scan(rows *sql.Rows, err error, res *[]models.System
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&item.GroupID, &item.ParameterID, &item.Value1, &item.IsDeleted)
+		var isDeleted sql.NullInt32
+		err := rows.Scan(&item.GroupID, &item.ParameterID, &item.Value1, &isDeleted)
+		item.IsDeleted = int(isDeleted.Int32)
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err

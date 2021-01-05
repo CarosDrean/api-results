@@ -52,7 +52,7 @@ func (db PersonDB) Create(item models.Person) (string, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.Person["insert"].Q)
 	if item.Password != "" {
-		item.Password = encryptMD5(item.Password)
+		item.Password = utils.EncryptMD5(item.Password)
 	}
 	sqdb :=SequentialDB{}
 	sequentialID := sqdb.NextSequentialId(constants.IdNode, constants.IdPersonTable)

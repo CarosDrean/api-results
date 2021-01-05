@@ -41,7 +41,7 @@ func (db SequentialDB) Get(nodeId int, tableId int) (models.Sequential, error) {
 	tsql := fmt.Sprintf(query.Sequential["get"].Q, nodeId, tableId)
 	rows, err := DB.Query(tsql)
 
-	err = db.scan(rows, err, &res, "Organization DB", "Get")
+	err = db.scan(rows, err, &res, "Sequential DB", "Get")
 	if err != nil {
 		return models.Sequential{}, err
 	}

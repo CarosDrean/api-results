@@ -24,6 +24,18 @@ func (c SystemParameterController) GetConsultingS(w http.ResponseWriter, r *http
 	_ = json.NewEncoder(w).Encode(res)
 }
 
+func (c SystemParameterController) GetAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	res, err := c.DB.GetAll()
+	if err != nil {
+		returnErr(w, err, "obtener todos")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+
 func (c SystemParameterController) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.SystemParameter

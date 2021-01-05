@@ -1,8 +1,8 @@
 package constants
 
 const (
-	PORT          = "8000"
-	ApiMail       = "https://api-mail.holosalud.org"
+	PORT    = "8000"
+	ApiMail = "https://api-mail.holosalud.org"
 	// ApiMail       = "http://localhost:2000"
 	SecretApiMail = "miclavedetokens"
 
@@ -13,13 +13,16 @@ const (
 	RouteCertificate312   string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\CERTIFICADOS\\CAMO312\\"
 	RouteHistory          string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Historia Clinica\\"
 
-	IdNode                    = 9
+	IdNode = 9
+
 	IdPersonTable             = 8
 	IdSystemUserTable         = 9
 	IdProtocolSystemUserTable = 44
+	IdDiseaseTable            = 27
 
 	PrefixPerson             = "PP"
 	PrefixProtocolSystemUser = "PU"
+	PrefixDisease            = "DD"
 
 	MaxUsersOrganization = 4
 )

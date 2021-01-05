@@ -29,4 +29,8 @@ func Routes(r *mux.Router) {
 	componentRoutes(cmp)
 	st := r.PathPrefix("/statistic").Subrouter()
 	statisticRoutes(st)
+	cie10 := r.PathPrefix("/cie10").Subrouter()
+	cie10Routes(cie10)
+	dis := r.PathPrefix("/disease").Subrouter()
+	diseaseRoutes(dis)
 }
