@@ -40,7 +40,22 @@ func (c OrganizationController) Get(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(item)
 }
 
-func SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
+func (c OrganizationController) Update(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Organization
+	_ = json.NewDecoder(r.Body).Decode(&item)
+	var params = mux.Vars(r)
+	id, _ := params["id"]
+	result, err := c.DB.Update(id, item)
+	if err != nil {
+		returnErr(w, err, "update")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(result)
+}
+
+func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.OrganizationForMailCreateUser
 	_ = json.NewDecoder(r.Body).Decode(&item)
@@ -49,6 +64,8 @@ func SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
 		Role: constants.Roles.Temp,
 		Data: item.TypeUser,
 	}
+
+	_ = c.updateURLAdminOrMedic(item)
 
 	token := mid.GenerateJWTExternal(claim)
 	URL := constants.ClientURL + "temp/create-external-user/" + token
@@ -63,4 +80,22 @@ func SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_ = json.NewEncoder(w).Encode(URL)
+}
+
+func (c OrganizationController) updateURLAdminOrMedic(item models.OrganizationForMailCreateUser) error  {
+	organization, err := c.DB.Get(item.ID)
+	if err != nil  {
+		return err
+	}
+	if item.TypeUser == "Admin" {
+		organization.UrlAdmin = true
+	}
+	if item.TypeUser == "Medic" {
+		organization.UrlMedic = true
+	}
+	_, err = c.DB.Update(organization.ID, organization)
+	if err != nil {
+		return err
+	}
+	return nil
 }

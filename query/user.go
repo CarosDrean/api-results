@@ -15,4 +15,9 @@ var SystemUser = models.QueryDB{
 	"updatePassword": {Q: "update " + user.Name + " set v_Password = @Password where " + user.Fields[0] + " = %s;"},
 	"update":         {Q: "update " + user.Name + " set " + updatesString(user.Fields) + " where " + user.Fields[0] + " = @ID;"},
 	"delete":         {Q: "update " + user.Name + " set " + user.Fields[5] + " = 1 where " + user.Fields[0] + " = @ID;"},
+
+	"getOrganization": {Q: "select u.i_SystemUserTypeId from systemuser u inner join protocolsystemuser pu on u.i_SystemUserId = pu.i_SystemUserId " +
+		"inner join protocol p on pu.v_ProtocolId = p.v_ProtocolId inner join person pe on u.v_PersonId = pe.v_PersonId " +
+		"inner join organization o on p.v_CustomerOrganizationId = o.v_OrganizationId " +
+		"where o.v_OrganizationId = '%s';"},
 }

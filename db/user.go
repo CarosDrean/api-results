@@ -27,6 +27,29 @@ func (db UserDB) GetAll() ([]models.SystemUser, error) {
 	return res, nil
 }
 
+func (db UserDB) GetAllOrganization(idOrganization string) ([]models.SystemUser, error) {
+	res := make([]models.SystemUser, 0)
+	var item models.SystemUser
+
+	tsql := fmt.Sprintf(query.SystemUser["getOrganization"].Q, idOrganization)
+	rows, err := DB.Query(tsql)
+	if err != nil {
+		checkError(err, "GetAllOrganization", "DB", "Reading rows")
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&item.TypeUser)
+		if err != nil {
+			checkError(err, "GetAllOrganization", "ctx", "Scan rows")
+		} else if item.IsDelete != 1{
+			res = append(res, item)
+		}
+	}
+	defer rows.Close()
+	return res, nil
+}
+
 func (db UserDB) Get(id string) (models.SystemUser, error) {
 	res := make([]models.SystemUser, 0)
 
