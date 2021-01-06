@@ -11,6 +11,58 @@ import (
 
 type ServiceDB struct{}
 
+func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOrganization, error) {
+	res := make([]models.ServicePatientOrganization, 0)
+	var service models.Service
+	var person models.Person
+	var organization models.Organization
+	var protocol models.Protocol
+
+	tsql := fmt.Sprintf(query.Service["listDate"].Q, filter.DateTo, filter.DateFrom)
+	rows, err := DB.Query(tsql)
+
+	if err != nil {
+		fmt.Println("Error reading rows: " + err.Error())
+		return res, err
+	}
+	for rows.Next() {
+		var pass sql.NullString
+		var birth sql.NullString
+		err := rows.Scan(&service.ID, &service.PersonID, &service.ProtocolID, &service.ServiceDate, &service.ServiceStatusId,
+			&service.IsDeleted, &service.AptitudeStatusId,
+			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
+			&person.Sex, &birth, &person.IsDeleted,
+			&organization.ID, &organization.Name,
+			&protocol.EsoType)
+		person.Password = pass.String
+		person.Birthday = birth.String
+		if err != nil {
+			log.Println(err)
+		} else {
+			item := models.ServicePatientOrganization{
+				ID:               service.ID,
+				ServiceDate:      service.ServiceDate,
+				PersonID:         service.PersonID,
+				ProtocolID:       service.ProtocolID,
+				OrganizationID:   organization.ID,
+				Organization: organization.Name,
+				AptitudeStatusId: service.AptitudeStatusId,
+				DNI:              person.DNI,
+				Name:             person.Name,
+				FirstLastName:    person.FirstLastName,
+				SecondLastName:   person.SecondLastName,
+				Mail:             person.Mail,
+				Sex:              person.Sex,
+				Birthday:         person.Birthday,
+				EsoType:          protocol.EsoType,
+			}
+			res = append(res, item)
+		}
+	}
+	defer rows.Close()
+	return res, nil
+}
+
 func (db ServiceDB) GetAllPerson(id string) ([]models.Service, error) {
 	res := make([]models.Service, 0)
 

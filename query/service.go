@@ -25,5 +25,12 @@ var Service = models.QueryDB{
 		service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] + " as date) <= CAST('%s' as date) " +
 		"and s.i_ServiceStatusId = 3 and s." + service.Fields[3] +
 		" is not null;"},
-	"get":            {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
+	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
+	"listDate": {Q: "select " + fieldStringPrefix(service.Fields, "s") + ", " + fieldStringPrefix(person.Fields, "pe") +
+		", o.v_OrganizationId, o.v_Name, p.i_EsoTypeId from service s " +
+		"inner join protocol p on s.v_ProtocolId = p.v_ProtocolId " +
+		"inner join person pe on s.v_PersonId = pe.v_PersonId " +
+		"inner join organization o on p.v_CustomerOrganizationId = o.v_OrganizationId " +
+		" where CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] +
+		" as date) <= CAST('%s' as date) and s." + service.Fields[3] + " is not null;"},
 }

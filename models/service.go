@@ -46,3 +46,21 @@ type ServicePatientDiseases struct {
 	Consulting       string `json:"consulting"`
 	EsoType          int    `json:"esoType"`
 }
+
+type ServicePatientOrganization struct {
+	ID               string `json:"_id"`
+	ServiceDate      string `json:"serviceDate"`
+	PersonID         string `json:"personId"`
+	ProtocolID       string `json:"protocolId"`
+	OrganizationID   string `json:"organizationId"`
+	EsoType          int    `json:"esoType"`
+	Organization     string `json:"organization"`
+	AptitudeStatusId int    `json:"aptitude"`
+	DNI              string `json:"dni"`
+	Name             string `json:"name"`
+	FirstLastName    string `json:"firstLastname"`
+	SecondLastName   string `json:"secondLastname"`
+	Mail             string `json:"mail"`
+	Sex              int    `json:"sex"`
+	Birthday         string `json:"birthday"`
+}

@@ -13,6 +13,19 @@ type ServiceController struct {
 	DB db.ServiceDB
 }
 
+func (c ServiceController) GetAllDate(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+	services, err := c.DB.GetAllDate(item)
+	if err != nil {
+		returnErr(w, err, "obtener todos date")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(services)
+}
+
 func (c ServiceController) GetAllDiseaseFilterDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
