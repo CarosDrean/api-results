@@ -8,7 +8,7 @@ var spT = models.TableDB{
 }
 
 var SystemParameter = models.QueryDB{
-	"getGroup": {Q: "select " + fieldString(spT.Fields) + " from " + spT.Name + " where " + calendar.Fields[0] + " = %s;"},
+	"getGroup": {Q: "select " + fieldString(spT.Fields) + " from " + spT.Name + " where " + spT.Fields[0] + " = %s;"},
 	"list":     {Q: "select " + fieldString(spT.Fields) + " from " + spT.Name + ";"},
 	"insert":   {Q: "insert into " + spT.Name + " (" + fieldString(spT.Fields) + ") values (" + valuesStringNoID(spT.Fields) + ");"},
 	"update":   {Q: "update " + spT.Name + " set " + updatesString(spT.Fields) + " where " + spT.Fields[0] + " = @ID and " + spT.Fields[1] + " = IDT;"},

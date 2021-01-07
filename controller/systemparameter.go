@@ -5,6 +5,7 @@ import (
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -16,6 +17,19 @@ func (c SystemParameterController) GetConsultingS(w http.ResponseWriter, r *http
 	w.Header().Set("Content-Type", "application/json")
 
 	res, err := c.DB.GetAllByGroupID(constants.IdConsultings)
+	if err != nil {
+		returnErr(w, err, "obtener todos")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+
+func (c SystemParameterController) GetAllGroup(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	group, _ := params["group"]
+	res, err := c.DB.GetAllByGroupID(group)
 	if err != nil {
 		returnErr(w, err, "obtener todos")
 		return

@@ -18,7 +18,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOr
 	var organization models.Organization
 	var protocol models.Protocol
 
-	tsql := fmt.Sprintf(query.Service["listDate"].Q, filter.DateTo, filter.DateFrom)
+	tsql := fmt.Sprintf(query.Service["listDate"].Q, filter.DateFrom, filter.DateTo)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
