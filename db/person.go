@@ -105,13 +105,13 @@ func (db PersonDB) Update(id string, item models.Person) (int64, error) {
 	return result.RowsAffected()
 }
 
-func (db PersonDB) ValidateLogin(user string, password string) (constants.State, string){
+func (db PersonDB) ValidateLogin(user string, password string) (constants.State, string, error){
 	item, err := db.GetFromDNI(user)
 	if err != nil {
-		return constants.NotFound, ""
+		return constants.NotFound, "", err
 	}
 	if item.DNI == "" && item.Name == "" {
-		return constants.NotFound, ""
+		return constants.NotFound, "", nil
 	}
 	if validatePasswordPatientForReset(password, item){
 		if len(item.Mail) != 0{
@@ -123,17 +123,17 @@ func (db PersonDB) ValidateLogin(user string, password string) (constants.State,
 			}
 			_, err := db.UpdatePassword(item.ID, newPassword)
 			if err != nil {
-				return constants.ErrorUP, ""
+				return constants.ErrorUP, "", nil
 			}
 			_ = utils.SendMail(mail, constants.RouteNewPassword)
-			return constants.PasswordUpdate, ""
+			return constants.PasswordUpdate, "", nil
 		}
-		return constants.NotFoundMail, ""
+		return constants.NotFoundMail, "", nil
 	}
 	if item.Password == password {
-		return constants.Accept, item.ID
+		return constants.Accept, item.ID, nil
 	}
-	return constants.InvalidCredentials, ""
+	return constants.InvalidCredentials, "", nil
 }
 
 func (db PersonDB) UpdatePassword(id string, password string) (int64, error) {

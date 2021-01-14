@@ -142,14 +142,15 @@ func (db UserDB) GetFromUserName(userName string) (models.SystemUser, error) {
 	return res[0], nil
 }
 
-func (db UserDB) ValidateLogin(user string, password string) (constants.State, string){
+func (db UserDB) ValidateLogin(user string, password string) (constants.State, string, error){
 	item, err := db.GetFromUserName(user)
 	if err != nil {
-		return constants.NotFound, ""
+		return constants.NotFound, "", err
 	}
 	if item.UserName == "" && item.PersonID == "" {
-		return constants.NotFound, ""
+		return constants.NotFound, "", nil
 	}
+
 	if validatePasswordSystemUserForReset(password, item){
 		person, _ := PersonDB{}.Get(item.PersonID)
 		if len(person.Mail) != 0{
@@ -161,17 +162,17 @@ func (db UserDB) ValidateLogin(user string, password string) (constants.State, s
 			}
 			_, err := db.UpdatePassword(strconv.FormatInt(item.ID, 10), newPassword)
 			if err != nil {
-				return constants.ErrorUP, ""
+				return constants.ErrorUP, "", nil
 			}
 			_ = utils.SendMail(mail, constants.RouteNewPassword)
-			return constants.PasswordUpdate, ""
+			return constants.PasswordUpdate, "", nil
 		}
-		return constants.NotFoundMail, ""
+		return constants.NotFoundMail, "", nil
 	}
 	if utils.ComparePassword(item.Password, password) {
-		return constants.Accept, strconv.FormatInt(item.ID, 10)
+		return constants.Accept, strconv.FormatInt(item.ID, 10), nil
 	}
-	return constants.InvalidCredentials, ""
+	return constants.InvalidCredentials, "", nil
 
 }
 

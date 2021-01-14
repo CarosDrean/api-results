@@ -24,16 +24,19 @@ func Login(w http.ResponseWriter, r *http.Request){
 	isSystemUser := false
 	isPatientParticular := false
 	if !user.Particular {
-		stateLogin, id = patientBusiness(user)
+		stateLogin, id, err = patientBusiness(user)
 
 		if stateLogin == constants.NotFound {
-			stateLogin, id = db.UserDB{}.ValidateLogin(user.User, user.Password)
+			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password)
 			isSystemUser = true
 		}
 	} else {
 		isPatientParticular = true
 		isSystemUser = false
-		stateLogin, id = patientParticular(user)
+		stateLogin, id, err = patientParticular(user)
+	}
+	if err != nil {
+		_, _ = fmt.Fprintf(w, fmt.Sprintf("¡Hubo un Error %s", err.Error()))
 	}
 
 
@@ -81,12 +84,12 @@ func Login(w http.ResponseWriter, r *http.Request){
 }
 
 // en las dos funciones siguientes inicializamos la bd dependiendo del caso, tambien lo dejamos en el main por si acaso
-func patientBusiness(user models.UserLogin) (constants.State, string){
+func patientBusiness(user models.UserLogin) (constants.State, string, error){
 	db.DB = helper.Get()
 	return db.PersonDB{}.ValidateLogin(user.User, user.Password)
 }
 
-func patientParticular(user models.UserLogin) (constants.State, string){
+func patientParticular(user models.UserLogin) (constants.State, string, error){
 	db.DB = helper.GetAux()
 	return db.PersonDB{}.ValidateLogin(user.User, user.Password)
 }
