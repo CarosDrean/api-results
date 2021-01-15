@@ -39,7 +39,6 @@ func Login(w http.ResponseWriter, r *http.Request){
 		_, _ = fmt.Fprintf(w, fmt.Sprintf("¡Hubo un Error %s", err.Error()))
 	}
 
-
 	switch stateLogin {
 	case constants.Accept:
 		userResult := models.ClaimResult{ID: id, Role: getRole(0)}
@@ -106,6 +105,8 @@ func getRole(typeUser int)constants.Role{
 		return constants.Roles.ExternalMedic
 	case constants.CodeRoles.ExternalMedicNoData:
 		return constants.Roles.ExternalMedic
+	case constants.CodeRoles.Accounting:
+		return constants.Roles.Accounting
 	default:
 		return ""
 	}

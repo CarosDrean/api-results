@@ -120,7 +120,7 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	idUser, err := c.DB.Create(user)
 	checkError(err, "Created User")
 
-	if user.TypeUser != 1 {
+	if user.TypeUser != 1 && user.TypeUser != 5 {
 		createProtocolSystemUser(idUser, item.OrganizationID)
 	}
 

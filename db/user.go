@@ -207,6 +207,8 @@ func (db UserDB) scan(rows *sql.Rows, err error, res *[]models.SystemUser, ctx s
 			protocol, _ := ProtocolDB{}.Get(protocolSystemUsers[0].ProtocolID)
 			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
 			item.OrganizationID = organization.ID
+		} else {
+			item.OrganizationID = ""
 		}
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")

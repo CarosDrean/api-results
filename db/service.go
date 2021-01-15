@@ -63,6 +63,32 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOr
 	return res, nil
 }
 
+func (db ServiceDB) GetAllExamDetail(filter models.Filter) ([]models.ServicePatientExam, error) {
+	res := make([]models.ServicePatientExam, 0)
+	var item models.ServicePatientExam
+	tsql := fmt.Sprintf(query.Service["listExamsDetailDate"].Q, filter.DateFrom, filter.DateTo)
+	rows, err := DB.Query(tsql)
+
+	if err != nil {
+		fmt.Println("Error reading rows: " + err.Error())
+		return res, err
+	}
+	for rows.Next() {
+		var birth sql.NullString
+		err := rows.Scan(&item.ID, &item.ProtocolID, &item.LocationID, &item.OrganizationID, &item.FirstLastName, &item.SecondLastName, &item.Name,
+			&item.TypeDoc, &item.DNI, &item.Organization, &item.Occupation, &item.ServiceDate, &birth, &item.PriceProtocol,
+			&item.Component, &item.PriceComponent, &item.Protocol, &item.Mail, &item.Sex, &item.AptitudeStatusId, &item.EsoType)
+		item.Birthday = birth.String
+		if err != nil {
+			log.Println(err)
+		} else {
+			res = append(res, item)
+		}
+	}
+	defer rows.Close()
+	return res, nil
+}
+
 func (db ServiceDB) GetAllPerson(id string) ([]models.Service, error) {
 	res := make([]models.Service, 0)
 
