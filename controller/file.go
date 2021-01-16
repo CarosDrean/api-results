@@ -18,6 +18,50 @@ import (
 
 type FileController struct {}
 
+func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var filter models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&filter)
+	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter)
+	if err != nil {
+		log.Println(err)
+		_ = json.NewEncoder(w).Encode("error!")
+		return
+	}
+	paths := make([]string, 0)
+	for _, e := range res {
+		petition := models.PetitionFile{
+			Exam:        filter.Data,
+			ServiceID:   e.ID,
+			DNI:         e.DNI,
+			NameComplet: e.FirstLastName + " " + e.SecondLastName + " " + e.Name,
+			ServiceDate: e.ServiceDate,
+		}
+		path, err := c.assemblyFilePath(petition)
+		if err == nil {
+			paths = append(paths, path)
+		}
+	}
+	if len(paths) == 0 {
+		log.Println("Sin elementos")
+		_ = json.NewEncoder(w).Encode("sin elementos!")
+		return
+	}
+	output := "temp\\" + filter.Data + strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10) + ".zip"
+	err = utils.ZipFiles(output, paths)
+	if err != nil {
+		log.Println(fmt.Sprintf("Comprimir %s", err))
+		_ = json.NewEncoder(w).Encode("error!")
+		return
+	}
+	err = utils.SendFileMail(filter.DataTwo, constants.RouteSendFile, output)
+	if err != nil {
+		fmt.Println(err)
+	}
+	_ = os.Remove(output)
+	_ = json.NewEncoder(w).Encode("enviado!")
+}
+
 func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var filter models.Filter

@@ -14,6 +14,7 @@ const (
 	RouteNewPassword   = "newpassword"
 	RouteNewSystemUser = "new-systemuser"
 	RouteUserLink      = "userlink"
+	RouteSendFile      = "send-file"
 
 	ClientURL = "https://resultados.holosalud.org/#/"
 
