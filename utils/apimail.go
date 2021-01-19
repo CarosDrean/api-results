@@ -51,7 +51,7 @@ func SendFileMail(mail string, route string, filename string) error {
 	}
 	err := Upload(constants.ApiMail + "/" + route, values)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	return nil
 	/*data, err := os.Open(filename)
