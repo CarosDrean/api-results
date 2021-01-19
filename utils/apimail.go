@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
-	"github.com/CarosDrean/api-results.git/models"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,14 +14,10 @@ import (
 	"strings"
 )
 
-func SendMail(mail models.Mail, route string) error{
-	data, err := json.Marshal(mail)
-	if err != nil {
-		fmt.Println(err)
-	}
+func SendMail(mailData []byte, route string) error{
 	token := loginApiMail()
 
-	req, err := http.NewRequest("POST", constants.ApiMail+ "/" + route, bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", constants.ApiMail+ "/" + route, bytes.NewBuffer(mailData))
 	if err != nil {
 		log.Panic(err)
 	}

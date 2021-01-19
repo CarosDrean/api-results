@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
@@ -121,11 +122,12 @@ func (db PersonDB) ValidateLogin(user string, password string) (constants.State,
 				User: user,
 				Password: newPassword,
 			}
+			data, _ := json.Marshal(mail)
 			_, err := db.UpdatePassword(item.ID, newPassword)
 			if err != nil {
 				return constants.ErrorUP, "", nil
 			}
-			_ = utils.SendMail(mail, constants.RouteNewPassword)
+			_ = utils.SendMail(data, constants.RouteNewPassword)
 			return constants.PasswordUpdate, "", nil
 		}
 		return constants.NotFoundMail, "", nil

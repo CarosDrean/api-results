@@ -69,12 +69,16 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 
 	token := mid.GenerateJWTExternal(claim)
 	URL := constants.ClientURL + "temp/create-external-user/" + token
+
+	organization, _ := c.DB.Get(item.ID)
 	objectMail := models.Mail{
 		From: item.Mail,
 		Data: URL,
+		Business: organization.Name,
 	}
+	data, _ := json.Marshal(objectMail)
 
-	err := utils.SendMail(objectMail, constants.RouteUserLink)
+	err := utils.SendMail(data, constants.RouteUserLink)
 	if err != nil {
 		_, _ = fmt.Fprintf(w, "¡Hubo un error al procesar la solicitud!")
 		return

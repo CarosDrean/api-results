@@ -18,6 +18,14 @@ import (
 
 type FileController struct {}
 
+func (c FileController) SendZipOrganizationData(mailFile models.MailFile) {
+	data, _ := json.Marshal(mailFile)
+	err := utils.SendMail(data, constants.RouteSendFile)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var filter models.Filter
@@ -28,10 +36,44 @@ func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Reque
 		_ = json.NewEncoder(w).Encode("error!")
 		return
 	}
+	paths := c.GetPaths(res, filter.Data)
+	if len(paths) == 0 {
+		log.Println("Sin elementos")
+		_ = json.NewEncoder(w).Encode("sin elementos!")
+		return
+	}
+	fileName := filter.Data + strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10) + ".zip"
+	output := "temp\\" + fileName
+	err = utils.ZipFiles(output, paths)
+	if err != nil {
+		log.Println(fmt.Sprintf("Comprimir %s", err))
+		_ = json.NewEncoder(w).Encode("error!")
+		return
+	}
+	err = utils.SendFileMail(filter.DataTwo, constants.RouteUploadFile, output)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	organization, _ := db.OrganizationDB{}.Get(filter.ID)
+	mailFile := models.MailFile{
+		From:     filter.DataTwo,
+		File:     fileName,
+		Business: organization.Name,
+		DateFrom: filter.DateFrom,
+		DateTo:   filter.DateTo,
+	}
+	c.SendZipOrganizationData(mailFile)
+
+	_ = os.Remove(output)
+	_ = json.NewEncoder(w).Encode("enviado!")
+}
+
+func (c FileController) GetPaths(res []models.ServicePatient, exam string) []string {
 	paths := make([]string, 0)
 	for _, e := range res {
 		petition := models.PetitionFile{
-			Exam:        filter.Data,
+			Exam:        exam,
 			ServiceID:   e.ID,
 			DNI:         e.DNI,
 			NameComplet: e.FirstLastName + " " + e.SecondLastName + " " + e.Name,
@@ -42,24 +84,7 @@ func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Reque
 			paths = append(paths, path)
 		}
 	}
-	if len(paths) == 0 {
-		log.Println("Sin elementos")
-		_ = json.NewEncoder(w).Encode("sin elementos!")
-		return
-	}
-	output := "temp\\" + filter.Data + strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10) + ".zip"
-	err = utils.ZipFiles(output, paths)
-	if err != nil {
-		log.Println(fmt.Sprintf("Comprimir %s", err))
-		_ = json.NewEncoder(w).Encode("error!")
-		return
-	}
-	err = utils.SendFileMail(filter.DataTwo, constants.RouteSendFile, output)
-	if err != nil {
-		fmt.Println(err)
-	}
-	_ = os.Remove(output)
-	_ = json.NewEncoder(w).Encode("enviado!")
+	return paths
 }
 
 func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.Request) {
@@ -78,20 +103,7 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 		log.Println(err)
 		return
 	}
-	paths := make([]string, 0)
-	for _, e := range res {
-		petition := models.PetitionFile{
-			Exam:        filter.Data,
-			ServiceID:   e.ID,
-			DNI:         e.DNI,
-			NameComplet: e.FirstLastName + " " + e.SecondLastName + " " + e.Name,
-			ServiceDate: e.ServiceDate,
-		}
-		path, err := c.assemblyFilePath(petition)
-		if err == nil {
-			paths = append(paths, path)
-		}
-	}
+	paths := c.GetPaths(res, filter.Data)
 	if len(paths) == 0 {
 		log.Println("Sin elementos")
 		return
