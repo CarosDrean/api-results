@@ -11,7 +11,7 @@ import (
 type SequentialDB struct {}
 
 func (db SequentialDB) NewID(nodeId int, sequentialId int, prefix string) string {
-	return fmt.Sprintf("N%03d-%09d%s", nodeId, sequentialId, prefix)
+	return fmt.Sprintf("N%03d-%s%09d", nodeId, prefix, sequentialId)
 }
 
 func (db SequentialDB) NextSequentialId(nodeId int, tableId int) int {

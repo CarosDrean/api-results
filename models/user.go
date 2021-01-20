@@ -1,13 +1,14 @@
 package models
 
 type SystemUser struct {
-	ID             int64  `json:"_id"`
-	PersonID       string `json:"personId"`
-	UserName       string `json:"username"`
-	Password       string `json:"password"`
-	TypeUser       int    `json:"typeUser"`
-	OrganizationID string `json:"organizationId"`
-	IsDelete       int
+	ID               int64  `json:"_id"`
+	PersonID         string `json:"personId"`
+	UserName         string `json:"username"`
+	Password         string `json:"password"`
+	TypeUser         int    `json:"typeUser"`
+	OrganizationID   string `json:"organizationId"`
+	CodeProfessional string `json:"codeProfessional"` // numero de colegiatura, para el caso inicial siempre va a ser de un medico
+	IsDelete         int
 }
 
 type UserPerson struct {
