@@ -34,6 +34,10 @@ func Login(w http.ResponseWriter, r *http.Request){
 		isPatientParticular = true
 		isSystemUser = false
 		stateLogin, id, err = patientParticular(user)
+		if stateLogin == constants.NotFound {
+			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password)
+			isSystemUser = true
+		}
 	}
 	if err != nil {
 		_, _ = fmt.Fprintf(w, fmt.Sprintf("¡Hubo un Error %s", err.Error()))

@@ -24,7 +24,8 @@ type ServicePatient struct {
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
 	// only result covid moment
-	Result string `json:"result"`
+	Result  string `json:"result"`
+	Result2 string `json:"result2"`
 }
 
 type ServicePatientDiseases struct {
