@@ -8,4 +8,5 @@ type Result struct {
 	Exam         string `json:"exam"`
 	ServiceDate  string `json:"servicedate"`
 	Result       string `json:"result"`
+	Result2      string `json:"result2"`
 }

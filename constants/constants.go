@@ -14,11 +14,16 @@ const (
 	RouteNewPassword   = "newpassword"
 	RouteNewSystemUser = "new-systemuser"
 	RouteUserLink      = "userlink"
+	RouteUploadFile    = "upload-file"
+	RouteSendFile      = "send-file"
 
 	ClientURL = "https://resultados.holosalud.org/#/"
 
 	IdPruebaRapida       string = "N007-ME000000491"
 	IdResultPruebaRapida string = "N007-MF000004612"
+
+	IdPruebaHisopado       string = "N009-ME000000567"
+	IdResultPruebaHisopado string = "N009-MF000004672"
 
 	// systemparameter
 	IdConsultings string = "116"
@@ -31,6 +36,7 @@ var (
 		InternalAdmin: "Internal Admin",
 		ExternalAdmin: "External Admin",
 		ExternalMedic: "External Medic",
+		Accounting:    "Accounting",
 	}
 	CodeRoles = CodeRolesModel{
 		Patient:             0,
@@ -38,6 +44,7 @@ var (
 		ExternalAdmin:       2,
 		ExternalMedic:       3,
 		ExternalMedicNoData: 4,
+		Accounting:          5,
 	}
 )
 
@@ -47,6 +54,7 @@ type RolesModel struct {
 	InternalAdmin Role
 	ExternalAdmin Role
 	ExternalMedic Role
+	Accounting    Role
 }
 
 type CodeRolesModel struct {
@@ -55,4 +63,5 @@ type CodeRolesModel struct {
 	ExternalAdmin       int
 	ExternalMedic       int
 	ExternalMedicNoData int
+	Accounting          int
 }

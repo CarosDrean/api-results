@@ -27,6 +27,7 @@ func (c ExamController) GetAllPerson(w http.ResponseWriter, r *http.Request){
 		if e.ServiceStatusId == 3 && e.IsDeleted != 1 { // culminado
 			calendar, _ := db.CalendarDB{}.GetService(e.ID)
 			result, _ := db.ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
+			// result2, _ := db.ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			protocol, _ := db.ProtocolDB{}.Get(e.ProtocolID)
 			if calendar.CalendarStatusID != 4 { // 4 = cancelado
 				item.ID = strconv.Itoa(i)
@@ -37,6 +38,7 @@ func (c ExamController) GetAllPerson(w http.ResponseWriter, r *http.Request){
 				item.Business = be[0]
 				item.Exam = be[len(be)-1]
 				item.Result = result
+				// item.Result2 = result2
 				res = append(res, item)
 			}
 		}

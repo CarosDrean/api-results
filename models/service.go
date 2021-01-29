@@ -24,7 +24,8 @@ type ServicePatient struct {
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
 	// only result covid moment
-	Result string `json:"result"`
+	Result  string `json:"result"`
+	Result2 string `json:"result2"`
 }
 
 type ServicePatientDiseases struct {
@@ -63,4 +64,27 @@ type ServicePatientOrganization struct {
 	Mail             string `json:"mail"`
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
+}
+
+type ServicePatientExam struct {
+	ID               string      `json:"_id"`
+	ServiceDate      string      `json:"serviceDate"`
+	ProtocolID       string      `json:"protocolId"`
+	OrganizationID   string      `json:"organizationId"`
+	LocationID       string      `json:"locationId"`
+	Protocol         string      `json:"protocol"`
+	PriceProtocol    float32     `json:"priceProtocol"`
+	TypeDoc          string      `json:"typeDoc"`
+	Occupation       string      `json:"occupation"`
+	EsoType          int         `json:"esoType"`
+	Organization     string      `json:"organization"`
+	DNI              string      `json:"dni"`
+	Name             string      `json:"name"`
+	FirstLastName    string      `json:"firstLastname"`
+	SecondLastName   string      `json:"secondLastname"`
+	Mail             string      `json:"mail"`
+	Sex              int         `json:"sex"`
+	AptitudeStatusId int         `json:"aptitude"`
+	Birthday         string      `json:"birthday"`
+	Components       []Component `json:"components"`
 }

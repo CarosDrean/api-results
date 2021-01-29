@@ -33,4 +33,18 @@ var Service = models.QueryDB{
 		"inner join organization o on p.v_CustomerOrganizationId = o.v_OrganizationId " +
 		" where CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] +
 		" as date) <= CAST('%s' as date) and s." + service.Fields[3] + " is not null;"},
+		// reestructurar query para nuevo model
+	"listExamsDetailDate": {Q: "select s.v_ServiceId, pr.v_ProtocolId, l.v_LocationId,  o.v_OrganizationId, p.v_FirstLastName, p.v_SecondLastName, " +
+		"p.v_FirstName, dh.v_Value1, p.v_DocNumber, o.v_Name, p.v_CurrentOccupation, s.d_ServiceDate, p.d_Birthdate, " +
+		"pc.r_Price, c.v_Name, sc.r_Price, pr.v_Name, p.v_Mail, p.i_SexTypeId, s.i_AptitudeStatusId, pr.i_EsoTypeId " +
+		"from service s " +
+		"inner join servicecomponent sc on s.v_ServiceId = sc.v_ServiceId and sc.r_Price > 0 " +
+		"inner join person p on s.v_PersonId = p.v_PersonId " +
+		"inner join protocol pr on s.v_ProtocolId = pr.v_ProtocolId " +
+		"inner join protocolcomponent pc on pr.v_ProtocolId = pc.v_ProtocolId and pc.r_Price > 0 " +
+		"inner join component c on pc.v_ComponentId = c.v_ComponentId " +
+		"inner join organization o on pr.v_CustomerOrganizationId = o.v_OrganizationId " +
+		"inner join datahierarchy dh on p.i_DocTypeId = dh.i_ItemId and dh.i_GroupId = 106 " +
+		"inner join location l on o.v_OrganizationId = l.v_OrganizationId " +
+		"where CAST(s.d_ServiceDate as date) >= CAST('%s' as date) and CAST(s.d_ServiceDate as date) <= CAST('%s' as date)"},
 }

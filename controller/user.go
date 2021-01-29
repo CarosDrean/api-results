@@ -41,21 +41,23 @@ func (c UserController) GetAllPerson(w http.ResponseWriter, r *http.Request) {
 	for _, e := range items {
 		person, _ := db.PersonDB{}.Get(e.PersonID)
 		organization, _ := db.OrganizationDB{}.Get(e.OrganizationID)
+		professional, _ := db.ProfessionalDB{}.Get(e.PersonID)
 		item := models.UserPerson{
-			ID:             e.ID,
-			PersonID:       e.PersonID,
-			UserName:       e.UserName,
-			Password:       e.Password,
-			TypeUser:       e.TypeUser,
-			OrganizationID: e.OrganizationID,
-			Organization:   organization.Name,
-			DNI:            person.DNI,
-			Name:           person.Name,
-			FirstLastName:  person.FirstLastName,
-			SecondLastName: person.SecondLastName,
-			Mail:           person.Mail,
-			Sex:            person.Sex,
-			Birthday:       person.Birthday,
+			ID:               e.ID,
+			PersonID:         e.PersonID,
+			UserName:         e.UserName,
+			Password:         e.Password,
+			TypeUser:         e.TypeUser,
+			OrganizationID:   e.OrganizationID,
+			Organization:     organization.Name,
+			DNI:              person.DNI,
+			Name:             person.Name,
+			FirstLastName:    person.FirstLastName,
+			SecondLastName:   person.SecondLastName,
+			Mail:             person.Mail,
+			Sex:              person.Sex,
+			Birthday:         person.Birthday,
+			CodeProfessional: professional.Code,
 		}
 		res = append(res, item)
 	}
@@ -69,6 +71,8 @@ func (c UserController) Get(w http.ResponseWriter, r *http.Request) {
 	id, _ := params["id"]
 
 	item, _ := c.DB.Get(id)
+	professional, _ := db.ProfessionalDB{}.Get(item.PersonID)
+	item.CodeProfessional = professional.Code
 
 	_ = json.NewEncoder(w).Encode(item)
 }
@@ -120,7 +124,7 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	idUser, err := c.DB.Create(user)
 	checkError(err, "Created User")
 
-	if user.TypeUser != 1 {
+	if user.TypeUser != 1 && user.TypeUser != 5 {
 		createProtocolSystemUser(idUser, item.OrganizationID)
 	}
 
@@ -129,7 +133,8 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 		User:     item.UserName,
 		Password: item.Password,
 	}
-	utils.SendMail(mail, constants.RouteNewSystemUser)
+	data, _ := json.Marshal(mail)
+	_ = utils.SendMail(data, constants.RouteNewSystemUser)
 
 	_ = json.NewEncoder(w).Encode(idUser)
 }
@@ -140,7 +145,7 @@ func (c UserController) permitCreateUser(idOrganization string) bool {
 	}
 	users, _ := c.usersOrganization(idOrganization)
 	if len(users) >= constants.MaxUsersOrganization {
-	 	return false
+		return false
 	}
 	return true
 }
@@ -186,7 +191,7 @@ func createProtocolSystemUser(idUser int64, organizationId string) {
 	checkError(err, "Created ProtocolSystemUser")
 }
 
-func (c UserController) validateAndCreateOrUpdateMedic(item models.UserPerson) {
+func (c UserController) validateAndCreateOrUpdateMedic(item models.UserPerson) error {
 	personID := item.PersonID
 	professional, _ := db.ProfessionalDB{}.Get(personID)
 	newProfessional := models.Professional{
@@ -198,12 +203,19 @@ func (c UserController) validateAndCreateOrUpdateMedic(item models.UserPerson) {
 	if professional.Code == "" && professional.ProfessionID == 0 {
 		_, err := db.ProfessionalDB{}.Create(newProfessional)
 		checkError(err, "Created Professional")
+		if err != nil {
+			return err
+		}
 	} else {
 		if !cmp.Equal(professional, newProfessional) {
 			_, err := db.ProfessionalDB{}.Update(personID, newProfessional)
 			checkError(err, "Updated Professional")
+			if err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
 // verifica si exste la person y de no ser el caso crea y devuelve el ID
@@ -225,7 +237,10 @@ func (c UserController) validateAndCreateOrUpdatePerson(item models.UserPerson) 
 		person, _ := db.PersonDB{}.GetFromDNI(item.DNI)
 		if person.Name == "" && person.DNI == "" {
 			personID, err = db.PersonDB{}.Create(newPerson)
+			item.PersonID = personID
 			checkError(err, "Created Person")
+		} else {
+			item.PersonID = person.ID
 		}
 	} else {
 		person, _ := db.PersonDB{}.Get(personID)
@@ -243,7 +258,10 @@ func (c UserController) validateAndCreateOrUpdatePerson(item models.UserPerson) 
 		if item.CodeProfessional == "" {
 			return personID, errors.New("code professional invalid")
 		}
-		c.validateAndCreateOrUpdateMedic(item)
+		err := c.validateAndCreateOrUpdateMedic(item)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return personID, nil

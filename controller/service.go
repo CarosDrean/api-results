@@ -26,6 +26,19 @@ func (c ServiceController) GetAllDate(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(services)
 }
 
+func (c ServiceController) GetAllExamsDetail(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+	services, err := c.DB.GetAllExamDetail(item)
+	if err != nil {
+		returnErr(w, err, "obtener todos exam detail")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(services)
+}
+
 func (c ServiceController) GetAllDiseaseFilterDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter

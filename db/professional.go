@@ -24,6 +24,7 @@ func (db ProfessionalDB) GetAll() ([]models.Professional, error) {
 	return res, err
 }
 
+// obtiene el profesional por el personID
 func (db ProfessionalDB) Get(id string) (models.Professional, error) {
 	res := make([]models.Professional, 0)
 
@@ -95,7 +96,9 @@ func (db ProfessionalDB) scan(rows *sql.Rows, err error, res *[]models.Professio
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&item.PersonID, &item.ProfessionID, &item.Code, &item.IsDeleted)
+		var code sql.NullString
+		err := rows.Scan(&item.PersonID, &item.ProfessionID, &code, &item.IsDeleted)
+		item.Code = code.String
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err

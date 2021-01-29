@@ -48,7 +48,7 @@ func (db LocationDB) scan(rows *sql.Rows, err error, res *[]models.Location, ctx
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err
-		} else {
+		} else if item.IsDeleted != 1{
 			*res = append(*res, item)
 		}
 	}
