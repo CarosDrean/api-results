@@ -11,7 +11,7 @@ import (
 
 type ServiceDB struct{}
 
-func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOrganization, error) {
+func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrganization, error) {
 	res := make([]models.ServicePatientOrganization, 0)
 	var service models.Service
 	var person models.Person
@@ -28,14 +28,16 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOr
 	for rows.Next() {
 		var pass sql.NullString
 		var birth sql.NullString
+		var phone sql.NullString
 		err := rows.Scan(&service.ID, &service.PersonID, &service.ProtocolID, &service.ServiceDate, &service.ServiceStatusId,
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
-			&person.Sex, &birth, &person.IsDeleted,
+			&person.Sex, &birth, &person.IsDeleted, &phone,
 			&organization.ID, &organization.Name,
 			&protocol.EsoType)
 		person.Password = pass.String
 		person.Birthday = birth.String
+		person.Phone = phone.String
 		if err != nil {
 			log.Println(err)
 		} else {
@@ -45,7 +47,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOr
 				PersonID:         service.PersonID,
 				ProtocolID:       service.ProtocolID,
 				OrganizationID:   organization.ID,
-				Organization: organization.Name,
+				Organization:     organization.Name,
 				AptitudeStatusId: service.AptitudeStatusId,
 				DNI:              person.DNI,
 				Name:             person.Name,
@@ -55,6 +57,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOr
 				Sex:              person.Sex,
 				Birthday:         person.Birthday,
 				EsoType:          protocol.EsoType,
+				Phone:            person.Phone,
 			}
 			res = append(res, item)
 		}
@@ -134,12 +137,13 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 		var pass sql.NullString
 		var birth sql.NullString
 		var disease sql.NullString
+		var phone sql.NullString
 		var diseaseString string
 		err := rows.Scan(&service.ID, &service.PersonID, &service.ProtocolID, &service.ServiceDate, &service.ServiceStatusId,
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
-			&person.Sex, &birth, &person.IsDeleted,
-			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType,
+			&person.Sex, &birth, &person.IsDeleted, &phone,
+			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType, &protocol.GroupOccupationId,
 			&disease)
 		if pass.Valid {
 			person.Password = pass.String

@@ -164,9 +164,11 @@ func (db PersonDB) scan(rows *sql.Rows, err error, res *[]models.Person, ctx str
 	for rows.Next() {
 		var pass sql.NullString
 		var birth sql.NullString
+		var phone sql.NullString
 		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail,
-			&item.Sex, &birth, &item.IsDeleted)
+			&item.Sex, &birth, &item.IsDeleted, &phone)
 		item.Birthday = birth.String
+		item.Phone = phone.String
 		if pass.Valid {
 			item.Password = pass.String
 		} else {
