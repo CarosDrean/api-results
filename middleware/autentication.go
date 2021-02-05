@@ -86,12 +86,13 @@ func Login(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-// en las dos funciones siguientes inicializamos la bd dependiendo del caso, tambien lo dejamos en el main por si acaso
+// Inicializar BD
 func patientBusiness(user models.UserLogin) (constants.State, string, error){
 	db.DB = helper.Get()
 	return db.PersonDB{}.ValidateLogin(user.User, user.Password)
 }
 
+// Inicializar BD particular
 func patientParticular(user models.UserLogin) (constants.State, string, error){
 	db.DB = helper.GetAux()
 	return db.PersonDB{}.ValidateLogin(user.User, user.Password)

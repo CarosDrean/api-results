@@ -75,7 +75,7 @@ func (db ProtocolDB) scan(rows *sql.Rows, err error, res *[]models.Protocol, ctx
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType, &item.GroupOccupationId)
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err
