@@ -178,7 +178,11 @@ func (c FileController) assemblyFileNameExtra(idService string, dni string, pare
 	layout := "2006-01-02"
 	t, _ := time.Parse(layout, dates[0])
 	year, month, day := t.Date()
-	td := strconv.Itoa(day) + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
+	dayString := strconv.Itoa(day)
+	if len(dayString) == 1 {
+		dayString = "0" + strconv.Itoa(day)
+	}
+	td := dayString + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
 
 	namePDF := organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
 	if parent == "CAPSD" {
@@ -193,6 +197,7 @@ func (c FileController) assemblyFileNameExtra(idService string, dni string, pare
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		namePDF = organizationName + " - " + personName + " - " + td + ".pdf"
 	}
+	fmt.Println(namePDF)
 	return namePDF
 }
 
