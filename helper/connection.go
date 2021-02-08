@@ -10,7 +10,7 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 )
 
-func Get() *sql.DB {
+func Get() (*sql.DB, string) {
 	config, err := utils.GetConfiguration()
 
 	if err != nil {
@@ -34,10 +34,10 @@ func Get() *sql.DB {
 
 	fmt.Println("Db is connected!")
 
-	return db
+	return db, config.Database
 }
 
-func GetAux() *sql.DB {
+func GetAux() (*sql.DB, string) {
 	config, err := utils.GetConfiguration()
 
 	if err != nil {
@@ -61,5 +61,5 @@ func GetAux() *sql.DB {
 
 	fmt.Println("Db aux is connected!")
 
-	return db
+	return db, config.Databaseaux
 }

@@ -4,12 +4,15 @@ import (
 	"crypto/rsa"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
+	"github.com/CarosDrean/api-results.git/db"
+	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -110,7 +113,7 @@ func ValidateToken(w http.ResponseWriter, r *http.Request) string {
 	return "Error"
 }
 
-func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constants.Role) {
+func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constants.Role, string) {
 	r.Header.Add("Authorization", r.Header.Get("x-token"))
 
 	var claim models.Claim
@@ -126,28 +129,43 @@ func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constant
 			switch vErr.Errors {
 			case jwt.ValidationErrorExpired:
 				_, _ = fmt.Fprintln(w, "Su token ha expirado")
-				return nil, ""
+				return nil, "", ""
 			case jwt.ValidationErrorSignatureInvalid:
 				_, _ = fmt.Fprintln(w, "Su firma de token no coincide")
-				return nil, ""
+				return nil, "", ""
 			default:
 				_, _ = fmt.Fprintln(w, "Su token no es valido")
-				return nil, ""
+				return nil, "", ""
 			}
 		default:
 			_, _ = fmt.Fprintln(w, "Su token no es valido error")
-			return nil, ""
+			return nil, "", ""
 		}
 	}
-	return token, role
+	return token, role, claim.NameDB
+}
+
+func reconnectDBParticular(nameDB string) {
+	instance := db.DB
+	strDB := fmt.Sprint(instance)[1:]
+	contains := strings.Contains(strDB, nameDB)
+	// corregir esto
+	if !contains {
+		if nameDB == "HoloCovid" {
+			db.DB, _ = helper.GetAux()
+		} else {
+			db.DB, _ = helper.Get()
+		}
+	}
 }
 
 func CheckSecurity(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token, _ := validateToken(w, r)
+		token, _, nameDB := validateToken(w, r)
 		if token == nil {
 			return
 		}
+		reconnectDBParticular(nameDB)
 
 		if token.Valid {
 			w.WriteHeader(http.StatusAccepted)
