@@ -74,6 +74,7 @@ func (db PersonDB) Create(item models.Person) (string, error) {
 		sql.Named("v_Mail", item.Mail),
 		sql.Named("i_SexTypeId", item.Sex),
 		sql.Named("d_Birthdate", date),
+		sql.Named("v_TelephoneNumber", ""),
 		sql.Named("i_IsDeleted", 0))
 	if err != nil {
 		return "", err
@@ -97,6 +98,7 @@ func (db PersonDB) Update(id string, item models.Person) (int64, error) {
 		sql.Named("v_FirstLastName", item.FirstLastName),
 		sql.Named("v_SecondLastName", item.SecondLastName),
 		sql.Named("v_Mail", item.Mail),
+		sql.Named("v_TelephoneNumber", ""),
 		sql.Named("i_SexTypeId", item.Sex),
 		sql.Named("d_Birthdate", date),
 		sql.Named("i_IsDeleted", 0))

@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"io"
@@ -31,13 +32,19 @@ func SendMail(mailData []byte, route string) error{
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err)
+		log.Println(fmt.Sprintf("error in read body: %s", err))
 		return err
 	}
 	byt := []byte(string(body))
+	if strings.Contains(string(body), "<") {
+		return errors.New("Error de respuesta")
+	}
+	if strings.Contains(string(body), "quota exceeded") || strings.Contains(string(body), "ECONNECTION"){
+		return errors.New("Cuota de envios diarios excedida")
+	}
 	var dat map[string]interface{}
 	if err := json.Unmarshal(byt, &dat); err != nil {
-		log.Println(err)
+		log.Println(fmt.Sprintf("error in unarchall json: %s", err))
 		return err
 	}
 	fmt.Println(dat)

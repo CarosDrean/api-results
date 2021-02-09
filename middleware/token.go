@@ -20,6 +20,7 @@ import (
 var (
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
+	config     models.Configuration
 )
 
 func init() {
@@ -40,6 +41,10 @@ func init() {
 	publicKey, err = jwt.ParseRSAPublicKeyFromPEM(publicBytes)
 	if err != nil {
 		log.Fatal("No se pudo leer")
+	}
+	config, err = utils.GetConfiguration()
+	if err != nil {
+		log.Println("No se pudo leer")
 	}
 }
 
@@ -147,7 +152,6 @@ func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constant
 }
 
 func reconnectDBParticular(nameDB string) {
-	config, _ := utils.GetConfiguration()
 	instance := db.DB
 	strDB := fmt.Sprint(instance)[1:]
 	contains := strings.Contains(strDB, nameDB)
@@ -155,7 +159,6 @@ func reconnectDBParticular(nameDB string) {
 		db.DB, _ = helper.Get()
 		return
 	}
-	// corregir esto
 	if !contains {
 		if nameDB == config.Databaseaux {
 			db.DB, _ = helper.GetAux()

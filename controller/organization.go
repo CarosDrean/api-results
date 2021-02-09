@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/db"
 	mid "github.com/CarosDrean/api-results.git/middleware"
@@ -67,8 +66,6 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 		NameDB: config.Database,
 	}
 
-	_ = c.updateURLAdminOrMedic(item)
-
 	token := mid.GenerateJWTExternal(claim)
 	URL := constants.ClientURL + "temp/create-external-user/" + token
 
@@ -82,9 +79,10 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 
 	err := utils.SendMail(data, constants.RouteUserLink)
 	if err != nil {
-		_, _ = fmt.Fprintf(w, "¡Hubo un error al procesar la solicitud!")
+		returnErr(w, err, "Send Mail")
 		return
 	}
+	_ = c.updateURLAdminOrMedic(item)
 	_ = json.NewEncoder(w).Encode(URL)
 }
 
