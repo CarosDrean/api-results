@@ -89,3 +89,17 @@ type ServicePatientExam struct {
 	Birthday         string      `json:"birthday"`
 	Components       []Component `json:"components"`
 }
+
+type ServiceCovid struct {
+	Date           string `json:"date"`
+	Name           string `json:"name"`
+	FirstLastname  string `json:"lastname"`
+	SecondLastName string `json:"secondLastname"`
+	DocNumber      string `json:"docNumber"`
+	BirthDate      string `json:"birthdate"`
+	Age            int    `json:"age"`
+	Group          string `json:"group"`
+	Occupation     string `json:"occupation"`
+	Exam           string `json:"exam"`
+	Result         string `json:"result"`
+}

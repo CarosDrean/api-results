@@ -11,6 +11,30 @@ import (
 
 type ServiceDB struct{}
 
+func (db ServiceDB) GetAllCovid(docNumber string) ([]models.ServiceCovid, error) {
+	res := make([]models.ServiceCovid, 0)
+	var item models.ServiceCovid
+	tsql := fmt.Sprintf(query.Service["getAllCovid"].Q, docNumber)
+	rows, err := DB.Query(tsql)
+
+	if err != nil {
+		fmt.Println("Error reading rows: " + err.Error())
+		return res, err
+	}
+	for rows.Next() {
+		err := rows.Scan(&item.Date, &item.Name, &item.FirstLastname, &item.SecondLastName, &item.DocNumber, &item.BirthDate,
+			&item.Group, &item.Occupation, &item.Exam, &item.Result)
+		if err != nil {
+			log.Println(err)
+		} else {
+			// calcular edad
+			item.Age = 30
+			res = append(res, item)
+		}
+	}
+	return res, nil
+}
+
 func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrganization, error) {
 	res := make([]models.ServicePatientOrganization, 0)
 	var service models.Service

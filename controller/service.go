@@ -13,6 +13,20 @@ type ServiceController struct {
 	DB db.ServiceDB
 }
 
+func (c ServiceController) GetAllCovid(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	docNumber, _ := params["docNumber"]
+
+	res, err := db.ServiceDB{}.GetAllCovid(docNumber)
+	if err != nil {
+		returnErr(w, err, "obtener todos organization")
+		return
+	}
+	// aqui obtener el pdf con la data obtenida
+	_ = json.NewEncoder(w).Encode(res)
+}
+
 func (c ServiceController) GetAllDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
