@@ -59,10 +59,12 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 	w.Header().Set("Content-Type", "application/json")
 	var item models.OrganizationForMailCreateUser
 	_ = json.NewDecoder(r.Body).Decode(&item)
+	config, _ := utils.GetConfiguration()
 	claim := models.ClaimResult{
 		ID:   item.ID,
 		Role: constants.Roles.Temp,
 		Data: item.TypeUser,
+		NameDB: config.Database,
 	}
 
 	_ = c.updateURLAdminOrMedic(item)

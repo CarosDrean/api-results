@@ -7,6 +7,7 @@ import (
 	"github.com/CarosDrean/api-results.git/db"
 	"github.com/CarosDrean/api-results.git/helper"
 	"github.com/CarosDrean/api-results.git/models"
+	"github.com/CarosDrean/api-results.git/utils"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
 	"io/ioutil"
@@ -146,12 +147,17 @@ func validateToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, constant
 }
 
 func reconnectDBParticular(nameDB string) {
+	config, _ := utils.GetConfiguration()
 	instance := db.DB
 	strDB := fmt.Sprint(instance)[1:]
 	contains := strings.Contains(strDB, nameDB)
+	if nameDB == "" {
+		db.DB, _ = helper.Get()
+		return
+	}
 	// corregir esto
 	if !contains {
-		if nameDB == "HoloCovid" {
+		if nameDB == config.Databaseaux {
 			db.DB, _ = helper.GetAux()
 		} else {
 			db.DB, _ = helper.Get()
