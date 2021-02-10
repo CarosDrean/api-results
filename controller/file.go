@@ -151,6 +151,8 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		nameFile = constants.RouteCertificate312 + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "CAP")
 	} else if strings.Contains(petition.Exam, "HISTORIA CLINICA") {
 		nameFile = constants.RouteHistory + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "HISTORIA")
+	} else if strings.Contains(petition.Exam, "PRUEBA HISOPADO") {
+		nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopado + ".pdf"
 	}
 	if len(nameFile) == 0 {
 		return "", errors.New("no aceptado")

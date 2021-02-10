@@ -20,10 +20,9 @@ func (c ServiceController) GetAllCovid(w http.ResponseWriter, r *http.Request) {
 
 	res, err := db.ServiceDB{}.GetAllCovid(docNumber)
 	if err != nil {
-		returnErr(w, err, "obtener todos organization")
+		returnErr(w, err, "obtener todos covid")
 		return
 	}
-	// aqui obtener el pdf con la data obtenida
 	_ = json.NewEncoder(w).Encode(res)
 }
 
@@ -98,8 +97,6 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 
 	res := make([]models.ServicePatient, 0)
 
-	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
-
 	protocols, err := db.ProtocolDB{}.GetAllOrganization(id)
 	if err != nil {
 		returnErr(w, err, "obtener todos organization")
@@ -110,6 +107,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 		for _, s := range services {
 			patient, _ := db.PersonDB{}.Get(s.PersonID)
 			result, _ := db.ResultDB{}.GetService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
+			result2, _ := db.ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -124,6 +122,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 				Sex:              patient.Sex,
 				Birthday:         patient.Birthday,
 				Result:           result,
+				Result2:          result2,
 			}
 			res = append(res, item)
 		}
@@ -132,7 +131,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request){
+func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)

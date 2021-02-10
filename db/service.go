@@ -65,6 +65,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 		if err != nil {
 			log.Println(err)
 		} else {
+			result2, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			item := models.ServicePatientOrganization{
 				ID:               service.ID,
 				ServiceDate:      service.ServiceDate,
@@ -82,6 +83,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 				Birthday:         person.Birthday,
 				EsoType:          protocol.EsoType,
 				Phone:            person.Phone,
+				Result2:          result2,
 			}
 			res = append(res, item)
 		}
@@ -295,6 +297,7 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 	for _, e := range services {
 		patient, _ := PersonDB{}.Get(e.PersonID)
 		result, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
+		result2, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 		item := models.ServicePatient{
 			ID:               e.ID,
 			ServiceDate:      e.ServiceDate,
@@ -309,6 +312,7 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 			Mail:             patient.Mail,
 			Sex:              patient.Sex,
 			Result:           result,
+			Result2:          result2,
 		}
 		res = append(res, item)
 	}

@@ -65,6 +65,7 @@ type ServicePatientOrganization struct {
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
 	Phone            string `json:"phone"`
+	Result2          string `json:"result2"`
 }
 
 type ServicePatientExam struct {
