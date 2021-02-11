@@ -38,9 +38,23 @@ func (db ProtocolDB) GetAllOrganization(id string) ([]models.Protocol, error) {
 	return res, nil
 }
 
-func (db ProtocolDB) delBusinessName(nameComplet string) string {
-	pr := strings.Split(nameComplet, "-")
-	name := nameComplet
+func (db ProtocolDB) GetAllOrganizationEmployer(id string) ([]models.Protocol, error) {
+	res := make([]models.Protocol, 0)
+
+	tsql := fmt.Sprintf(query.Protocol["getOrganizationEmployer"].Q, id)
+	rows, err := DB.Query(tsql)
+
+	err = db.scan(rows, err, &res, "Protocol DB", "GetAllOrganizationEmployer")
+	if err != nil {
+		return res, err
+	}
+	defer rows.Close()
+	return res, nil
+}
+
+func (db ProtocolDB) delBusinessName(nameFull string) string {
+	pr := strings.Split(nameFull, "-")
+	name := nameFull
 	for i, e := range pr {
 		if i == 1 {
 			name = e
@@ -75,7 +89,7 @@ func (db ProtocolDB) scan(rows *sql.Rows, err error, res *[]models.Protocol, ctx
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.LocationID, &item.IsDeleted, &item.EsoType, &item.GroupOccupationId)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.OrganizationEmployerID, &item.LocationID, &item.IsDeleted, &item.EsoType, &item.GroupOccupationId)
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err
