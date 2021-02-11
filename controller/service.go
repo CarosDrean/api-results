@@ -145,12 +145,26 @@ func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseW
 	_ = json.NewEncoder(w).Encode(res)
 }
 
+func (c ServiceController) GetAllPatientsWithOrganizationEmployerFilter(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	res, err := c.DB.GetAllPatientsWithOrganizationEmployerFilter(item)
+	if err != nil {
+		returnErr(w, err, "obtener todos organization filter")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+
 func (c ServiceController) GetAllPatientsWithProtocolFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
-	res, err := c.DB.GetAllPatientsWithProtocolFilter(item.ID, item)
+	res, err := c.DB.GetAllPatientsWithProtocolFilter(item.ID, item, false)
 	if err != nil {
 		returnErr(w, err, "obtener todos patients")
 		return

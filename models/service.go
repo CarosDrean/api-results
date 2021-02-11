@@ -26,6 +26,9 @@ type ServicePatient struct {
 	// only result covid moment
 	Result  string `json:"result"`
 	Result2 string `json:"result2"`
+
+	OrganizationID   string `json:"organizationId"`
+	Organization     string `json:"organization"`
 }
 
 type ServicePatientDiseases struct {

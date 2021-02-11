@@ -102,7 +102,7 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 	if filter.ID == "all" {
 		res, err = db.ServiceDB{}.GetAllPatientsWithLocationFilter(filter.DataTwo, filter)
 	} else {
-		res, err = db.ServiceDB{}.GetAllPatientsWithProtocolFilter(filter.ID, filter)
+		res, err = db.ServiceDB{}.GetAllPatientsWithProtocolFilter(filter.ID, filter, false)
 	}
 
 	if err != nil {

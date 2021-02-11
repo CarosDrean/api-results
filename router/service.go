@@ -13,6 +13,7 @@ func serviceRoutes(s *mux.Router) {
 	s.HandleFunc("/all-covid/{docNumber}", mid.CheckSecurity(ctrl.GetAllCovid)).Methods("GET")
 	s.HandleFunc("/all-organization/{id}", mid.CheckSecurity(ctrl.GetAllPatientsWithOrganization)).Methods("GET")
 	s.HandleFunc("/all-organization/", mid.CheckSecurity(ctrl.GetAllPatientsWithOrganizationFilter)).Methods("POST")
+	s.HandleFunc("/all-organization-employer/", mid.CheckSecurity(ctrl.GetAllPatientsWithOrganizationEmployerFilter)).Methods("POST")
 	s.HandleFunc("/filter/", mid.CheckSecurity(ctrl.GetAllPatientsWithProtocolFilter)).Methods("POST")
 	s.HandleFunc("/filter-date/", mid.RoleInternalAdmin(ctrl.GetAllDiseaseFilterDate)).Methods("POST")
 	s.HandleFunc("/all-date/", mid.CheckSecurity(ctrl.GetAllDate)).Methods("POST")

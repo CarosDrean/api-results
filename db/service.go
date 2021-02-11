@@ -267,7 +267,21 @@ func (db ServiceDB) GetAllPatientsWithOrganizationFilter(filter models.Filter) (
 		return res, err
 	}
 	for _, e := range protocols {
-		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter)
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter, false)
+		res = append(res, sp...)
+	}
+	return res, nil
+}
+
+func (db ServiceDB) GetAllPatientsWithOrganizationEmployerFilter(filter models.Filter) ([]models.ServicePatient, error) {
+	res := make([]models.ServicePatient, 0)
+
+	protocols, err := ProtocolDB{}.GetAllOrganizationEmployer(filter.ID)
+	if err != nil {
+		return res, err
+	}
+	for _, e := range protocols {
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter, true)
 		res = append(res, sp...)
 	}
 	return res, nil
@@ -281,13 +295,13 @@ func (db ServiceDB) GetAllPatientsWithLocationFilter(idLocation string, filter m
 		return res, err
 	}
 	for _, e := range protocols {
-		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter)
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter, false)
 		res = append(res, sp...)
 	}
 	return res, nil
 }
 
-func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter models.Filter) ([]models.ServicePatient, error) {
+func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter models.Filter, needOrganization bool) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
 	services, err := db.GetAllProtocolFilter(idProtocol, filter)
@@ -313,6 +327,12 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 			Sex:              patient.Sex,
 			Result:           result,
 			Result2:          result2,
+		}
+		if needOrganization {
+			protocol, _ := ProtocolDB{}.Get(e.ProtocolID)
+			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
+			item.OrganizationID = organization.ID
+			item.Organization = organization.Name
 		}
 		res = append(res, item)
 	}
