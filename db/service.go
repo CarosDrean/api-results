@@ -6,7 +6,6 @@ import (
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/query"
-	"log"
 )
 
 type ServiceDB struct{}
@@ -25,7 +24,7 @@ func (db ServiceDB) GetAllCovid(docNumber string) ([]models.ServiceCovid, error)
 		err := rows.Scan(&item.Date, &item.Name, &item.FirstLastname, &item.SecondLastName, &item.DocNumber, &item.BirthDate,
 			&item.Sex, &item.Group, &item.Occupation, &item.Exam, &item.Result)
 		if err != nil {
-			log.Println(err)
+			checkError(err, "next", "db", "getallcovid")
 		} else {
 			// calcular edad
 			item.Age = 30
@@ -63,7 +62,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 		person.Birthday = birth.String
 		person.Phone = phone.String
 		if err != nil {
-			log.Println(err)
+			checkError(err, "next", "Db", "GetAlDate")
 		} else if service.IsDeleted != 1 && service.ServiceStatusId == 3 {
 			result2, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			item := models.ServicePatientOrganization{
@@ -169,7 +168,8 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
 			&person.Sex, &birth, &person.IsDeleted, &phone,
-			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType, &protocol.GroupOccupationId,
+			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.OrganizationEmployerID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType,
+			&protocol.GroupOccupationId,
 			&disease)
 		if pass.Valid {
 			person.Password = pass.String
@@ -187,7 +187,7 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 			diseaseString = ""
 		}
 		if err != nil {
-			log.Println(err)
+			checkError(err, "next", "db", "get all disease filter")
 		} else {
 			item := models.ServicePatientDiseases{
 				ID:               service.ID,

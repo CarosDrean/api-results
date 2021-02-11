@@ -32,7 +32,8 @@ var Service = models.QueryDB{
 		"inner join person pe on s.v_PersonId = pe.v_PersonId " +
 		"inner join organization o on p.v_CustomerOrganizationId = o.v_OrganizationId " +
 		" where CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] +
-		" as date) <= CAST('%s' as date) and s." + service.Fields[3] + " is not null;"},
+		" as date) <= CAST('%s' as date) and s." + service.Fields[3] + " is not null" +
+		" order by s.d_ServiceDate;"},
 	// reestructurar query para nuevo model
 	"listExamsDetailDate": {Q: "select s.v_ServiceId, pr.v_ProtocolId, l.v_LocationId,  o.v_OrganizationId, p.v_FirstLastName, p.v_SecondLastName, " +
 		"p.v_FirstName, dh.v_Value1, p.v_DocNumber, o.v_Name, p.v_CurrentOccupation, s.d_ServiceDate, p.d_Birthdate, " +
