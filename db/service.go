@@ -64,7 +64,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 		person.Phone = phone.String
 		if err != nil {
 			log.Println(err)
-		} else {
+		} else if service.IsDeleted != 1 && service.ServiceStatusId == 3 {
 			result2, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			item := models.ServicePatientOrganization{
 				ID:               service.ID,
