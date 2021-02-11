@@ -103,4 +103,5 @@ type ServiceCovid struct {
 	Occupation     string `json:"occupation"`
 	Exam           string `json:"exam"`
 	Result         string `json:"result"`
+	Sex            int    `json:"sex"`
 }

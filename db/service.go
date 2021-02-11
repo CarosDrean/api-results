@@ -23,7 +23,7 @@ func (db ServiceDB) GetAllCovid(docNumber string) ([]models.ServiceCovid, error)
 	}
 	for rows.Next() {
 		err := rows.Scan(&item.Date, &item.Name, &item.FirstLastname, &item.SecondLastName, &item.DocNumber, &item.BirthDate,
-			&item.Group, &item.Occupation, &item.Exam, &item.Result)
+			&item.Sex, &item.Group, &item.Occupation, &item.Exam, &item.Result)
 		if err != nil {
 			log.Println(err)
 		} else {

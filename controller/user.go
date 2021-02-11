@@ -58,6 +58,7 @@ func (c UserController) GetAllPerson(w http.ResponseWriter, r *http.Request) {
 			Sex:              person.Sex,
 			Birthday:         person.Birthday,
 			CodeProfessional: professional.Code,
+			AccessClient:     e.AccessClient,
 		}
 		res = append(res, item)
 	}
@@ -123,9 +124,9 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	idUser, err := c.DB.Create(user)
 	checkError(err, "Created User")
-
+	// 3003 codigo para acceso a clinete
 	if user.TypeUser != 1 && user.TypeUser != 5 {
-		createProtocolSystemUser(idUser, item.OrganizationID)
+		createProtocolSystemUser(idUser, item.OrganizationID, item.AccessClient)
 	}
 
 	mail := models.Mail{
@@ -180,12 +181,15 @@ func (c UserController) usersOrganization(idOrganization string) ([]models.UserP
 	return res, nil
 }
 
-func createProtocolSystemUser(idUser int64, organizationId string) {
+func createProtocolSystemUser(idUser int64, organizationId string, accessClient bool) {
 	// hay que obtener el id del protocolo deacuerdo a la empresa
 	protocols, _ := db.ProtocolDB{}.GetAllOrganization(organizationId)
 	psu := models.ProtocolSystemUser{
 		SystemUserID: idUser,
 		ProtocolID:   protocols[0].ID,
+	}
+	if accessClient {
+		psu.AccessClient = constants.CodeAccessClient
 	}
 	_, err := db.ProtocolSystemUserDB{}.Create(psu)
 	checkError(err, "Created ProtocolSystemUser")
@@ -289,7 +293,7 @@ func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if userDB.OrganizationID != item.OrganizationID {
-		createProtocolSystemUser(item.ID, item.OrganizationID)
+		createProtocolSystemUser(item.ID, item.OrganizationID, item.AccessClient)
 	}
 
 	user := models.SystemUser{

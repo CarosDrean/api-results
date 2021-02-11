@@ -47,7 +47,7 @@ var Service = models.QueryDB{
 		"inner join datahierarchy dh on p.i_DocTypeId = dh.i_ItemId and dh.i_GroupId = 106 " +
 		"inner join location l on o.v_OrganizationId = l.v_OrganizationId " +
 		"where CAST(s.d_ServiceDate as date) >= CAST('%s' as date) and CAST(s.d_ServiceDate as date) <= CAST('%s' as date)"},
-	"getAllCovid": {Q: "select s.d_ServiceDate, p.v_FirstName, p.v_FirstLastName, p.v_SecondLastName, p.v_DocNumber, p.d_Birthdate, g.v_Name, p.v_CurrentOccupation, c.v_Name, scfv.v_Value1 from service s " +
+	"getAllCovid": {Q: "select s.d_ServiceDate, p.v_FirstName, p.v_FirstLastName, p.v_SecondLastName, p.v_DocNumber, p.d_Birthdate, p.i_SexTypeId, g.v_Name, p.v_CurrentOccupation, c.v_Name, scfv.v_Value1 from service s " +
 		"inner join person p on s.v_PersonId = p.v_PersonId " +
 		"inner join protocol pr on s.v_ProtocolId = pr.v_ProtocolId and pr.i_IsDeleted = 0 " +
 		"inner join groupoccupation g on pr.v_GroupOccupationId = g.v_GroupOccupationId " +

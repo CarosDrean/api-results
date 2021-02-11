@@ -27,6 +27,8 @@ const (
 
 	// systemparameter
 	IdConsultings string = "116"
+
+	CodeAccessClient = 3003
 )
 
 var (
