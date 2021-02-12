@@ -26,6 +26,19 @@ func (c OrganizationController) GetAll(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(items)
 }
 
+func (c OrganizationController) GetAllWorkingOfEmployer(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	idUser, _ := params["idUser"]
+
+	items, err := c.DB.GetAllWorkingOfEmployer(idUser)
+	if err != nil {
+		returnErr(w, err, "GetAllWorkingOfEmployer")
+		return
+	}
+	_ = json.NewEncoder(w).Encode(items)
+}
+
 func (c OrganizationController) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)

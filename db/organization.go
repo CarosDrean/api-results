@@ -23,6 +23,28 @@ func (db OrganizationDB) GetAll() ([]models.Organization, error) {
 	return res, err
 }
 
+func (db OrganizationDB) GetAllWorkingOfEmployer(idUser string) ([]models.Organization, error) {
+	res := make([]models.Organization, 0)
+	var item models.Organization
+
+	tsql := fmt.Sprintf(query.Organization["listWorkingOfEmployer"].Q, idUser)
+	rows, err := DB.Query(tsql)
+	if err != nil {
+		checkError(err, "GetAllWorkingOfEmployer", "db", "Reading rows")
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&item.ID, &item.Name)
+	}
+
+	if err != nil {
+		return res, err
+	}
+	defer rows.Close()
+	return res, err
+}
+
 func (db OrganizationDB) Get(id string) (models.Organization, error) {
 	res := make([]models.Organization, 0)
 

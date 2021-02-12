@@ -1,6 +1,0 @@
-select o.v_OrganizationId, o.v_Name from protocolsystemuser psu
-inner join protocol p on psu.v_ProtocolId = p.v_ProtocolId
-inner join protocol p2 on p.v_EmployerOrganizationId = p2.v_EmployerOrganizationId
-inner join organization o on p2.v_WorkingOrganizationId = o.v_OrganizationId
-where psu.i_SystemUserId = 388
-group by o.v_OrganizationId, o.v_Name
