@@ -136,7 +136,7 @@ func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseW
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
-	res, err := c.DB.GetAllPatientsWithOrganizationFilter(item)
+	res, err := c.DB.GetAllPatientsWithOrganizationFilter(item.ID, item)
 	if err != nil {
 		returnErr(w, err, "obtener todos organization filter")
 		return

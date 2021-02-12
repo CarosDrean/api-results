@@ -259,10 +259,10 @@ func (db ServiceDB) GetAllProtocolFilter(id string, filter models.Filter) ([]mod
 }
 
 // deacuerdo al id de la empresa obtiene todos sus protocolos y va armando el objeto ServicePatient
-func (db ServiceDB) GetAllPatientsWithOrganizationFilter(filter models.Filter) ([]models.ServicePatient, error) {
+func (db ServiceDB) GetAllPatientsWithOrganizationFilter(idOrganization string, filter models.Filter) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
-	protocols, err := ProtocolDB{}.GetAllOrganization(filter.ID)
+	protocols, err := ProtocolDB{}.GetAllOrganization(idOrganization)
 	if err != nil {
 		return res, err
 	}

@@ -31,7 +31,7 @@ func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Content-Type", "application/json")
 	var filter models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&filter)
-	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter)
+	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter.ID, filter)
 	if err != nil {
 		log.Println(err)
 		returnErr(w, err, "obtener todos pacientes")
@@ -100,7 +100,7 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 	var err error
 	res := make([]models.ServicePatient, 0)
 	if filter.ID == "all" {
-		res, err = db.ServiceDB{}.GetAllPatientsWithLocationFilter(filter.DataTwo, filter)
+		res, err = db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter.DataTwo, filter)
 	} else {
 		res, err = db.ServiceDB{}.GetAllPatientsWithProtocolFilter(filter.ID, filter, false)
 	}
@@ -199,7 +199,6 @@ func (c FileController) assemblyFileNameExtra(idService string, dni string, pare
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		namePDF = organizationName + " - " + personName + " - " + td + ".pdf"
 	}
-	fmt.Println(namePDF)
 	return namePDF
 }
 
