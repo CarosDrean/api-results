@@ -36,11 +36,11 @@ func SendMail(mailData []byte, route string) error{
 		return err
 	}
 	byt := []byte(string(body))
-	if strings.Contains(string(body), "<") {
-		return errors.New("Error de respuesta")
+	if !strings.Contains(string(body), "accepted") {
+		return errors.New("error de respuesta")
 	}
 	if strings.Contains(string(body), "quota exceeded") || strings.Contains(string(body), "ECONNECTION"){
-		return errors.New("Cuota de envios diarios excedida")
+		return errors.New("cuota de envios diarios excedida")
 	}
 	var dat map[string]interface{}
 	if err := json.Unmarshal(byt, &dat); err != nil {
