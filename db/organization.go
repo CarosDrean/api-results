@@ -82,6 +82,20 @@ func (db OrganizationDB) Update(id string, item models.Organization) (int64, err
 	return result.RowsAffected()
 }
 
+func (db OrganizationDB) Delete(id string) (int64, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(query.Organization["delete"].Q)
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("ID", id))
+	if err != nil {
+		fmt.Println(err)
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
 func (db OrganizationDB) scan(rows *sql.Rows, err error, res *[]models.Organization, ctx string, situation string) error {
 	var item models.Organization
 	if err != nil {

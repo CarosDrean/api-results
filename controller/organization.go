@@ -116,3 +116,14 @@ func (c OrganizationController) updateURLAdminOrMedic(item models.OrganizationFo
 	}
 	return nil
 }
+
+func (c OrganizationController) Delete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["id"]
+	result, err := c.DB.Delete(id)
+	if err != nil {
+		returnErr(w, err, "deleted")
+	}
+	_ = json.NewEncoder(w).Encode(result)
+}

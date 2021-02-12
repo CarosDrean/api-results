@@ -14,4 +14,5 @@ func organizationRoutes(s *mux.Router) {
 	s.HandleFunc("/all-working-employer/{idUser}", mid.CheckSecurity(ctrl.GetAllWorkingOfEmployer)).Methods("GET")
 	s.HandleFunc("/{id}", mid.CheckSecurity(ctrl.Update)).Methods("PUT")
 	s.HandleFunc("/send-mail", mid.RoleInternalAdmin(ctrl.SendURLTokenForExternalUser)).Methods("POST")
+	s.HandleFunc("/{id}", mid.CheckSecurity(ctrl.Delete)).Methods("DELETE")
 }
