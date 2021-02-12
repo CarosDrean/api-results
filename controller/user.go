@@ -182,17 +182,33 @@ func (c UserController) usersOrganization(idOrganization string) ([]models.UserP
 }
 
 func createProtocolSystemUser(idUser int64, organizationId string, accessClient bool) {
-	// hay que obtener el id del protocolo deacuerdo a la empresa
 	protocols, _ := db.ProtocolDB{}.GetAllOrganization(organizationId)
 	psu := models.ProtocolSystemUser{
 		SystemUserID: idUser,
 		ProtocolID:   protocols[0].ID,
 	}
 	if accessClient {
-		psu.AccessClient = constants.CodeAccessClient
+		psu.ApplicationHierarchy = constants.CodeAccessClient
 	}
 	_, err := db.ProtocolSystemUserDB{}.Create(psu)
 	checkError(err, "Created ProtocolSystemUser")
+}
+
+func updateProtocolSystemUser(idPsu string, idUser int64, organizationId string, accessClient bool) error {
+	protocols, _ := db.ProtocolDB{}.GetAllOrganization(organizationId)
+	psu := models.ProtocolSystemUser{
+		SystemUserID: idUser,
+		ProtocolID:   protocols[0].ID,
+	}
+	if accessClient {
+		psu.ApplicationHierarchy = constants.CodeAccessClient
+	}
+	_, err := db.ProtocolSystemUserDB{}.Update(idPsu, psu)
+	checkError(err, "Updated ProtocolSystemUser")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c UserController) validateAndCreateOrUpdateMedic(item models.UserPerson) error {
@@ -292,8 +308,12 @@ func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	if userDB.OrganizationID != item.OrganizationID {
-		createProtocolSystemUser(item.ID, item.OrganizationID, item.AccessClient)
+	psuDB, _ := db.ProtocolSystemUserDB{}.GetAllSystemUserID(strconv.Itoa(int(userDB.ID)))
+	if userDB.OrganizationID != item.OrganizationID || !(psuDB[0].ApplicationHierarchy == constants.CodeAccessClient && item.AccessClient) {
+		err = updateProtocolSystemUser(psuDB[0].ID, item.ID, item.OrganizationID, item.AccessClient)
+		if err != nil {
+			returnErr(w, err, "update protocol system user")
+		}
 	}
 
 	user := models.SystemUser{
@@ -307,7 +327,7 @@ func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	result, err := c.DB.Update(user)
 	if err != nil {
-		log.Println(err)
+		returnErr(w, err, "update")
 	}
 	_ = json.NewEncoder(w).Encode(result)
 }

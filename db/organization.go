@@ -36,10 +36,11 @@ func (db OrganizationDB) GetAllWorkingOfEmployer(idUser string) ([]models.Organi
 
 	for rows.Next() {
 		err = rows.Scan(&item.ID, &item.Name)
-	}
-
-	if err != nil {
-		return res, err
+		if err != nil {
+			checkError(err, "GetAllWorkingOfEmployer", "db", "scan rows")
+		} else {
+			res = append(res, item)
+		}
 	}
 	defer rows.Close()
 	return res, err

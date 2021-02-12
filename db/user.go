@@ -210,7 +210,7 @@ func (db UserDB) scan(rows *sql.Rows, err error, res *[]models.SystemUser, ctx s
 			protocol, _ := ProtocolDB{}.Get(protocolSystemUsers[0].ProtocolID)
 			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
 			item.OrganizationID = organization.ID
-			if protocolSystemUsers[0].AccessClient == constants.CodeAccessClient {
+			if protocolSystemUsers[0].ApplicationHierarchy == constants.CodeAccessClient {
 				item.AccessClient = true
 			}
 		} else {
