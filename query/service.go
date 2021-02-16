@@ -3,18 +3,22 @@ package query
 import "github.com/CarosDrean/api-results.git/models"
 
 var service = models.TableDB{
-	Name: "dbo.service",
+	Name: "service",
 	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate", "i_ServiceStatusId", "i_isDeleted",
 		"i_AptitudeStatusId"},
 }
 
 var Service = models.QueryDB{
 	"getPersonID": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[1] + " = '%s' order by " + service.Fields[3] + " desc;"},
-	"getProtocol": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
+	"getProtocol": {Q: "select " + fieldStringPrefix(service.Fields, "s") + " from " + service.Name +
+		" s inner join calendar c on s.v_ServiceId = c.v_ServiceId and c.i_CalendarStatusId != 4" +
+		" where " + service.Fields[2] +
 		" = '%s' and d_ServiceDate is not null order by " + service.Fields[3] + " desc;"},
-	"getProtocolFilter": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[2] +
-		" = '%s' and CAST(" + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(" + service.Fields[3] + " as date) <= CAST('%s' as date) and " + service.Fields[3] +
-		" is not null order by " + service.Fields[3] + " desc;"},
+	"getProtocolFilter": {Q: "select " + fieldStringPrefix(service.Fields, "s") + " from " + service.Name +
+		" s inner join calendar c on s.v_ServiceId = c.v_ServiceId and c.i_CalendarStatusId != 4" +
+		" where s." + service.Fields[2] +
+		" = '%s' and CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] + " as date) <= CAST('%s' as date) and s." + service.Fields[3] +
+		" is not null order by s." + service.Fields[3] + " desc;"},
 	"listDiseaseFilter": {Q: "select " + fieldStringPrefix(service.Fields, "s") + ", " + fieldStringPrefix(person.Fields, "pe") + ", " +
 		fieldStringPrefix(protocol.Fields, "p") +
 		", d.v_Name from dbo.service s " +

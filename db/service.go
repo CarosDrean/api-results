@@ -188,7 +188,7 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 		}
 		if err != nil {
 			checkError(err, "next", "db", "get all disease filter")
-		} else {
+		} else if service.IsDeleted != 1 {
 			item := models.ServicePatientDiseases{
 				ID:               service.ID,
 				ServiceDate:      service.ServiceDate,
