@@ -27,8 +27,12 @@ type ServicePatient struct {
 	Result  string `json:"result"`
 	Result2 string `json:"result2"`
 
-	OrganizationID   string `json:"organizationId"`
-	Organization     string `json:"organization"`
+	OrganizationID string `json:"organizationId"`
+	Organization   string `json:"organization"`
+
+	CalendarStatus int    `json:"calendarStatus"`
+	CircuitStart   string `json:"circuitStart"`
+	CircuitEnd     string `json:"circuitEnd"`
 }
 
 type ServicePatientDiseases struct {

@@ -6,6 +6,7 @@ import (
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/query"
+	"strings"
 )
 
 type ServiceDB struct{}
@@ -312,6 +313,10 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 		patient, _ := PersonDB{}.Get(e.PersonID)
 		result, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 		result2, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
+		calendar, _ := CalendarDB{}.GetService(e.ID)
+		// para quitar la zona horaria
+		start := strings.Split(calendar.CircuitStart, ".")
+		end := strings.Split(calendar.CircuitEnd, ".")
 		item := models.ServicePatient{
 			ID:               e.ID,
 			ServiceDate:      e.ServiceDate,
@@ -327,6 +332,9 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 			Sex:              patient.Sex,
 			Result:           result,
 			Result2:          result2,
+			CalendarStatus:   calendar.CalendarStatusID,
+			CircuitStart:     start[0],
+			CircuitEnd:       end[0],
 		}
 		if needOrganization {
 			protocol, _ := ProtocolDB{}.Get(e.ProtocolID)
