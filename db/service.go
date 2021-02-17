@@ -359,7 +359,7 @@ func (db ServiceDB) scan(rows *sql.Rows, err error, res *[]models.Service, ctx s
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err
-		} else if item.IsDeleted != 1 && item.ServiceStatusId == 3 { // verificar servicios no eliminados y culminados
+		} else if item.IsDeleted != 1 /*&& item.ServiceStatusId == 3*/ { // verificar servicios no eliminados y culminados
 			*res = append(*res, item)
 		}
 	}

@@ -13,6 +13,7 @@ type Service struct {
 type ServicePatient struct {
 	ID               string `json:"_id"`
 	ServiceDate      string `json:"serviceDate"`
+	ServiceStatusId  int    `json:"serviceStatus"`
 	PersonID         string `json:"personId"`
 	ProtocolID       string `json:"protocolId"`
 	AptitudeStatusId int    `json:"aptitude"`
