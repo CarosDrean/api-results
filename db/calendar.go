@@ -7,7 +7,7 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type CalendarDB struct {}
+type CalendarDB struct{}
 
 func (db CalendarDB) GetService(idService string) (models.Calendar, error) {
 	res := make([]models.Calendar, 0)
@@ -30,7 +30,11 @@ func (db CalendarDB) scan(rows *sql.Rows, err error, res *[]models.Calendar, ctx
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.ServiceID, &item.CalendarStatusID)
+		var circuitStart sql.NullString
+		var circuitEnd sql.NullString
+		err := rows.Scan(&item.ID, &item.ServiceID, &item.ProtocolID, &item.CalendarStatusID, &circuitStart, &circuitEnd)
+		item.CircuitStart = circuitStart.String
+		item.CircuitEnd = circuitEnd.String
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err

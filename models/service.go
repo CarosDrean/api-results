@@ -13,6 +13,7 @@ type Service struct {
 type ServicePatient struct {
 	ID               string `json:"_id"`
 	ServiceDate      string `json:"serviceDate"`
+	ServiceStatusId  int    `json:"serviceStatus"`
 	PersonID         string `json:"personId"`
 	ProtocolID       string `json:"protocolId"`
 	AptitudeStatusId int    `json:"aptitude"`
@@ -27,8 +28,12 @@ type ServicePatient struct {
 	Result  string `json:"result"`
 	Result2 string `json:"result2"`
 
-	OrganizationID   string `json:"organizationId"`
-	Organization     string `json:"organization"`
+	OrganizationID string `json:"organizationId"`
+	Organization   string `json:"organization"`
+
+	CalendarStatus int    `json:"calendarStatus"`
+	CircuitStart   string `json:"circuitStart"`
+	CircuitEnd     string `json:"circuitEnd"`
 }
 
 type ServicePatientDiseases struct {

@@ -1,0 +1,39 @@
+select oo.v_Name, pp.v_FirstLastName + ' ' + pp. v_SecondLastName + ', ' + pp.v_FirstName as Name , pp.v_DocNumber,
+sr.v_ServiceId, sr.v_PersonId, cast(datediff(dd, pp.d_Birthdate ,GETDATE()) / 365.25 as int) as Age, pr.v_Name,
+sr.d_ServiceDate, SUM(sc.r_Price)/1.18 as IGV, SUM(sc.r_Price) - (SUM(sc.r_Price)/1.18) as Price, SUM(sc.r_Price) as PriceProtocol,
+pp.v_CurrentOccupation, pp.i_SexTypeId, pp.v_TelephoneNumber, pp.v_AdressLocation ,dh.v_Value1 as District, dh2.v_Value1 as Province, max(scv.v_Value1) as ResultPR, max(scv2.v_Value1) as Brand, max(scv3.v_Value1) as Lot,
+max(scvh.v_Value1) as ResultH, max(scv2h.v_Value1) as BrandH, max(scv3h.v_Value1) as LotH
+, pp.v_FirstLastName, pp.v_SecondLastName, pp.v_FirstName, cal.i_CalendarStatusId, max(pc.v_ComponentId), max(pch.v_ComponentId)  from service sr
+inner join protocol pr on sr.v_ProtocolId=pr.v_ProtocolId and pr.i_IsDeleted = 0
+
+left join protocolcomponent pc on pr.v_ProtocolId=pc.v_ProtocolId and (pc.v_ComponentId= 'N007-ME000000491')
+left join protocolcomponent pch on pr.v_ProtocolId=pch.v_ProtocolId and (pch.v_ComponentId= 'N009-ME000000567')
+
+inner join servicecomponent sc on sr.v_ServiceId=sc.v_ServiceId
+inner join organization oo on pr.v_CustomerOrganizationId=oo.v_OrganizationId
+inner join person pp on sr.v_PersonId=pp.v_PersonId
+left join datahierarchy dh on pp.i_DistrictId=dh.i_ItemId and dh.i_GroupId=113
+left join datahierarchy dh2 on pp.i_ProvinceId=dh2.i_ItemId and dh2.i_GroupId=113
+
+left join servicecomponentfields scf on sc.v_ServiceComponentId=scf.v_ServiceComponentId and (scf.v_ComponentFieldId = 'N007-MF000004612')
+left join servicecomponentfieldvalues scv on scf.v_servicecomponentfieldsId=scv.v_servicecomponentfieldsId
+left join servicecomponentfields scf2 on sc.v_ServiceComponentId=scf2.v_ServiceComponentId and (scf2.v_ComponentFieldId = 'N007-MF000003248')
+left join servicecomponentfieldvalues scv2 on scf2.v_servicecomponentfieldsId=scv2.v_servicecomponentfieldsId
+left join servicecomponentfields scf3 on sc.v_ServiceComponentId=scf3.v_ServiceComponentId and (scf3.v_ComponentFieldId = 'N007-MF000004614')
+left join servicecomponentfieldvalues scv3 on scf3.v_servicecomponentfieldsId=scv3.v_servicecomponentfieldsId
+
+left join servicecomponentfields scfh on sc.v_ServiceComponentId=scfh.v_ServiceComponentId and (scfh.v_ComponentFieldId = 'N009-MF000004572')
+left join servicecomponentfieldvalues scvh on scfh.v_servicecomponentfieldsId=scvh.v_servicecomponentfieldsId
+left join servicecomponentfields scf2h on sc.v_ServiceComponentId=scf2h.v_ServiceComponentId and (scf2h.v_ComponentFieldId = 'N009-MF000004575')
+left join servicecomponentfieldvalues scv2h on scf2h.v_servicecomponentfieldsId=scv2h.v_servicecomponentfieldsId
+left join servicecomponentfields scf3h on sc.v_ServiceComponentId=scf3h.v_ServiceComponentId and (scf3h.v_ComponentFieldId = 'N009-MF000004573')
+left join servicecomponentfieldvalues scv3h on scf3h.v_servicecomponentfieldsId=scv3h.v_servicecomponentfieldsId
+
+inner join calendar cal on sr.v_ServiceId=cal.v_ServiceId and cal.i_CalendarStatusId != 4
+where CAST(sr.d_ServiceDate as date) >= CAST('2021-02-13' as date) and CAST(sr.d_ServiceDate as date) <= CAST('2021-02-13' as date)
+and (pc.v_ComponentId is not null or pch.v_ComponentId is not null) and sr.i_IsDeleted = 0
+and (scv2h.v_Value1 is not null or scv2.v_Value1 is not null)
+group by oo.v_Name, pp.v_FirstLastName , pp. v_SecondLastName , pp.v_FirstName , pp.v_DocNumber,
+sr.v_ServiceId, sr.v_PersonId, pp.d_Birthdate, pr.v_Name,sr.d_ServiceDate,
+pp.v_CurrentOccupation, pp.i_SexTypeId, pp.v_TelephoneNumber, pp.v_AdressLocation, dh.v_Value1, dh2.v_Value1, scv3h.v_Value1,
+cal.i_CalendarStatusId, pc.v_ComponentId, pch.v_ComponentId
