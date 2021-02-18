@@ -74,6 +74,7 @@ func (db PersonDB) Create(item models.Person) (string, error) {
 		sql.Named("v_Mail", item.Mail),
 		sql.Named("i_SexTypeId", item.Sex),
 		sql.Named("d_Birthdate", date),
+		sql.Named("v_TelephoneNumber", ""),
 		sql.Named("i_IsDeleted", 0))
 	if err != nil {
 		return "", err
@@ -97,6 +98,7 @@ func (db PersonDB) Update(id string, item models.Person) (int64, error) {
 		sql.Named("v_FirstLastName", item.FirstLastName),
 		sql.Named("v_SecondLastName", item.SecondLastName),
 		sql.Named("v_Mail", item.Mail),
+		sql.Named("v_TelephoneNumber", ""),
 		sql.Named("i_SexTypeId", item.Sex),
 		sql.Named("d_Birthdate", date),
 		sql.Named("i_IsDeleted", 0))
@@ -164,9 +166,11 @@ func (db PersonDB) scan(rows *sql.Rows, err error, res *[]models.Person, ctx str
 	for rows.Next() {
 		var pass sql.NullString
 		var birth sql.NullString
+		var phone sql.NullString
 		err := rows.Scan(&item.ID, &item.DNI, &pass, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail,
-			&item.Sex, &birth, &item.IsDeleted)
+			&item.Sex, &birth, &item.IsDeleted, &phone)
 		item.Birthday = birth.String
+		item.Phone = phone.String
 		if pass.Valid {
 			item.Password = pass.String
 		} else {

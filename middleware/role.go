@@ -11,7 +11,7 @@ import (
 
 func RoleInternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token, role := validateToken(w, r)
+		token, role, _ := validateToken(w, r)
 		if token == nil {
 			return
 		}
@@ -37,7 +37,7 @@ func RoleInternalAdmin(next http.HandlerFunc) http.HandlerFunc {
 // ver la manera de concatenar middlewares con ||
 func RoleInternalAdminOrTemp(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token, role := validateToken(w, r)
+		token, role, _ := validateToken(w, r)
 		if token == nil {
 			return
 		}

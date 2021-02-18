@@ -11,5 +11,6 @@ func protocolRoutes(s *mux.Router) {
 	ctrl := protocol.ProtocolController{DB: db.ProtocolDB{}}
 	s.HandleFunc("/all/{idLocation}", mid.CheckSecurity(ctrl.GetAllLocation)).Methods("GET")
 	s.HandleFunc("/all-organization/{idOrganization}", mid.CheckSecurity(ctrl.GetAllOrganization)).Methods("GET")
+	s.HandleFunc("/all-organization-employer/{idOrganization}", mid.CheckSecurity(ctrl.GetAllOrganizationEmployer)).Methods("GET")
 	s.HandleFunc("/{id}", mid.CheckSecurity(ctrl.Get)).Methods("GET")
 }

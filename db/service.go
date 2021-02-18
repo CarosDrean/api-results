@@ -6,12 +6,35 @@ import (
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/query"
-	"log"
 )
 
 type ServiceDB struct{}
 
-func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOrganization, error) {
+func (db ServiceDB) GetAllCovid(docNumber string) ([]models.ServiceCovid, error) {
+	res := make([]models.ServiceCovid, 0)
+	var item models.ServiceCovid
+	tsql := fmt.Sprintf(query.Service["getAllCovid"].Q, docNumber)
+	rows, err := DB.Query(tsql)
+
+	if err != nil {
+		fmt.Println("Error reading rows: " + err.Error())
+		return res, err
+	}
+	for rows.Next() {
+		err := rows.Scan(&item.Date, &item.Name, &item.FirstLastname, &item.SecondLastName, &item.DocNumber, &item.BirthDate,
+			&item.Sex, &item.Group, &item.Occupation, &item.Exam, &item.Result)
+		if err != nil {
+			checkError(err, "next", "db", "getallcovid")
+		} else {
+			// calcular edad
+			item.Age = 30
+			res = append(res, item)
+		}
+	}
+	return res, nil
+}
+
+func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrganization, error) {
 	res := make([]models.ServicePatientOrganization, 0)
 	var service models.Service
 	var person models.Person
@@ -28,24 +51,27 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOr
 	for rows.Next() {
 		var pass sql.NullString
 		var birth sql.NullString
+		var phone sql.NullString
 		err := rows.Scan(&service.ID, &service.PersonID, &service.ProtocolID, &service.ServiceDate, &service.ServiceStatusId,
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
-			&person.Sex, &birth, &person.IsDeleted,
+			&person.Sex, &birth, &person.IsDeleted, &phone,
 			&organization.ID, &organization.Name,
 			&protocol.EsoType)
 		person.Password = pass.String
 		person.Birthday = birth.String
+		person.Phone = phone.String
 		if err != nil {
-			log.Println(err)
-		} else {
+			checkError(err, "next", "Db", "GetAlDate")
+		} else if service.IsDeleted != 1 && service.ServiceStatusId == 3 {
+			result2, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			item := models.ServicePatientOrganization{
 				ID:               service.ID,
 				ServiceDate:      service.ServiceDate,
 				PersonID:         service.PersonID,
 				ProtocolID:       service.ProtocolID,
 				OrganizationID:   organization.ID,
-				Organization: organization.Name,
+				Organization:     organization.Name,
 				AptitudeStatusId: service.AptitudeStatusId,
 				DNI:              person.DNI,
 				Name:             person.Name,
@@ -55,6 +81,8 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([] models.ServicePatientOr
 				Sex:              person.Sex,
 				Birthday:         person.Birthday,
 				EsoType:          protocol.EsoType,
+				Phone:            person.Phone,
+				Result2:          result2,
 			}
 			res = append(res, item)
 		}
@@ -134,12 +162,14 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 		var pass sql.NullString
 		var birth sql.NullString
 		var disease sql.NullString
+		var phone sql.NullString
 		var diseaseString string
 		err := rows.Scan(&service.ID, &service.PersonID, &service.ProtocolID, &service.ServiceDate, &service.ServiceStatusId,
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
-			&person.Sex, &birth, &person.IsDeleted,
-			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType,
+			&person.Sex, &birth, &person.IsDeleted, &phone,
+			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.OrganizationEmployerID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType,
+			&protocol.GroupOccupationId,
 			&disease)
 		if pass.Valid {
 			person.Password = pass.String
@@ -157,7 +187,7 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 			diseaseString = ""
 		}
 		if err != nil {
-			log.Println(err)
+			checkError(err, "next", "db", "get all disease filter")
 		} else {
 			item := models.ServicePatientDiseases{
 				ID:               service.ID,
@@ -229,15 +259,29 @@ func (db ServiceDB) GetAllProtocolFilter(id string, filter models.Filter) ([]mod
 }
 
 // deacuerdo al id de la empresa obtiene todos sus protocolos y va armando el objeto ServicePatient
-func (db ServiceDB) GetAllPatientsWithOrganizationFilter(filter models.Filter) ([]models.ServicePatient, error) {
+func (db ServiceDB) GetAllPatientsWithOrganizationFilter(idOrganization string, filter models.Filter) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
-	protocols, err := ProtocolDB{}.GetAllOrganization(filter.ID)
+	protocols, err := ProtocolDB{}.GetAllOrganization(idOrganization)
 	if err != nil {
 		return res, err
 	}
 	for _, e := range protocols {
-		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter)
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter, false)
+		res = append(res, sp...)
+	}
+	return res, nil
+}
+
+func (db ServiceDB) GetAllPatientsWithOrganizationEmployerFilter(filter models.Filter) ([]models.ServicePatient, error) {
+	res := make([]models.ServicePatient, 0)
+
+	protocols, err := ProtocolDB{}.GetAllOrganizationEmployer(filter.ID)
+	if err != nil {
+		return res, err
+	}
+	for _, e := range protocols {
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter, true)
 		res = append(res, sp...)
 	}
 	return res, nil
@@ -251,13 +295,13 @@ func (db ServiceDB) GetAllPatientsWithLocationFilter(idLocation string, filter m
 		return res, err
 	}
 	for _, e := range protocols {
-		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter)
+		sp, _ := db.GetAllPatientsWithProtocolFilter(e.ID, filter, false)
 		res = append(res, sp...)
 	}
 	return res, nil
 }
 
-func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter models.Filter) ([]models.ServicePatient, error) {
+func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter models.Filter, needOrganization bool) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
 	services, err := db.GetAllProtocolFilter(idProtocol, filter)
@@ -267,6 +311,7 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 	for _, e := range services {
 		patient, _ := PersonDB{}.Get(e.PersonID)
 		result, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
+		result2, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 		item := models.ServicePatient{
 			ID:               e.ID,
 			ServiceDate:      e.ServiceDate,
@@ -281,6 +326,13 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 			Mail:             patient.Mail,
 			Sex:              patient.Sex,
 			Result:           result,
+			Result2:          result2,
+		}
+		if needOrganization {
+			protocol, _ := ProtocolDB{}.Get(e.ProtocolID)
+			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
+			item.OrganizationID = organization.ID
+			item.Organization = organization.Name
 		}
 		res = append(res, item)
 	}

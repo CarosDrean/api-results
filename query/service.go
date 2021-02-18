@@ -32,8 +32,9 @@ var Service = models.QueryDB{
 		"inner join person pe on s.v_PersonId = pe.v_PersonId " +
 		"inner join organization o on p.v_CustomerOrganizationId = o.v_OrganizationId " +
 		" where CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] +
-		" as date) <= CAST('%s' as date) and s." + service.Fields[3] + " is not null;"},
-		// reestructurar query para nuevo model
+		" as date) <= CAST('%s' as date) and s." + service.Fields[3] + " is not null" +
+		" order by s.d_ServiceDate;"},
+	// reestructurar query para nuevo model
 	"listExamsDetailDate": {Q: "select s.v_ServiceId, pr.v_ProtocolId, l.v_LocationId,  o.v_OrganizationId, p.v_FirstLastName, p.v_SecondLastName, " +
 		"p.v_FirstName, dh.v_Value1, p.v_DocNumber, o.v_Name, p.v_CurrentOccupation, s.d_ServiceDate, p.d_Birthdate, " +
 		"pc.r_Price, c.v_Name, sc.r_Price, pr.v_Name, p.v_Mail, p.i_SexTypeId, s.i_AptitudeStatusId, pr.i_EsoTypeId " +
@@ -47,4 +48,17 @@ var Service = models.QueryDB{
 		"inner join datahierarchy dh on p.i_DocTypeId = dh.i_ItemId and dh.i_GroupId = 106 " +
 		"inner join location l on o.v_OrganizationId = l.v_OrganizationId " +
 		"where CAST(s.d_ServiceDate as date) >= CAST('%s' as date) and CAST(s.d_ServiceDate as date) <= CAST('%s' as date)"},
+	"getAllCovid": {Q: "select s.d_ServiceDate, p.v_FirstName, p.v_FirstLastName, p.v_SecondLastName, p.v_DocNumber, p.d_Birthdate, p.i_SexTypeId, g.v_Name, p.v_CurrentOccupation, c.v_Name, scfv.v_Value1 from service s " +
+		"inner join person p on s.v_PersonId = p.v_PersonId " +
+		"inner join protocol pr on s.v_ProtocolId = pr.v_ProtocolId and pr.i_IsDeleted = 0 " +
+		"inner join groupoccupation g on pr.v_GroupOccupationId = g.v_GroupOccupationId " +
+		"inner join protocolcomponent pc on s.v_ProtocolId = pc.v_ProtocolId and " +
+		"(pc.v_ComponentId= 'N007-ME000000491' or pc.v_ComponentId= 'N009-ME000000567') and pc.i_IsDeleted = 0 " +
+		"inner join component c on pc.v_ComponentId = c.v_ComponentId " +
+		"inner join servicecomponent sc on s.v_ServiceId = sc.v_ServiceId " +
+		"inner join servicecomponentfields scf on sc.v_ServiceComponentId = scf.v_ServiceComponentId and " +
+		"(scf.v_ComponentFieldId = 'N007-MF000004612' or scf.v_ComponentFieldId = 'N009-MF000004572') " +
+		"inner join servicecomponentfieldvalues scfv on scf.v_ServiceComponentFieldsId = scfv.v_ServiceComponentFieldsId " +
+		"where p.v_DocNumber = '%s' " +
+		"order by s.d_ServiceDate desc"},
 }

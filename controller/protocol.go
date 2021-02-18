@@ -50,3 +50,18 @@ func (c ProtocolController) GetAllOrganization(w http.ResponseWriter, r *http.Re
 
 	_ = json.NewEncoder(w).Encode(protocols)
 }
+
+func (c ProtocolController) GetAllOrganizationEmployer(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, _ := params["idOrganization"]
+
+	protocols, err := c.DB.GetAllOrganizationEmployer(id)
+	if err != nil {
+		returnErr(w, err, "obtener todos organization")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(protocols)
+}
+

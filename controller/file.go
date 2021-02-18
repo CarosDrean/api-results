@@ -31,7 +31,7 @@ func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Reque
 	w.Header().Set("Content-Type", "application/json")
 	var filter models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&filter)
-	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter)
+	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter.ID, filter)
 	if err != nil {
 		log.Println(err)
 		returnErr(w, err, "obtener todos pacientes")
@@ -100,9 +100,9 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 	var err error
 	res := make([]models.ServicePatient, 0)
 	if filter.ID == "all" {
-		res, err = db.ServiceDB{}.GetAllPatientsWithLocationFilter(filter.DataTwo, filter)
+		res, err = db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter.DataTwo, filter)
 	} else {
-		res, err = db.ServiceDB{}.GetAllPatientsWithProtocolFilter(filter.ID, filter)
+		res, err = db.ServiceDB{}.GetAllPatientsWithProtocolFilter(filter.ID, filter, false)
 	}
 
 	if err != nil {
@@ -151,6 +151,8 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		nameFile = constants.RouteCertificate312 + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "CAP")
 	} else if strings.Contains(petition.Exam, "HISTORIA CLINICA") {
 		nameFile = constants.RouteHistory + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "HISTORIA")
+	} else if strings.Contains(petition.Exam, "PRUEBA HISOPADO") {
+		nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopado + ".pdf"
 	}
 	if len(nameFile) == 0 {
 		return "", errors.New("no aceptado")
@@ -178,7 +180,11 @@ func (c FileController) assemblyFileNameExtra(idService string, dni string, pare
 	layout := "2006-01-02"
 	t, _ := time.Parse(layout, dates[0])
 	year, month, day := t.Date()
-	td := strconv.Itoa(day) + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
+	dayString := strconv.Itoa(day)
+	if len(dayString) == 1 {
+		dayString = "0" + strconv.Itoa(day)
+	}
+	td := dayString + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
 
 	namePDF := organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
 	if parent == "CAPSD" {

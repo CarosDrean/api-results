@@ -23,6 +23,29 @@ func (db OrganizationDB) GetAll() ([]models.Organization, error) {
 	return res, err
 }
 
+func (db OrganizationDB) GetAllWorkingOfEmployer(idUser string) ([]models.Organization, error) {
+	res := make([]models.Organization, 0)
+	var item models.Organization
+
+	tsql := fmt.Sprintf(query.Organization["listWorkingOfEmployer"].Q, idUser)
+	rows, err := DB.Query(tsql)
+	if err != nil {
+		checkError(err, "GetAllWorkingOfEmployer", "db", "Reading rows")
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&item.ID, &item.Name)
+		if err != nil {
+			checkError(err, "GetAllWorkingOfEmployer", "db", "scan rows")
+		} else {
+			res = append(res, item)
+		}
+	}
+	defer rows.Close()
+	return res, err
+}
+
 func (db OrganizationDB) Get(id string) (models.Organization, error) {
 	res := make([]models.Organization, 0)
 
@@ -54,6 +77,20 @@ func (db OrganizationDB) Update(id string, item models.Organization) (int64, err
 		sql.Named("b_urlAdmin", item.UrlAdmin),
 		sql.Named("b_urlMedic", item.UrlMedic))
 	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
+func (db OrganizationDB) Delete(id string) (int64, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(query.Organization["delete"].Q)
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("ID", id))
+	if err != nil {
+		fmt.Println(err)
 		return -1, err
 	}
 	return result.RowsAffected()

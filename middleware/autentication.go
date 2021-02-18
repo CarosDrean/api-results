@@ -23,8 +23,9 @@ func Login(w http.ResponseWriter, r *http.Request){
 	var id string
 	isSystemUser := false
 	isPatientParticular := false
+	nameDB := ""
 	if !user.Particular {
-		stateLogin, id, err = patientBusiness(user)
+		stateLogin, id, err, nameDB = patientBusiness(user)
 
 		if stateLogin == constants.NotFound {
 			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password)
@@ -33,7 +34,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 	} else {
 		isPatientParticular = true
 		isSystemUser = false
-		stateLogin, id, err = patientParticular(user)
+		stateLogin, id, err, nameDB = patientParticular(user)
 		if stateLogin == constants.NotFound {
 			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password)
 			isSystemUser = true
@@ -45,10 +46,10 @@ func Login(w http.ResponseWriter, r *http.Request){
 
 	switch stateLogin {
 	case constants.Accept:
-		userResult := models.ClaimResult{ID: id, Role: getRole(0)}
+		userResult := models.ClaimResult{ID: id, Role: getRole(0), NameDB: nameDB}
 		if isSystemUser {
 			systemUser, _ := db.UserDB{}.Get(id)
-			userResult = models.ClaimResult{ID: id, Role: getRole(systemUser.TypeUser)}
+			userResult = models.ClaimResult{ID: id, Role: getRole(systemUser.TypeUser), NameDB: nameDB}
 		}
 		token := GenerateJWT(userResult)
 		result := models.ResponseToken{Token: token}
@@ -86,15 +87,20 @@ func Login(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-// en las dos funciones siguientes inicializamos la bd dependiendo del caso, tambien lo dejamos en el main por si acaso
-func patientBusiness(user models.UserLogin) (constants.State, string, error){
-	db.DB = helper.Get()
-	return db.PersonDB{}.ValidateLogin(user.User, user.Password)
+// Inicializar BD
+func patientBusiness(user models.UserLogin) (constants.State, string, error, string){
+	var nameDB string
+	db.DB, nameDB = helper.Get()
+	state, id, err := db.PersonDB{}.ValidateLogin(user.User, user.Password)
+	return state, id, err, nameDB
 }
 
-func patientParticular(user models.UserLogin) (constants.State, string, error){
-	db.DB = helper.GetAux()
-	return db.PersonDB{}.ValidateLogin(user.User, user.Password)
+// Inicializar BD particular
+func patientParticular(user models.UserLogin) (constants.State, string, error, string){
+	var nameDB string
+	db.DB, nameDB = helper.GetAux()
+	state, id, err := db.PersonDB{}.ValidateLogin(user.User, user.Password)
+	return state, id, err, nameDB
 }
 
 func getRole(typeUser int)constants.Role{

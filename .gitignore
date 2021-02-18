@@ -1,1 +1,4 @@
 .idea
+configuration.json
+private.rsa
+public.rsa.pub

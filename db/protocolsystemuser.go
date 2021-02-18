@@ -51,12 +51,51 @@ func (db ProtocolSystemUserDB) Create(item models.ProtocolSystemUser) (int64, er
 	newId := sqdb.NewID(constants.IdNode, sequentialID, constants.PrefixProtocolSystemUser)
 	item.ID = newId
 
+	applicationHierarchy := sql.Named("i_ApplicationHierarchyId", item.ApplicationHierarchy)
+	if item.ApplicationHierarchy != constants.CodeAccessClient {
+		applicationHierarchy = sql.Named("i_ApplicationHierarchyId", nil)
+	}
+
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,
 		sql.Named("v_ProtocolSystemUserId", item.ID),
 		sql.Named("i_SystemUserId", item.SystemUserID),
-		sql.Named("v_ProtocolId", item.ProtocolID))
+		sql.Named("v_ProtocolId", item.ProtocolID),
+		applicationHierarchy)
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
+func (db ProtocolSystemUserDB) Update(id string, item models.ProtocolSystemUser) (int64, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(query.ProtocolSystemUser["update"].Q)
+	applicationHierarchy := sql.Named("i_ApplicationHierarchyId", item.ApplicationHierarchy)
+	if item.ApplicationHierarchy != constants.CodeAccessClient {
+		applicationHierarchy = sql.Named("i_ApplicationHierarchyId", nil)
+	}
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("ID", id),
+		sql.Named("i_SystemUserId", item.SystemUserID),
+		sql.Named("v_ProtocolId", item.ProtocolID),
+		applicationHierarchy)
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
+func (db ProtocolSystemUserDB) Delete(id string) (int64, error) {
+	ctx := context.Background()
+	tsql := fmt.Sprintf(query.ProtocolSystemUser["delete"].Q)
+	result, err := DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("ID", id))
 	if err != nil {
 		return -1, err
 	}
@@ -70,7 +109,9 @@ func (db ProtocolSystemUserDB) scan(rows *sql.Rows, err error, res *[]models.Pro
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.SystemUserID, &item.ProtocolID)
+		var applicationHierarchy sql.NullInt64
+		err := rows.Scan(&item.ID, &item.SystemUserID, &item.ProtocolID, &applicationHierarchy)
+		item.ApplicationHierarchy = int(applicationHierarchy.Int64)
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err

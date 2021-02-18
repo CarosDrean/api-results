@@ -1,9 +1,9 @@
 {
     "engine": "mssql",
-    "server": "DESKTOP-QD7QM2Q\\HOLOSALUD2018",
+    "server": "HOLOSALUD-TI",
     "port": "1433",
     "user": "sa",
     "password": "123456",
-    "database": "HoloCovid",
+    "database": "HoloSalud2019",
     "databaseaux": "HoloCovid"
 }

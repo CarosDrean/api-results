@@ -39,7 +39,7 @@ func hideConsole(){
 func api(){
 	r := mux.NewRouter()
 
-	db.DB = helper.Get()
+	db.DB, _ = helper.Get()
 
 	r.HandleFunc("/", indexRouter)
 	r.HandleFunc("/api/login", middleware.Login)

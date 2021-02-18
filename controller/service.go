@@ -13,6 +13,19 @@ type ServiceController struct {
 	DB db.ServiceDB
 }
 
+func (c ServiceController) GetAllCovid(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	docNumber, _ := params["docNumber"]
+
+	res, err := db.ServiceDB{}.GetAllCovid(docNumber)
+	if err != nil {
+		returnErr(w, err, "obtener todos covid")
+		return
+	}
+	_ = json.NewEncoder(w).Encode(res)
+}
+
 func (c ServiceController) GetAllDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
@@ -84,8 +97,6 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 
 	res := make([]models.ServicePatient, 0)
 
-	// deacuerdo al id de la empresa obtener todos sus protocolos e ir armando el objeto
-
 	protocols, err := db.ProtocolDB{}.GetAllOrganization(id)
 	if err != nil {
 		returnErr(w, err, "obtener todos organization")
@@ -96,6 +107,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 		for _, s := range services {
 			patient, _ := db.PersonDB{}.Get(s.PersonID)
 			result, _ := db.ResultDB{}.GetService(s.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
+			result2, _ := db.ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			item := models.ServicePatient{
 				ID:               s.ID,
 				ServiceDate:      s.ServiceDate,
@@ -110,6 +122,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 				Sex:              patient.Sex,
 				Birthday:         patient.Birthday,
 				Result:           result,
+				Result2:          result2,
 			}
 			res = append(res, item)
 		}
@@ -118,12 +131,26 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 	_ = json.NewEncoder(w).Encode(res)
 }
 
-func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request){
+func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
-	res, err := c.DB.GetAllPatientsWithOrganizationFilter(item)
+	res, err := c.DB.GetAllPatientsWithOrganizationFilter(item.ID, item)
+	if err != nil {
+		returnErr(w, err, "obtener todos organization filter")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+
+func (c ServiceController) GetAllPatientsWithOrganizationEmployerFilter(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	res, err := c.DB.GetAllPatientsWithOrganizationEmployerFilter(item)
 	if err != nil {
 		returnErr(w, err, "obtener todos organization filter")
 		return
@@ -137,7 +164,7 @@ func (c ServiceController) GetAllPatientsWithProtocolFilter(w http.ResponseWrite
 	var item models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
-	res, err := c.DB.GetAllPatientsWithProtocolFilter(item.ID, item)
+	res, err := c.DB.GetAllPatientsWithProtocolFilter(item.ID, item, false)
 	if err != nil {
 		returnErr(w, err, "obtener todos patients")
 		return

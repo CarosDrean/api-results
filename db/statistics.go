@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/CarosDrean/api-results.git/models"
 	"github.com/CarosDrean/api-results.git/query"
-	"log"
 )
 
 type StatisticDB struct {}
@@ -25,7 +24,7 @@ func (db StatisticDB) GetServiceDiseaseByProtocol(filter models.Filter)([]models
 			&item.DNI, &item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail, &item.Sex, &item.Birthday,
 			&item.Disease, &item.Component, &item.Consulting)
 		if err != nil {
-			log.Println(err)
+			checkError(err, "next", "db statistics", "get diasease")
 		} else {
 			res = append(res, item)
 		}

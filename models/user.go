@@ -8,6 +8,7 @@ type SystemUser struct {
 	TypeUser         int    `json:"typeUser"`
 	OrganizationID   string `json:"organizationId"`
 	CodeProfessional string `json:"codeProfessional"` // numero de colegiatura, para el caso inicial siempre va a ser de un medico
+	AccessClient     bool   `json:"accessClient"`
 	IsDelete         int
 }
 
@@ -26,6 +27,7 @@ type UserPerson struct {
 	Mail             string `json:"mail"`
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
+	AccessClient     bool   `json:"accessClient"`
 	CodeProfessional string `json:"codeProfessional"` // numero de colegiatura, para el caso inicial siempre va a ser de un medico
 }
 

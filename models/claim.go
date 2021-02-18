@@ -11,7 +11,8 @@ type Claim struct {
 }
 
 type ClaimResult struct {
-	ID   string         `json:"_id"`
-	Role constants.Role `json:"role"`
-	Data string         `json:"data"`
+	ID     string         `json:"_id"`
+	Role   constants.Role `json:"role"`
+	Data   string         `json:"data"`
+	NameDB string         `json:"nameDB"`
 }
