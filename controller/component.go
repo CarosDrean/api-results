@@ -24,3 +24,16 @@ func (c ComponentController) GetAllCategoryId(w http.ResponseWriter, r *http.Req
 
 	_ = json.NewEncoder(w).Encode(res)
 }
+
+func (c ComponentController) GetComponentProtocolId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	idProtocol, _ := params["idProtocol"]
+
+	items, err := c.DB.GetComponentProtocolId(idProtocol)
+	if err != nil {
+		returnErr(w, err, "GetComponentProtocolId")
+		return
+	}
+	_ = json.NewEncoder(w).Encode(items)
+}

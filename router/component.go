@@ -10,5 +10,8 @@ import (
 func componentRoutes(s *mux.Router) {
 	ctrl := component.ComponentController{DB: db.ComponentDB{}}
 	s.HandleFunc("/all/{id}", mid.CheckSecurity(ctrl.GetAllCategoryId)).Methods("GET")
+	s.HandleFunc("/all-component-protocol/{idProtocol}", mid.CheckSecurity(ctrl.GetComponentProtocolId)).Methods("GET")
+
+
 }
 

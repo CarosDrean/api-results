@@ -23,6 +23,30 @@ func (db ComponentDB) GetAllCategoryId(idCategory string) ([]models.Component, e
 	return res, nil
 }
 
+func (db ComponentDB) GetComponentProtocolId(idProtocol string) ([]models.Component, error){
+	res := make([]models.Component, 0)
+	var item models.Component
+	tsql := fmt.Sprintf(query.Component["listComponent"].Q, idProtocol)
+	rows, err := DB.Query(tsql)
+	if err != nil {
+		checkError(err, "GetComponentProtocolId", "db", "Reading rows")
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&item.ID, &item.Name)
+		if err != nil {
+			checkError(err, "GetComponentProtocolId", "db", "scan rows")
+		} else {
+			res = append(res, item)
+		}
+	}
+	defer rows.Close()
+	return res, err
+}
+
+
+
 func (db ComponentDB) scan(rows *sql.Rows, err error, res *[]models.Component, ctx string, situation string) error {
 	var item models.Component
 	if err != nil {
@@ -40,3 +64,5 @@ func (db ComponentDB) scan(rows *sql.Rows, err error, res *[]models.Component, c
 	}
 	return nil
 }
+
+

@@ -9,4 +9,9 @@ var component = models.TableDB{
 
 var Component = models.QueryDB{
 	"getCategory": {Q: "select " + fieldString(component.Fields) + " from " + component.Name + " where " + calendar.Fields[2] + " = %s;"},
+	"listComponent": {Q: "select co.v_ComponentId, co.v_Name from protocol p" +
+		" inner join protocolcomponent c on c.v_ProtocolId  = p.v_ProtocolId" +
+		" inner join component co on c.v_ComponentId = co.v_ComponentId " +
+		" where p.v_ProtocolId = '%s' and p.i_IsDeleted = 0 and co.i_IsDeleted = 0 " +
+		" group by co.v_Name, co.v_ComponentId"},
 }
