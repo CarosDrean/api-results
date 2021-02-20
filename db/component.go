@@ -7,9 +7,9 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type ComponentDB struct {}
+type ComponentDB struct{}
 
-func (db ComponentDB) GetAllCategoryId(idCategory string) ([]models.Component, error){
+func (db ComponentDB) GetAllCategoryId(idCategory string) ([]models.Component, error) {
 	res := make([]models.Component, 0)
 
 	tsql := fmt.Sprintf(query.Component["getCategory"].Q, idCategory)
@@ -23,7 +23,7 @@ func (db ComponentDB) GetAllCategoryId(idCategory string) ([]models.Component, e
 	return res, nil
 }
 
-func (db ComponentDB) GetComponentProtocolId(idProtocol string) ([]models.Component, error){
+func (db ComponentDB) GetComponentProtocolId(idProtocol string) ([]models.Component, error) {
 	res := make([]models.Component, 0)
 	var item models.Component
 	tsql := fmt.Sprintf(query.Component["listComponent"].Q, idProtocol)
@@ -34,7 +34,7 @@ func (db ComponentDB) GetComponentProtocolId(idProtocol string) ([]models.Compon
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&item.ID, &item.Name)
+		err = rows.Scan(&item.ID, &item.Name, &item.Price)
 		if err != nil {
 			checkError(err, "GetComponentProtocolId", "db", "scan rows")
 		} else {
@@ -44,8 +44,6 @@ func (db ComponentDB) GetComponentProtocolId(idProtocol string) ([]models.Compon
 	defer rows.Close()
 	return res, err
 }
-
-
 
 func (db ComponentDB) scan(rows *sql.Rows, err error, res *[]models.Component, ctx string, situation string) error {
 	var item models.Component
@@ -64,5 +62,3 @@ func (db ComponentDB) scan(rows *sql.Rows, err error, res *[]models.Component, c
 	}
 	return nil
 }
-
-
