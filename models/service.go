@@ -73,6 +73,7 @@ type ServicePatientOrganization struct {
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
 	Phone            string `json:"phone"`
+	Result           string `json:"result"`
 	Result2          string `json:"result2"`
 }
 
