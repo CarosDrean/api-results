@@ -32,7 +32,8 @@ func (db CalendarDB) scan(rows *sql.Rows, err error, res *[]models.Calendar, ctx
 	for rows.Next() {
 		var circuitStart sql.NullString
 		var circuitEnd sql.NullString
-		err := rows.Scan(&item.ID, &item.ServiceID, &item.ProtocolID, &item.CalendarStatusID, &circuitStart, &circuitEnd)
+		err := rows.Scan(&item.ID, &item.PersonID, &item.ServiceID, &item.ProtocolID, &item.CalendarStatusID, &circuitStart,
+			&circuitEnd, &item.Date)
 		item.CircuitStart = circuitStart.String
 		item.CircuitEnd = circuitEnd.String
 		if err != nil {
