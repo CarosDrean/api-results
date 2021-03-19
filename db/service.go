@@ -65,6 +65,8 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 		if err != nil {
 			checkError(err, "next", "Db", "GetAlDate")
 		} else if service.IsDeleted != 1 && service.ServiceStatusId == 3 {
+
+			result, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 			result2, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			item := models.ServicePatientOrganization{
 				ID:               service.ID,
@@ -83,6 +85,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 				Birthday:         person.Birthday,
 				EsoType:          protocol.EsoType,
 				Phone:            person.Phone,
+				Result:           result,
 				Result2:          result2,
 			}
 			res = append(res, item)
