@@ -5,7 +5,7 @@ import "github.com/CarosDrean/api-results.git/models"
 var service = models.TableDB{
 	Name: "service",
 	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate", "i_ServiceStatusId", "i_isDeleted",
-		"i_AptitudeStatusId"},
+		"i_AptitudeStatusId" },
 }
 
 var Service = models.QueryDB{
@@ -65,4 +65,5 @@ var Service = models.QueryDB{
 		"inner join servicecomponentfieldvalues scfv on scf.v_ServiceComponentFieldsId = scfv.v_ServiceComponentFieldsId " +
 		"where p.v_DocNumber = '%s' " +
 		"order by s.d_ServiceDate desc"},
+
 }

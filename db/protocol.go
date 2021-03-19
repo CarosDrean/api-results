@@ -94,6 +94,7 @@ func (db ProtocolDB) scan(rows *sql.Rows, err error, res *[]models.Protocol, ctx
 			checkError(err, situation, ctx, "Scan rows")
 			return err
 		} else if item.IsDeleted == 0 {
+			item.BusinessName = item.Name
 			item.Name = db.delBusinessName(item.Name)
 			*res = append(*res, item)
 		}

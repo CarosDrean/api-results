@@ -9,4 +9,5 @@ type Result struct {
 	ServiceDate  string `json:"servicedate"`
 	Result       string `json:"result"`
 	Result2      string `json:"result2"`
+	EsoType      int    `json:"esoType"`
 }
