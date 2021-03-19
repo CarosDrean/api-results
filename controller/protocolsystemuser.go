@@ -30,6 +30,7 @@ func (c ProtocolSystemUserController) GetSystemUser(w http.ResponseWriter, r *ht
 		res = append(res, item)
 	}
 
+
 	_ = json.NewEncoder(w).Encode(res)
 }
 

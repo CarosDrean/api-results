@@ -7,4 +7,5 @@ type Calendar struct {
 	CalendarStatusID int
 	CircuitStart     string
 	CircuitEnd       string
+
 }
