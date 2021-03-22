@@ -24,6 +24,9 @@ const (
 
 	IdPruebaHisopado       string = "N009-ME000000567"
 	IdResultPruebaHisopado string = "N009-MF000004572"
+	IdCardio		       string = "N009-PR000002876"
+	IdHoloMapa			   string = ""
+	IdHoloEcocardiograma   string = ""
 
 	// systemparameter
 	IdConsultings string = "116"

@@ -24,8 +24,9 @@ func splitDate(r rune) bool {
 
 func formatDate(date string) string {
 	data := strings.FieldsFunc(date, splitDate)
-	return data[2]+data[1]+data[0]
+	return data[2] + data[1] + data[0]
 }
+
 
 func getMonth(month string) string {
 	switch month {
