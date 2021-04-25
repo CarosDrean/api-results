@@ -2,7 +2,7 @@ package constants
 
 type State string
 type Role string
-
+type IdConsultElectro string
 const (
 	NotFound           State = "Not found User"
 	ErrorUP            State = "Error Updating patient"
@@ -24,9 +24,11 @@ const (
 
 	IdPruebaHisopado       string = "N009-ME000000567"
 	IdResultPruebaHisopado string = "N009-MF000004572"
-	IdCardio		       string = "N009-PR000002876"
-	IdHoloMapa			   string = ""
-	IdHoloEcocardiograma   string = ""
+	IdCardio               string = "N009-PR000002876"
+
+	//IdEletro               string = "N009-PR000002932"
+
+	IdHoloEcocardiograma string = ""
 
 	// systemparameter
 	IdConsultings string = "116"

@@ -29,11 +29,13 @@ func (db ProtocolDB) GetAllOrganization(id string) ([]models.Protocol, error) {
 
 	tsql := fmt.Sprintf(query.Protocol["getOrganization"].Q, id)
 	rows, err := DB.Query(tsql)
-
+	//fmt.Println(tsql)
 	err = db.scan(rows, err, &res, "Protocol DB", "GetAll")
+	//fmt.Println(err)
 	if err != nil {
 		return res, err
 	}
+
 	defer rows.Close()
 	return res, nil
 }

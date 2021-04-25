@@ -8,14 +8,20 @@ const (
 
 	SecretApiMail = "miclavedetokens"
 
-	RoutePruebaRapida     string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Prueba Rapida\\"
-	RoutePruebaHisopado   string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Prueba Rapida\\"
-	RouteInterconsulta    string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\INTERCONSULTAS\\"
-	RouteInformeMedico    string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\INFORMES\\INFORME TRABAJADOR 2\\"
-	RouteCertificateSinDX string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\CERTIFICADOS\\CAMOSINDX\\"
-	RouteCertificate312   string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\CERTIFICADOS\\CAMO312\\"
-	RouteHistory          string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\Historia Clinica\\"
-	RouteCardio			  string = "\\\\DESKTOP-QD7QM2Q\\archivos sistema_2\\CardioCentro\\"
+	RoutePruebaRapida     string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Prueba Rapida\\"
+	RoutePruebaHisopado   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Prueba Rapida\\"
+	RouteInterconsulta    string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\INTERCONSULTAS\\"
+	RouteInformeMedico    string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\INFORMES\\INFORME TRABAJADOR 2\\"
+	RouteCertificateSinDX string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CERTIFICADOS\\CAMOSINDX\\"
+	RouteCertificate312   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CERTIFICADOS\\CAMO312\\"
+	RouteHistory          string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Historia Clinica\\"
+	RouteCardio           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\"
+	RouteElectro          string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\ELECTROCARDIOGRAMA\\"
+	RouteMapa             string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\MAPA\\"
+	RouteEcocardiograma   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\ECOCARDIOGRAMA\\"
+	RouteHolter           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\HOLTER\\"
+	RoutePruebaEsfuerzo   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\PRUEBA-ESFUERZO\\"
+	RouteRiesgo			  string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\RIESGO-QUIRURGICO\\"
 
 	IdNode = 9
 

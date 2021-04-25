@@ -13,6 +13,7 @@ func (db LocationDB) GetAllOrganizationID(id string) ([]models.Location, error){
 	res := make([]models.Location, 0)
 
 	tsql := fmt.Sprintf(query.Location["getOrganizationID"].Q, id)
+
 	rows, err := DB.Query(tsql)
 
 	err = db.scan(rows, err, &res, "Location DB", "GetAll")

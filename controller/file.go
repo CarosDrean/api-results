@@ -156,17 +156,17 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 	} else if strings.Contains(petition.Exam, "HOLOELECTRO") {
 		nameFile = constants.RouteCardio + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-SERVICIOS-" + constants.IdCardio + ".pdf"
 	} else if strings.Contains(petition.Exam, "HOLTER") {
-		nameFile = constants.RouteCardio + c.assemblyFileDate(petition.ServiceID, petition.DNI, "HOLTER")
+		nameFile = constants.RouteHolter + c.assemblyFileDate(petition.ServiceID, petition.DNI, "HOLTER")
 	} else if strings.Contains(petition.Exam, "ELECTROCARDIOGRAMA") {
-		nameFile = constants.RouteCardio + c.assemblyFileDate(petition.ServiceID, petition.DNI, "ELECTROCARDIOGRAMA")
+		nameFile = constants.RouteElectro + c.assemblyFileDate(petition.ServiceID, petition.DNI, "ELECTROCARDIOGRAMA")
 	} else if strings.Contains(petition.Exam, "MAPA") {
-		nameFile = constants.RouteCardio + c.assemblyFileDate(petition.ServiceID, petition.DNI, "MAPA")
+		nameFile = constants.RouteMapa + c.assemblyFileDate(petition.ServiceID, petition.DNI, "MAPA")
 	} else if strings.Contains(petition.Exam, "ECOCARDIOGRAMA") {
-		nameFile = constants.RouteCardio + c.assemblyFileDate(petition.ServiceID, petition.DNI, "ECOCARDIOGRAMA")
+		nameFile = constants.RouteEcocardiograma + c.assemblyFileDate(petition.ServiceID, petition.DNI, "ECOCARDIOGRAMA")
 	} else if strings.Contains(petition.Exam, "PRUEBA ESFUERZO") {
-		nameFile = constants.RouteCardio + c.assemblyFileDate(petition.ServiceID, petition.DNI, "PRUEBA ESFUERZO")
+		nameFile = constants.RoutePruebaEsfuerzo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "PRUEBA ESFUERZO")
 	}else if strings.Contains(petition.Exam, "RIESGO QUIRURGICO") {
-		nameFile = constants.RouteCardio + c.assemblyFileDate(petition.ServiceID, petition.DNI, "RIESGO QUIRURGICO")
+		nameFile = constants.RouteRiesgo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "RIESGO QUIRURGICO")
 
 	}
 
@@ -203,6 +203,7 @@ func (c FileController) assemblyFileNameExtra(idService string, dni string, pare
 	td := dayString + " " + getMonth(month.String()) + ",  " + strconv.Itoa(year)
 
 	namePDF := organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
+
 	if parent == "CAPSD" {
 		personName = person.FirstLastName + " " + person.SecondLastName + ", " + person.Name
 		namePDF = organizationName + " -" + personName + "-" + parent + "-" + td + ".pdf"
@@ -215,6 +216,7 @@ func (c FileController) assemblyFileNameExtra(idService string, dni string, pare
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		namePDF = organizationName + " - " + personName + " - " + td + ".pdf"
 	}
+
 	return namePDF
 }
 func (c FileController) assemblyFileDate(idService string, dni string, parent string) string {
@@ -238,36 +240,38 @@ func (c FileController) assemblyFileDate(idService string, dni string, parent st
 
 	namePDF := organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
 
+
 	if parent == "HOLTER" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		personDoc = person.DNI
-		namePDF = personDoc + "-" + td + "-" + parent + "-" + constants.IdCardio + ".pdf"
+		namePDF = personDoc + "-" + td + "-" + parent + "-" + service.ProtocolID + ".pdf"
 	}
 	if parent == "ELECTROCARDIOGRAMA" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		personDoc = person.DNI
-		namePDF = personDoc + "-" + td + "-" + parent + "-" + constants.IdCardio + ".pdf"
+		namePDF = personDoc + "-" + td + "-" + parent + "-" + service.ProtocolID + ".pdf"
 	}
 	if parent == "MAPA" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		personDoc = person.DNI
-		namePDF = personDoc + "-" + td + "-" + parent + "-" + constants.IdCardio + ".pdf"
+		namePDF = personDoc + "-" + td + "-" + parent + "-" + service.ProtocolID + ".pdf"
 	}
 	if parent == "ECOCARDIOGRAMA" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		personDoc = person.DNI
-		namePDF = personDoc + "-" + td + "-" + parent + "-" + constants.IdCardio + ".pdf"
+		namePDF = personDoc + "-" + td + "-" + parent + "-" + service.ProtocolID + ".pdf"
 	}
 	if parent == "PRUEBA ESFUERZO" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		personDoc = person.DNI
-		namePDF = personDoc + "-" + td + "-" + parent + "-" + constants.IdCardio + ".pdf"
+		namePDF = personDoc + "-" + td + "-" + parent + "-" + service.ProtocolID + ".pdf"
 	}
 	if parent == "RIESGO QUIRURGICO" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		personDoc = person.DNI
-		namePDF = personDoc + "-" + td + "-" + parent + "-" + constants.IdCardio + ".pdf"
+		namePDF = personDoc + "-" + td + "-" + parent + "-" + service.ProtocolID + ".pdf"
 
 	}
+	fmt.Println(namePDF)
 	return namePDF
 }

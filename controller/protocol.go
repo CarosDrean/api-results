@@ -42,6 +42,7 @@ func (c ProtocolController) GetAllOrganization(w http.ResponseWriter, r *http.Re
 	var params = mux.Vars(r)
 	id, _ := params["idOrganization"]
 
+
 	protocols, err := c.DB.GetAllOrganization(id)
 	if err != nil {
 		returnErr(w, err, "obtener todos organization")
