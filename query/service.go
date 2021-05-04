@@ -5,7 +5,7 @@ import "github.com/CarosDrean/api-results.git/models"
 var service = models.TableDB{
 	Name: "service",
 	Fields: []string{"v_ServiceId", "v_PersonId", "v_ProtocolId", "d_ServiceDate", "i_ServiceStatusId", "i_isDeleted",
-		"i_AptitudeStatusId" },
+		"i_AptitudeStatusId"},
 }
 
 var Service = models.QueryDB{
@@ -16,6 +16,7 @@ var Service = models.QueryDB{
 		" = '%s' and d_ServiceDate is not null order by " + service.Fields[3] + " desc;"},
 	"getProtocolFilter": {Q: "select " + fieldStringPrefix(service.Fields, "s") + " from " + service.Name +
 		" s inner join calendar c on s.v_ServiceId = c.v_ServiceId and c.i_CalendarStatusId != 4" +
+		" inner join  protocol p on s.v_ProtocolId = p.v_ProtocolId " +
 		" where s." + service.Fields[2] +
 		" = '%s' and CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] + " as date) <= CAST('%s' as date) and s." + service.Fields[3] +
 		" is not null order by s." + service.Fields[3] + " desc;"},
@@ -65,5 +66,15 @@ var Service = models.QueryDB{
 		"inner join servicecomponentfieldvalues scfv on scf.v_ServiceComponentFieldsId = scfv.v_ServiceComponentFieldsId " +
 		"where p.v_DocNumber = '%s' " +
 		"order by s.d_ServiceDate desc"},
-
+	"getGesoFilter": {Q: "SELECT s.v_ServiceId, s.d_ServiceDate, p3.v_PersonId, p.v_ProtocolId, s.i_AptitudeStatusId, p3.v_DocNumber, " +
+		"p3.v_FirstName, p3.v_FirstLastName, p3.v_SecondLastName,  p3.v_Mail, p3.i_SexTypeId, p3.d_Birthdate, " +
+		"c.i_CalendarStatusId, c.d_CircuitStartDate, c.d_SalidaCM, gp.v_Name FROM organization o " +
+		"INNER JOIN protocol p ON o.v_OrganizationId = p.v_EmployerOrganizationId " +
+		"INNER JOIN service s ON p.v_ProtocolId = s.v_ProtocolId AND s.i_IsDeleted != 1 AND s.d_ServiceDate IS NOT NULL " +
+		"INNER JOIN person p3 ON s.v_PersonId = p3.v_PersonId " +
+		"INNER JOIN calendar c ON s.v_ServiceId = c.v_ServiceId AND c.i_CalendarStatusId != 4 " +
+		"INNER JOIN groupoccupation gp ON p.v_GroupOccupationId = gp.v_GroupOccupationId " +
+		"where o.v_OrganizationId = '%s' " +
+		"and CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] + " as date) <= CAST('%s' as date) and s." + service.Fields[3] +
+		" is not null order by s." + service.Fields[3] + " desc;"},
 }

@@ -8,6 +8,7 @@ type Service struct {
 	ServiceStatusId  int
 	AptitudeStatusId int
 	IsDeleted        int
+
 }
 
 type ServicePatient struct {
@@ -24,6 +25,7 @@ type ServicePatient struct {
 	Mail             string `json:"mail"`
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
+
 	// only result covid moment
 	Result  string `json:"result"`
 	Result2 string `json:"result2"`
@@ -34,6 +36,7 @@ type ServicePatient struct {
 	CalendarStatus int    `json:"calendarStatus"`
 	CircuitStart   string `json:"circuitStart"`
 	CircuitEnd     string `json:"circuitEnd"`
+	Geso           string `json:"geso"`
 }
 
 type ServicePatientDiseases struct {

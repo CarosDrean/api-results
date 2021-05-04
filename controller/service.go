@@ -172,3 +172,18 @@ func (c ServiceController) GetAllPatientsWithProtocolFilter(w http.ResponseWrite
 
 	_ = json.NewEncoder(w).Encode(res)
 }
+
+func (c ServiceController) GetGesoPacientFilter(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var item models.Filter
+	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	res, err := c.DB.GetGesoFilter(item.ID, item)
+	if err != nil {
+		returnErr(w, err, "obtener todos patients")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(res)
+}
+

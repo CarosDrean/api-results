@@ -266,6 +266,7 @@ func (db ServiceDB) GetAllProtocolFilter(id string, filter models.Filter) ([]mod
 func (db ServiceDB) GetAllPatientsWithOrganizationFilter(idOrganization string, filter models.Filter) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
+	// esto esta mal, deberia obtener los pacientes defrente o los servicios
 	protocols, err := ProtocolDB{}.GetAllOrganization(idOrganization)
 	if err != nil {
 		return res, err
@@ -342,9 +343,79 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 		if needOrganization {
 			protocol, _ := ProtocolDB{}.Get(e.ProtocolID)
 			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
+
 			item.OrganizationID = organization.ID
 			item.Organization = organization.Name
+
 		}
+		res = append(res, item)
+	}
+	return res, nil
+}
+
+func (db ServiceDB) GetGesoAuxFilter(idOrganization string, filter models.Filter) ([]models.ServicePatient, error) {
+	res := make([]models.ServicePatient, 0)
+	var item models.ServicePatient
+	tsql := fmt.Sprintf(query.Service["getGesoFilter"].Q, idOrganization, filter.DateFrom, filter.DateTo)
+	rows, err := DB.Query(tsql)
+
+	if err != nil {
+		checkError(err, "GetGesoFilter", "db", "Reading rows")
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&item.ID, &item.ServiceDate, &item.PersonID, &item.ProtocolID, &item.AptitudeStatusId, &item.DNI,
+			&item.Name, &item.FirstLastName, &item.SecondLastName, &item.Mail, &item.Sex, &item.Birthday, &item.CalendarStatus, &item.CircuitStart,
+			&item.CircuitEnd, &item.Geso)
+		if err != nil {
+			checkError(err, "GetGesoFilter", "db", "scan rows")
+		} else {
+			res = append(res, item)
+		}
+
+	}
+	return res, nil
+}
+
+func (db ServiceDB) GetGesoFilter(idOrganization string, filter models.Filter) ([]models.ServicePatient, error) {
+	res := make([]models.ServicePatient, 0)
+	//var items models.ServicePatient
+
+	services, err := db.GetGesoAuxFilter(idOrganization, filter)
+	if err != nil {
+		return res, err
+	}
+	for _, e := range services {
+		patient, _ := PersonDB{}.Get(e.PersonID)
+		result, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
+		result2, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
+		calendar, _ := CalendarDB{}.GetService(e.ID)
+		// para quitar la zona horaria
+		start := strings.Split(calendar.CircuitStart, ".")
+		end := strings.Split(calendar.CircuitEnd, ".")
+		item := models.ServicePatient{
+			ID:               e.ID,
+			ServiceDate:      e.ServiceDate,
+			PersonID:         patient.ID,
+			ProtocolID:       e.ProtocolID,
+			Birthday:         patient.Birthday,
+			AptitudeStatusId: e.AptitudeStatusId,
+			DNI:              patient.DNI,
+			Name:             patient.Name,
+			FirstLastName:    patient.FirstLastName,
+			SecondLastName:   patient.SecondLastName,
+			Mail:             patient.Mail,
+			Sex:              patient.Sex,
+			Result:           result,
+			Result2:          result2,
+			CalendarStatus:   calendar.CalendarStatusID,
+			CircuitStart:     start[0],
+			CircuitEnd:       end[0],
+			Geso:			  e.Geso,
+		}
+
+
 		res = append(res, item)
 	}
 	return res, nil
