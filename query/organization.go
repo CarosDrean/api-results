@@ -23,7 +23,13 @@ var Organization = models.QueryDB{
 		"inner join organization o on p2.v_WorkingOrganizationId = o.v_OrganizationId " +
 		"where psu.i_SystemUserId = %s " +
 		"group by o.v_OrganizationId, o.v_Name"},
-
-		
-
+ //no se usa uwu
+	"getUserOrganization": {Q: "select o.v_OrganizationId, o.v_Name, pr.v_FirstName, pr.v_FirstLastName," +
+		"pr.v_SecondLastName, su.i_SystemUserId, su.v_UserName, su.i_SystemUserTypeId from organization o " +
+		"inner join protocol p on p.v_WorkingOrganizationId = o.v_OrganizationId " +
+		"inner join protocolsystemuser psu on psu.v_ProtocolId = p.v_ProtocolId " +
+		"inner join systemuser su on psu.i_SystemUserId = su.i_SystemUserId and su.i_IsDeleted != 1 " +
+		"inner join person pr on su.v_PersonId = pr.v_PersonId " +
+		"where o.v_OrganizationId = '%s' " +
+		"group by o.v_OrganizationId, o.v_Name, pr.v_FirstName, pr.v_FirstLastName, pr.v_SecondLastName, su.i_SystemUserId, su.v_UserName, su.i_SystemUserTypeId "},
 }
