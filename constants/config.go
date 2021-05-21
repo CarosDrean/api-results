@@ -22,6 +22,7 @@ const (
 	RouteHolter           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\HOLTER\\"
 	RoutePruebaEsfuerzo   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\PRUEBA-ESFUERZO\\"
 	RouteRiesgo			  string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\RIESGO-QUIRURGICO\\"
+	RoutePDF              string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Tecnologia e Informacion\\manuales\\"
 
 	IdNode = 9
 

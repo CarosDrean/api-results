@@ -167,7 +167,10 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		nameFile = constants.RoutePruebaEsfuerzo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "PRUEBA ESFUERZO")
 	}else if strings.Contains(petition.Exam, "RIESGO QUIRURGICO") {
 		nameFile = constants.RouteRiesgo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "RIESGO QUIRURGICO")
-
+	}else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - ADMINISTRADOR") {
+		nameFile = constants.RoutePDF + "MANUAL DE HOLORESULTS - ADMINISTRADOR" + ".pdf"
+	}else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - MEDICO") {
+		nameFile = constants.RoutePDF + "MANUAL DE HOLORESULTS - MEDICO" + ".pdf"
 	}
 
 	if len(nameFile) == 0 {
@@ -177,9 +180,11 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		if os.IsNotExist(err) {
 			return "", errors.New("no existe")
 		}
+
 	}
 
 	return nameFile, nil
+
 }
 
 func (c FileController) assemblyFileNameExtra(idService string, dni string, parent string) string {
