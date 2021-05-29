@@ -130,7 +130,7 @@ func (c ServiceController) GetAllPatientsWithOrganization(w http.ResponseWriter,
 
 	_ = json.NewEncoder(w).Encode(res)
 }
-
+// obtener las empresas
 func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter
@@ -144,7 +144,7 @@ func (c ServiceController) GetAllPatientsWithOrganizationFilter(w http.ResponseW
 
 	_ = json.NewEncoder(w).Encode(res)
 }
-
+// obtener las empresas con su contratista
 func (c ServiceController) GetAllPatientsWithOrganizationEmployerFilter(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var item models.Filter

@@ -153,6 +153,9 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		nameFile = constants.RouteHistory + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "HISTORIA")
 	} else if strings.Contains(petition.Exam, "PRUEBA HISOPADO") {
 		nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopado + ".pdf"
+		if strings.Contains(petition.Exam, "PRUEBA HISOPADO") {
+			nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopadoAux + ".pdf"
+		}
 	} else if strings.Contains(petition.Exam, "HOLOELECTRO") {
 		nameFile = constants.RouteCardio + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-SERVICIOS-" + constants.IdCardio + ".pdf"
 	} else if strings.Contains(petition.Exam, "HOLTER") {
@@ -165,11 +168,11 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		nameFile = constants.RouteEcocardiograma + c.assemblyFileDate(petition.ServiceID, petition.DNI, "ECOCARDIOGRAMA")
 	} else if strings.Contains(petition.Exam, "PRUEBA ESFUERZO") {
 		nameFile = constants.RoutePruebaEsfuerzo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "PRUEBA ESFUERZO")
-	}else if strings.Contains(petition.Exam, "RIESGO QUIRURGICO") {
+	} else if strings.Contains(petition.Exam, "RIESGO QUIRURGICO") {
 		nameFile = constants.RouteRiesgo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "RIESGO QUIRURGICO")
-	}else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - ADMINISTRADOR") {
+	} else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - ADMINISTRADOR") {
 		nameFile = constants.RoutePDF + "MANUAL DE HOLORESULTS - ADMINISTRADOR" + ".pdf"
-	}else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - MEDICO") {
+	} else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - MEDICO") {
 		nameFile = constants.RoutePDF + "MANUAL DE HOLORESULTS - MEDICO" + ".pdf"
 	}
 
@@ -177,6 +180,7 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		return "", errors.New("no aceptado")
 	}
 	if _, err := os.Stat(nameFile); err != nil {
+		fmt.Println(nameFile)
 		if os.IsNotExist(err) {
 			return "", errors.New("no existe")
 		}
@@ -244,7 +248,6 @@ func (c FileController) assemblyFileDate(idService string, dni string, parent st
 	td := dayString + "" + strconv.Itoa(int(month)) + "" + strconv.Itoa(year)
 
 	namePDF := organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
-
 
 	if parent == "HOLTER" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name

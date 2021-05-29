@@ -263,6 +263,7 @@ func (db ServiceDB) GetAllProtocolFilter(id string, filter models.Filter) ([]mod
 }
 
 // deacuerdo al id de la empresa obtiene todos sus protocolos y va armando el objeto ServicePatient
+// obtener las empresas
 func (db ServiceDB) GetAllPatientsWithOrganizationFilter(idOrganization string, filter models.Filter) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
@@ -278,6 +279,7 @@ func (db ServiceDB) GetAllPatientsWithOrganizationFilter(idOrganization string, 
 	return res, nil
 }
 
+// obtener las empresas con su contratista
 func (db ServiceDB) GetAllPatientsWithOrganizationEmployerFilter(filter models.Filter) ([]models.ServicePatient, error) {
 	res := make([]models.ServicePatient, 0)
 
@@ -420,6 +422,7 @@ func (db ServiceDB) GetGesoFilter(idOrganization string, filter models.Filter) (
 	}
 	return res, nil
 }
+
 
 func (db ServiceDB) scan(rows *sql.Rows, err error, res *[]models.Service, ctx string, situation string) error {
 	var item models.Service

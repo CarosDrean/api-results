@@ -23,7 +23,7 @@ func (db ProtocolDB) GetAllLocation(id string) ([]models.Protocol, error) {
 	defer rows.Close()
 	return res, nil
 }
-
+// obtener las empresas
 func (db ProtocolDB) GetAllOrganization(id string) ([]models.Protocol, error) {
 	res := make([]models.Protocol, 0)
 
@@ -39,7 +39,7 @@ func (db ProtocolDB) GetAllOrganization(id string) ([]models.Protocol, error) {
 	defer rows.Close()
 	return res, nil
 }
-
+// obtener las empresas con su contratista
 func (db ProtocolDB) GetAllOrganizationEmployer(id string) ([]models.Protocol, error) {
 	res := make([]models.Protocol, 0)
 

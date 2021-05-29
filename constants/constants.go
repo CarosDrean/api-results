@@ -22,7 +22,10 @@ const (
 	IdPruebaRapida       string = "N007-ME000000491"
 	IdResultPruebaRapida string = "N007-MF000004612"
 
+	// codigo de bd principal  del hisopado
 	IdPruebaHisopado       string = "N009-ME000000567"
+	// codigo de bd auxiliar del hisopado
+	IdPruebaHisopadoAux       string = "N009-ME000000529"
 	IdResultPruebaHisopado string = "N009-MF000004572"
 	IdCardio               string = "N009-PR000002876"
 
