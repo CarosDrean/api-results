@@ -84,6 +84,7 @@ func (db ProtocolDB) Get(id string) (models.Protocol, error) {
 	return res[0], nil
 }
 
+
 func (db ProtocolDB) scan(rows *sql.Rows, err error, res *[]models.Protocol, ctx string, situation string) error {
 	var item models.Protocol
 	if err != nil {

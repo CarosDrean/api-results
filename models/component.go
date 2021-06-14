@@ -10,7 +10,7 @@ type Component struct {
 
 type ProtocolComponent struct {
 	ProtocolComponentID string `json:"_id"`
-	ComponetID          string `json:"¨componentId"`
+	ComponetID          string `json:"componentId"`
 	NameComponent       string `json:"namecomponent"`
 	ProtocolID          string `json:"protocolId"`
 	Price               string `json:"price"`

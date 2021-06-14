@@ -37,3 +37,4 @@ func (c ComponentController) GetComponentProtocolId(w http.ResponseWriter, r *ht
 	}
 	_ = json.NewEncoder(w).Encode(items)
 }
+

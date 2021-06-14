@@ -10,4 +10,5 @@ type Protocol struct {
 	GroupOccupationId      string `json:"groupOccupationId"`
 	IsDeleted              int
 	BusinessName		   string
+	
 }

@@ -151,9 +151,8 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		nameFile = constants.RouteCertificate312 + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "CAP")
 	} else if strings.Contains(petition.Exam, "HISTORIA CLINICA") {
 		nameFile = constants.RouteHistory + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "HISTORIA")
-	} else if strings.Contains(petition.Exam, "PRUEBA HISOPADO") {
-		nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopado + ".pdf"
-	} else if strings.Contains(petition.Exam, "PRUEBA HISOPADO") {
+	}
+	if strings.Contains((petition.Exam), "PRUEBA HISOPADO") {
 		nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopadoAux + ".pdf"
 	} else if strings.Contains(petition.Exam, "HOLOELECTRO") {
 		nameFile = constants.RouteCardio + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-SERVICIOS-" + constants.IdCardio + ".pdf"
@@ -178,14 +177,19 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 	if len(nameFile) == 0 {
 		return "", errors.New("no aceptado")
 	}
+
 	if _, err := os.Stat(nameFile); err != nil {
 		fmt.Println(nameFile)
 		if os.IsNotExist(err) {
-			return "", errors.New("no existe")
+			if strings.Contains((petition.Exam), "PRUEBA HISOPADO") {
+				nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopadoAux + ".pdf"
+			} else {
+				return "", errors.New("no existe")
+			}
+
 		}
 
 	}
-
 	return nameFile, nil
 
 }
