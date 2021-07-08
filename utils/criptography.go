@@ -10,6 +10,7 @@ func EncryptMD5(text string) string {
 	data := []byte(text)
 	hash := md5.Sum(forSystem(data))
 	return base64.StdEncoding.EncodeToString(hash[:])
+
 }
 
 func forSystem(data []byte) []byte {
