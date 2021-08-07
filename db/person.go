@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type PersonDB struct {}
+type PersonDB struct{}
 
 func (db PersonDB) Get(id string) (models.Person, error) {
 	res := make([]models.Person, 0)
@@ -55,12 +55,12 @@ func (db PersonDB) Create(item models.Person) (string, error) {
 	if item.Password != "" {
 		item.Password = utils.EncryptMD5(item.Password)
 	}
-	sqdb :=SequentialDB{}
+	sqdb := SequentialDB{}
 	sequentialID := sqdb.NextSequentialId(constants.IdNode, constants.IdPersonTable)
 	newId := sqdb.NewID(constants.IdNode, sequentialID, constants.PrefixPerson)
 	item.ID = newId
 
-	date, _ := time.Parse(time.RFC3339, item.Birthday + "T05:00:00Z")
+	date, _ := time.Parse(time.RFC3339, item.Birthday+"T05:00:00Z")
 
 	_, err := DB.ExecContext(
 		ctx,
@@ -86,7 +86,7 @@ func (db PersonDB) Update(id string, item models.Person) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.Person["update"].Q)
 
-	date, _ := time.Parse(time.RFC3339, item.Birthday + "T05:00:00Z")
+	date, _ := time.Parse(time.RFC3339, item.Birthday+"T05:00:00Z")
 	result, err := DB.ExecContext(
 		ctx,
 		tsql,
@@ -108,7 +108,7 @@ func (db PersonDB) Update(id string, item models.Person) (int64, error) {
 	return result.RowsAffected()
 }
 
-func (db PersonDB) ValidateLogin(user string, password string) (constants.State, string, error){
+func (db PersonDB) ValidateLogin(user string, password string, token string) (constants.State, string, error) {
 	item, err := db.GetFromDNI(user)
 	if err != nil {
 		return constants.NotFound, "", err
@@ -116,27 +116,35 @@ func (db PersonDB) ValidateLogin(user string, password string) (constants.State,
 	if item.DNI == "" && item.Name == "" {
 		return constants.NotFound, "", nil
 	}
-	if validatePasswordPatientForReset(password, item){
-		if len(item.Mail) != 0{
+
+	if validatePasswordPatientForReset(password, item) {
+		if len(item.Mail) != 0 {
 			newPassword := utils.CreateNewPassword()
 			mail := models.Mail{
-				From: item.Mail,
-				User: user,
+				From:     item.Mail,
+				User:     user,
 				Password: newPassword,
 			}
+
 			data, _ := json.Marshal(mail)
+
 			_, err := db.UpdatePassword(item.ID, newPassword)
 			if err != nil {
 				return constants.ErrorUP, "", nil
 			}
-			_ = utils.SendMail(data, constants.RouteNewPassword)
+
+			_ = utils.SendMail(data, constants.RouteNewPassword, token)
+
 			return constants.PasswordUpdate, "", nil
 		}
+
 		return constants.NotFoundMail, "", nil
 	}
+
 	if item.Password == password {
 		return constants.Accept, item.ID, nil
 	}
+
 	return constants.InvalidCredentials, "", nil
 }
 
@@ -176,7 +184,7 @@ func (db PersonDB) scan(rows *sql.Rows, err error, res *[]models.Person, ctx str
 		} else {
 			item.Password = item.DNI
 		}
-		if strings.Contains(item.Mail, "notiene") || strings.Contains(item.Mail, "NOTIENE"){
+		if strings.Contains(item.Mail, "notiene") || strings.Contains(item.Mail, "NOTIENE") {
 			item.Mail = ""
 		}
 		if err != nil {
@@ -188,4 +196,3 @@ func (db PersonDB) scan(rows *sql.Rows, err error, res *[]models.Person, ctx str
 	}
 	return nil
 }
-

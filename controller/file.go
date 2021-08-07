@@ -18,17 +18,18 @@ import (
 
 type FileController struct{}
 
-func (c FileController) SendZipOrganizationData(mailFile models.MailFile) error {
+func (c FileController) SendZipOrganizationData(mailFile models.MailFile, token string) error {
 	data, _ := json.Marshal(mailFile)
-	err := utils.SendMail(data, constants.RouteSendFile)
+	err := utils.SendMail(data, constants.RouteSendFile, token)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Request) {
+func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Request)  {
 	w.Header().Set("Content-Type", "application/json")
+
 	var filter models.Filter
 	_ = json.NewDecoder(r.Body).Decode(&filter)
 	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter.ID, filter)
@@ -37,35 +38,42 @@ func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Reque
 		returnErr(w, err, "obtener todos pacientes")
 		return
 	}
+
 	paths := c.GetPaths(res, filter.Data)
 	if len(paths) == 0 {
 		log.Println("Sin elementos")
 		returnErr(w, err, "sin elementos")
 		return
 	}
+
 	fileName := filter.Data + strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10) + ".zip"
+
 	output := "temp\\" + fileName
+
 	err = utils.ZipFiles(output, paths)
 	if err != nil {
 		log.Println(fmt.Sprintf("Comprimir %s", err))
 		returnErr(w, err, "comprimir archivos")
 		return
 	}
-	err = utils.SendFileMail(filter.DataTwo, constants.RouteUploadFile, output)
+
+	tokenUser := r.Header.Get("Authorization")
+
+	resApiMail, err := utils.SendFileMail(constants.RouteUploadFile, output, tokenUser)
 	if err != nil {
 		log.Println(err)
 		returnErr(w, err, "subir archivo")
 	}
 
-	organization, _ := db.OrganizationDB{}.Get(filter.ID)
 	mailFile := models.MailFile{
-		From:     filter.DataTwo,
-		File:     fileName,
-		Business: organization.Name,
-		DateFrom: filter.DateFrom,
-		DateTo:   filter.DateTo,
+		Email:           filter.DataTwo,
+		FilenameUpload:  fileName,
+		Description:     "mensaje de prueba",
+		NameFileSending: "Historias-Clinicas",
+		FormatFile:       resApiMail.Format,
 	}
-	err = c.SendZipOrganizationData(mailFile)
+
+	err = c.SendZipOrganizationData(mailFile, tokenUser)
 	if err != nil {
 		log.Println(err)
 		returnErr(w, err, "enviar email")

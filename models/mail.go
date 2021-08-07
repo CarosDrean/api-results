@@ -9,9 +9,9 @@ type Mail struct {
 }
 
 type MailFile struct {
-	From     string `json:"from"`
-	File     string `json:"file"`
-	Business string `json:"business"`
-	DateFrom string `json:"dateFrom"`
-	DateTo   string `json:"dateTo"`
+	Email           string `json:"email"`
+	FilenameUpload  string `json:"filenameUpload"`
+	Description     string `json:"description"`
+	NameFileSending string `json:"nameFileSendingNoFormat"`
+	FormatFile      string `json:"formatFile"`
 }

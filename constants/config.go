@@ -2,10 +2,10 @@ package constants
 
 const (
 	PORT    = "8000"
-	ApiMail = "https://api-mail.sa.ngrok.io"
+	//ApiMail = "https://api-mail.sa.ngrok.io"
 
 	// anterior api https://api-mail.holosalud.org
-	// ApiMail       = "http://localhost:2001"
+	ApiMail       = "http://localhost:2001"
 
 	SecretApiMail = "miclavedetokens"
 

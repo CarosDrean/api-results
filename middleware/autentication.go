@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func Login(w http.ResponseWriter, r *http.Request){
+func Login(w http.ResponseWriter, r *http.Request) {
 	var user models.UserLogin
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -24,11 +24,20 @@ func Login(w http.ResponseWriter, r *http.Request){
 	isSystemUser := false
 	isPatientParticular := false
 	nameDB := ""
+
+	token := GenerateJWTExternal(models.ClaimResult{
+		ID:     "0",
+		Role:   constants.Roles.Temp,
+		Data:   "",
+		NameDB: "HoloSalud2019",
+	})
+
 	if !user.Particular {
 		stateLogin, id, err, nameDB = patientBusiness(user)
 
+
 		if stateLogin == constants.NotFound {
-			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password)
+			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password, token)
 			isSystemUser = true
 		}
 	} else {
@@ -36,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		isSystemUser = false
 		stateLogin, id, err, nameDB = patientParticular(user)
 		if stateLogin == constants.NotFound {
-			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password)
+			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password, token)
 			isSystemUser = true
 		}
 	}
@@ -71,7 +80,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		break
 	case constants.NotFound:
 		w.WriteHeader(http.StatusForbidden)
-		if !isSystemUser || isPatientParticular{
+		if !isSystemUser || isPatientParticular {
 			_, _ = fmt.Fprintf(w, "¡No existe Paciente!")
 		} else {
 			_, _ = fmt.Fprintf(w, "¡No existe Usuario!")
@@ -88,22 +97,36 @@ func Login(w http.ResponseWriter, r *http.Request){
 }
 
 // Inicializar BD
-func patientBusiness(user models.UserLogin) (constants.State, string, error, string){
+func patientBusiness(user models.UserLogin) (constants.State, string, error, string) {
+	token := GenerateJWTExternal(models.ClaimResult{
+		ID:     "0",
+		Role:   constants.Roles.Temp,
+		Data:   "",
+		NameDB: "HoloSalud2019",
+	})
+
 	var nameDB string
 	db.DB, nameDB = helper.Get()
-	state, id, err := db.PersonDB{}.ValidateLogin(user.User, user.Password)
+	state, id, err := db.PersonDB{}.ValidateLogin(user.User, user.Password, token)
 	return state, id, err, nameDB
 }
 
 // Inicializar BD particular
-func patientParticular(user models.UserLogin) (constants.State, string, error, string){
+func patientParticular(user models.UserLogin) (constants.State, string, error, string) {
+	token := GenerateJWTExternal(models.ClaimResult{
+		ID:     "0",
+		Role:   constants.Roles.Temp,
+		Data:   "",
+		NameDB: "HoloSalud2019",
+	})
+
 	var nameDB string
 	db.DB, nameDB = helper.GetAux()
-	state, id, err := db.PersonDB{}.ValidateLogin(user.User, user.Password)
+	state, id, err := db.PersonDB{}.ValidateLogin(user.User, user.Password, token)
 	return state, id, err, nameDB
 }
 
-func getRole(typeUser int)constants.Role{
+func getRole(typeUser int) constants.Role {
 	switch typeUser {
 	case constants.CodeRoles.Patient:
 		return constants.Roles.Patient

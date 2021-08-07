@@ -95,6 +95,9 @@ func (c UserController) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	tokenUser := r.Header.Get("Authorization")
+
 	var item models.UserPerson
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
@@ -124,7 +127,7 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	idUser, err := c.DB.Create(user)
 	checkError(err, "Created User")
-	// 3003 codigo para acceso a clinete
+
 	if user.TypeUser != 1 && user.TypeUser != 5 {
 		createProtocolSystemUser(idUser, item.OrganizationID, item.AccessClient)
 	}
@@ -134,8 +137,10 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 		User:     item.UserName,
 		Password: item.Password,
 	}
+
 	data, _ := json.Marshal(mail)
-	_ = utils.SendMail(data, constants.RouteNewSystemUser)
+
+	_ = utils.SendMail(data, constants.RouteNewSystemUser, tokenUser)
 
 	_ = json.NewEncoder(w).Encode(idUser)
 }
