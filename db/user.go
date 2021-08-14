@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-type UserDB struct {}
+type UserDB struct{}
 
 func (db UserDB) GetAll() ([]models.SystemUser, error) {
 	res := make([]models.SystemUser, 0)
@@ -43,7 +43,7 @@ func (db UserDB) GetAllOrganization(idOrganization string) ([]models.SystemUser,
 		err = rows.Scan(&item.TypeUser)
 		if err != nil {
 			checkError(err, "GetAllOrganization", "ctx", "Scan rows")
-		} else if item.IsDelete != 1{
+		} else if item.IsDelete != 1 {
 			res = append(res, item)
 		}
 	}
@@ -143,7 +143,7 @@ func (db UserDB) GetFromUserName(userName string) (models.SystemUser, error) {
 	return res[0], nil
 }
 
-func (db UserDB) ValidateLogin(user string, password string) (constants.State, string, error){
+func (db UserDB) ValidateLogin(user string, password string, token string) (constants.State, string, error) {
 	item, err := db.GetFromUserName(user)
 	if err != nil {
 		return constants.NotFound, "", err
@@ -152,21 +152,26 @@ func (db UserDB) ValidateLogin(user string, password string) (constants.State, s
 		return constants.NotFound, "", nil
 	}
 
-	if validatePasswordSystemUserForReset(password, item){
+	if validatePasswordSystemUserForReset(password, item) {
 		person, _ := PersonDB{}.Get(item.PersonID)
-		if len(person.Mail) != 0{
+
+		if len(person.Mail) != 0 {
 			newPassword := utils.CreateNewPassword()
 			mail := models.Mail{
-				From: person.Mail,
-				User: user,
+				From:     person.Mail,
+				User:     user,
 				Password: newPassword,
 			}
+
 			data, _ := json.Marshal(mail)
+
 			_, err := db.UpdatePassword(strconv.FormatInt(item.ID, 10), newPassword)
 			if err != nil {
 				return constants.ErrorUP, "", nil
 			}
-			_ = utils.SendMail(data, constants.RouteNewPassword)
+
+			_, _ = utils.SendMail(data, constants.RouteNewPassword, token)
+
 			return constants.PasswordUpdate, "", nil
 		}
 		return constants.NotFoundMail, "", nil
@@ -219,10 +224,9 @@ func (db UserDB) scan(rows *sql.Rows, err error, res *[]models.SystemUser, ctx s
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err
-		} else if item.IsDelete != 1{
+		} else if item.IsDelete != 1 {
 			*res = append(*res, item)
 		}
 	}
 	return nil
 }
-

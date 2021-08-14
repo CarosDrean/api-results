@@ -69,13 +69,18 @@ func (c OrganizationController) Update(w http.ResponseWriter, r *http.Request) {
 
 func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	tokenUser := r.Header.Get("Authorization")
+
 	var item models.OrganizationForMailCreateUser
 	_ = json.NewDecoder(r.Body).Decode(&item)
+
 	config, _ := utils.GetConfiguration()
+
 	claim := models.ClaimResult{
-		ID:   item.ID,
-		Role: constants.Roles.Temp,
-		Data: item.TypeUser,
+		ID:     item.ID,
+		Role:   constants.Roles.Temp,
+		Data:   item.TypeUser,
 		NameDB: config.Database,
 	}
 
@@ -84,24 +89,26 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 
 	organization, _ := c.DB.Get(item.ID)
 	objectMail := models.Mail{
-		From: item.Mail,
-		Data: URL,
+		From:     item.Mail,
+		Data:     URL,
 		Business: organization.Name,
 	}
+
 	data, _ := json.Marshal(objectMail)
 
-	err := utils.SendMail(data, constants.RouteUserLink)
+	_, err := utils.SendMail(data, constants.RouteUserLink, tokenUser)
 	if err != nil {
 		returnErr(w, err, "Send Mail")
 		return
 	}
 	_ = c.updateURLAdminOrMedic(item)
 	_ = json.NewEncoder(w).Encode(URL)
+
 }
 
-func (c OrganizationController) updateURLAdminOrMedic(item models.OrganizationForMailCreateUser) error  {
+func (c OrganizationController) updateURLAdminOrMedic(item models.OrganizationForMailCreateUser) error {
 	organization, err := c.DB.Get(item.ID)
-	if err != nil  {
+	if err != nil {
 		return err
 	}
 	if item.TypeUser == "Admin" {

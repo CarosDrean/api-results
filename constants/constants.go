@@ -12,11 +12,11 @@ const (
 	InvalidCredentials State = "Invalid Credentials"
 	PasswordUpdate     State = "Password Updated"
 
-	RouteNewPassword   = "newpassword"
-	RouteNewSystemUser = "new-systemuser"
-	RouteUserLink      = "userlink"
-	RouteUploadFile    = "upload-file"
-	RouteSendFile      = "send-file"
+	RouteNewPassword   = "/api/v1/user/reset-password"
+	RouteNewSystemUser = "/api/v1/user/new"
+	RouteUserLink      = "api/v1/url-create-user/send-mail"
+	RouteUploadFile    = "api/v1/file/upload"
+	RouteSendFile      = "api/v1/file/send-mail"
 
 	ClientURL = "https://resultados.holosalud.org/#/"
 
