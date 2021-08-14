@@ -1,6 +1,6 @@
 package models
 
-type PetitionFile struct {
+type PatientFile struct {
 	Exam        string `json:"exam"`
 	ServiceID   string `json:"serviceId"`
 	DNI         string `json:"dni"`

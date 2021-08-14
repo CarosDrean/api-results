@@ -2,22 +2,20 @@ package utils
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/CarosDrean/api-results.git/constants"
 	"github.com/CarosDrean/api-results.git/models"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
 )
 
-func SendMail(mailData []byte, route string, token string) error {
+func SendMail(mailData []byte, route string, token string) ([]byte, error) {
 	req, err := http.NewRequest("POST", constants.ApiMail+"/"+route, bytes.NewBuffer(mailData))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	req.Header.Set("Content-type", "application/json")
@@ -25,47 +23,43 @@ func SendMail(mailData []byte, route string, token string) error {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if resp.StatusCode >= 500 {
-		fmt.Println(resp)
-		return nil
+	if resp.StatusCode >= 400 {
+		e := &models.Error{}
+
+		if err := e.Decode(resp.Body); err != nil {
+			return nil, fmt.Errorf("errorResponse.decode(): %w", err)
+		}
+
+		return nil, e
 	}
-	fmt.Println(resp)
 
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(fmt.Sprintf("error in read body: %s", err))
-		return err
+		return nil, err
 	}
 
-	byt := []byte(string(body))
-	var dat map[string]interface{}
-	if err := json.Unmarshal(byt, &dat); err != nil {
-		log.Println(fmt.Sprintf("error in unarchall json: %s", err))
-		return err
-	}
-	fmt.Println(dat)
-	return nil
+	return data, nil
 }
 
-func SendFileMail(route string, filename string, token string) (models.MailFileRes, error) {
+func UploadFile(route string, filename string, token string) (models.MailFileResponse, error) {
 	values := map[string]io.Reader{
 		"file": mustOpen(filename), // lets assume its this file
 	}
 
-	resApiMail, err := Upload(constants.ApiMail+"/"+route, values, token)
+	resApiMail, err := upload(constants.ApiMail+"/"+route, values, token)
 	if err != nil {
-		return models.MailFileRes{}, err
+		return models.MailFileResponse{}, err
 	}
 
 	return resApiMail, nil
 }
 
-func Upload(url string, values map[string]io.Reader, token string) (models.MailFileRes, error) {
+func upload(url string, values map[string]io.Reader, token string) (models.MailFileResponse, error) {
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
 
@@ -78,15 +72,15 @@ func Upload(url string, values map[string]io.Reader, token string) (models.MailF
 		}
 		if x, ok := r.(*os.File); ok {
 			if fw, err = w.CreateFormFile(key, x.Name()); err != nil {
-				return models.MailFileRes{}, err
+				return models.MailFileResponse{}, err
 			}
 		} else {
 			if fw, err = w.CreateFormField(key); err != nil {
-				return models.MailFileRes{}, err
+				return models.MailFileResponse{}, err
 			}
 		}
 		if _, err := io.Copy(fw, r); err != nil {
-			return models.MailFileRes{}, err
+			return models.MailFileResponse{}, err
 		}
 	}
 
@@ -94,7 +88,7 @@ func Upload(url string, values map[string]io.Reader, token string) (models.MailF
 
 	req, err := http.NewRequest("POST", url, &b)
 	if err != nil {
-		return models.MailFileRes{}, err
+		return models.MailFileResponse{}, err
 	}
 
 	req.Header.Set("Content-Type", w.FormDataContentType())
@@ -102,23 +96,23 @@ func Upload(url string, values map[string]io.Reader, token string) (models.MailF
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return models.MailFileRes{}, err
+		return models.MailFileResponse{}, err
 	}
 
-	if res.StatusCode >= 500 {
-		//fmt.Errorf()	//TODO: aqui nos quedamos :D
+	if res.StatusCode >= 400 {
+		e := &models.Error{}
+
+		if err := e.Decode(res.Body); err != nil {
+			return models.MailFileResponse{}, fmt.Errorf("errorResponse.decode(): %w", err)
+		}
+
+		return models.MailFileResponse{}, e
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return models.MailFileRes{}, err
-	}
+	resApiMail := models.MailFileResponse{}
 
-	byt := []byte(string(body))
-	resApiMail := models.MailFileRes{}
-
-	if err := json.Unmarshal(byt, &resApiMail); err != nil {
-		return models.MailFileRes{}, err
+	if err := resApiMail.Decode(res.Body); err != nil {
+		return models.MailFileResponse{}, err
 	}
 
 	return resApiMail, nil
@@ -130,28 +124,4 @@ func mustOpen(f string) *os.File {
 		panic(err)
 	}
 	return r
-}
-
-func loginApiMail() string {
-	secret, err := json.Marshal(map[string]string{
-		"secret": constants.SecretApiMail,
-	})
-	if err != nil {
-		fmt.Println(err)
-	}
-	respToken, err := http.Post(constants.ApiMail+"/login", "application/json", bytes.NewBuffer(secret))
-	if err != nil {
-		log.Panic(err)
-	}
-	defer respToken.Body.Close()
-	body, err := ioutil.ReadAll(respToken.Body)
-	if err != nil {
-		log.Panic(err)
-	}
-	byt := []byte(string(body))
-	var dat map[string]interface{}
-	if err := json.Unmarshal(byt, &dat); err != nil {
-		panic(err)
-	}
-	return dat["token"].(string)
 }

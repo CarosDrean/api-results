@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func ZipFiles(filename string, files []string) error {
+func CreateZip(filename string, files []string) error {
 	newZipFile, err := os.Create(filename)
 	if err != nil {
 		return err

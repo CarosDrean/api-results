@@ -96,7 +96,7 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 
 	data, _ := json.Marshal(objectMail)
 
-	err := utils.SendMail(data, constants.RouteUserLink, tokenUser)
+	_, err := utils.SendMail(data, constants.RouteUserLink, tokenUser)
 	if err != nil {
 		returnErr(w, err, "Send Mail")
 		return

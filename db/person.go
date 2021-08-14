@@ -133,7 +133,7 @@ func (db PersonDB) ValidateLogin(user string, password string, token string) (co
 				return constants.ErrorUP, "", nil
 			}
 
-			_ = utils.SendMail(data, constants.RouteNewPassword, token)
+			_, _ = utils.SendMail(data, constants.RouteNewPassword, token)
 
 			return constants.PasswordUpdate, "", nil
 		}

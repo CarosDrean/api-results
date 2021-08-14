@@ -1,5 +1,10 @@
 package models
 
+import (
+	"encoding/json"
+	"io"
+)
+
 type Mail struct {
 	From     string `json:"from"`
 	User     string `json:"user"`
@@ -14,4 +19,8 @@ type MailFile struct {
 	Description     string `json:"description"`
 	NameFileSending string `json:"nameFileSendingNoFormat"`
 	FormatFile      string `json:"formatFile"`
+}
+
+func (m *MailFile) Decode(body io.ReadCloser) error {
+	return json.NewDecoder(body).Decode(&m)
 }

@@ -18,31 +18,25 @@ import (
 
 type FileController struct{}
 
-func (c FileController) SendZipOrganizationData(mailFile models.MailFile, token string) error {
-	data, _ := json.Marshal(mailFile)
-	err := utils.SendMail(data, constants.RouteSendFile, token)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Request)  {
+func (c FileController) UploadAndSendZipOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var filter models.Filter
-	_ = json.NewDecoder(r.Body).Decode(&filter)
-	res, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter.ID, filter)
+	err := json.NewDecoder(r.Body).Decode(&filter)
 	if err != nil {
-		log.Println(err)
+		returnErr(w, err, "decoder filter")
+		return
+	}
+
+	patientsOrganization, err := db.ServiceDB{}.GetAllPatientsWithOrganizationFilter(filter.ID, filter)
+	if err != nil {
 		returnErr(w, err, "obtener todos pacientes")
 		return
 	}
 
-	paths := c.GetPaths(res, filter.Data)
-	if len(paths) == 0 {
-		log.Println("Sin elementos")
-		returnErr(w, err, "sin elementos")
+	filePaths := c.getFilePaths(patientsOrganization, filter.Data)
+	if len(filePaths) == 0 {
+		returnErr(w, nil, "sin elementos")
 		return
 	}
 
@@ -50,50 +44,70 @@ func (c FileController) SendZipOrganization(w http.ResponseWriter, r *http.Reque
 
 	output := "temp\\" + fileName
 
-	err = utils.ZipFiles(output, paths)
+	err = utils.CreateZip(output, filePaths)
 	if err != nil {
-		log.Println(fmt.Sprintf("Comprimir %s", err))
 		returnErr(w, err, "comprimir archivos")
 		return
 	}
 
+	defer os.Remove(output)
+
 	tokenUser := r.Header.Get("Authorization")
 
-	resApiMail, err := utils.SendFileMail(constants.RouteUploadFile, output, tokenUser)
+	responseFile, err := utils.UploadFile(constants.RouteUploadFile, output, tokenUser)
 	if err != nil {
-		log.Println(err)
 		returnErr(w, err, "subir archivo")
+		return
 	}
 
 	mailFile := models.MailFile{
 		Email:           filter.DataTwo,
-		FilenameUpload:  fileName,
-		Description:     "mensaje de prueba",
+		FilenameUpload:  responseFile.Data,
+		Description:     "Recopilación de Historias Clinicas",
 		NameFileSending: "Historias-Clinicas",
-		FormatFile:       resApiMail.Format,
+		FormatFile:      responseFile.Format,
 	}
 
-	err = c.SendZipOrganizationData(mailFile, tokenUser)
+	mailResponse, err := c.sendZipOrganization(mailFile, tokenUser)
 	if err != nil {
-		log.Println(err)
 		returnErr(w, err, "enviar email")
+		return
 	}
 
-	_ = os.Remove(output)
-	_ = json.NewEncoder(w).Encode("enviado!")
+	_ = json.NewEncoder(w).Encode(mailResponse)
 }
 
-func (c FileController) GetPaths(res []models.ServicePatient, exam string) []string {
+func (c FileController) sendZipOrganization(mailFile models.MailFile, token string) (models.MailResponse, error){
+	dataMailFile, err := json.Marshal(mailFile)
+	if err != nil {
+		return models.MailResponse{}, err
+	}
+
+	dataResponse, err := utils.SendMail(dataMailFile, constants.RouteSendFile, token)
+	if err != nil {
+		return models.MailResponse{}, err
+	}
+
+	mailResponse := models.MailResponse{}
+	if err := mailResponse.Unmarshal(dataResponse); err != nil {
+		return models.MailResponse{}, err
+	}
+
+	return mailResponse, nil
+}
+
+func (c FileController) getFilePaths(patients []models.ServicePatient, exam string) []string {
 	paths := make([]string, 0)
-	for _, e := range res {
-		petition := models.PetitionFile{
+	for _, patient := range patients {
+		petition := models.PatientFile{
 			Exam:        exam,
-			ServiceID:   e.ID,
-			DNI:         e.DNI,
-			NameComplet: e.FirstLastName + " " + e.SecondLastName + " " + e.Name,
-			ServiceDate: e.ServiceDate,
+			ServiceID:   patient.ID,
+			DNI:         patient.DNI,
+			NameComplet: patient.FirstLastName + " " + patient.SecondLastName + " " + patient.Name,
+			ServiceDate: patient.ServiceDate,
 		}
-		path, err := c.assemblyFilePath(petition)
+
+		path, err := c.makeFilePath(petition)
 		if err == nil {
 			paths = append(paths, path)
 		}
@@ -117,13 +131,13 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 		log.Println(err)
 		return
 	}
-	paths := c.GetPaths(res, filter.Data)
+	paths := c.getFilePaths(res, filter.Data)
 	if len(paths) == 0 {
 		log.Println("Sin elementos")
 		return
 	}
 	output := "temp\\" + filter.Data + strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
-	err = utils.ZipFiles(output, paths)
+	err = utils.CreateZip(output, paths)
 	if err != nil {
 		log.Println(fmt.Sprintf("Comprimir %s", err))
 		return
@@ -134,10 +148,10 @@ func (c FileController) DownloadZIPOrganization(w http.ResponseWriter, r *http.R
 
 func (c FileController) DownloadPDF(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var petition models.PetitionFile
+	var petition models.PatientFile
 	_ = json.NewDecoder(r.Body).Decode(&petition)
 
-	filePath, err := c.assemblyFilePath(petition)
+	filePath, err := c.makeFilePath(petition)
 	if err != nil {
 		log.Println(err)
 		return
@@ -145,52 +159,51 @@ func (c FileController) DownloadPDF(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filePath)
 }
 
-func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, error) {
-	var nameFile string
-	if strings.Contains(petition.Exam, "PRUEBA RAPIDA") {
-		nameFile = constants.RoutePruebaRapida + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-" + constants.IdPruebaRapida + ".pdf"
-	} else if strings.Contains(petition.Exam, "INTERCONSULTA") {
-		nameFile = constants.RouteInterconsulta + petition.ServiceID + "-" + petition.NameComplet + ".pdf"
-	} else if strings.Contains(petition.Exam, "INFORME MEDICO") {
-		nameFile = constants.RouteInformeMedico + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "FMT2")
-	} else if strings.Contains(petition.Exam, "CERTIFICADO SIN DX") {
-		nameFile = constants.RouteCertificateSinDX + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "CAPSD")
-	} else if strings.Contains(petition.Exam, "CERTIFICADO 312") {
-		nameFile = constants.RouteCertificate312 + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "CAP")
-	} else if strings.Contains(petition.Exam, "HISTORIA CLINICA") {
-		nameFile = constants.RouteHistory + c.assemblyFileNameExtra(petition.ServiceID, petition.DNI, "HISTORIA")
+func (c FileController) makeFilePath(patient models.PatientFile) (string, error) {
+	var filePath string
+	if strings.Contains(patient.Exam, "PRUEBA RAPIDA") {
+		filePath = constants.RoutePruebaRapida + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-PRUEBA-RAPIDA-" + constants.IdPruebaRapida + ".pdf"
+	} else if strings.Contains(patient.Exam, "INTERCONSULTA") {
+		filePath = constants.RouteInterconsulta + patient.ServiceID + "-" + patient.NameComplet + ".pdf"
+	} else if strings.Contains(patient.Exam, "INFORME MEDICO") {
+		filePath = constants.RouteInformeMedico + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "FMT2")
+	} else if strings.Contains(patient.Exam, "CERTIFICADO SIN DX") {
+		filePath = constants.RouteCertificateSinDX + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "CAPSD")
+	} else if strings.Contains(patient.Exam, "CERTIFICADO 312") {
+		filePath = constants.RouteCertificate312 + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "CAP")
+	} else if strings.Contains(patient.Exam, "HISTORIA CLINICA") {
+		filePath = constants.RouteHistory + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "HISTORIA")
 	}
-	if strings.Contains((petition.Exam), "PRUEBA HISOPADO") {
-		nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopado + ".pdf"
-	} else if strings.Contains(petition.Exam, "HOLOELECTRO") {
-		nameFile = constants.RouteCardio + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-SERVICIOS-" + constants.IdCardio + ".pdf"
-	} else if strings.Contains(petition.Exam, "HOLTER") {
-		nameFile = constants.RouteHolter + c.assemblyFileDate(petition.ServiceID, petition.DNI, "HOLTER")
-	} else if strings.Contains(petition.Exam, "ELECTROCARDIOGRAMA") {
-		nameFile = constants.RouteElectro + c.assemblyFileDate(petition.ServiceID, petition.DNI, "ELECTROCARDIOGRAMA")
-	} else if strings.Contains(petition.Exam, "MAPA") {
-		nameFile = constants.RouteMapa + c.assemblyFileDate(petition.ServiceID, petition.DNI, "MAPA")
-	} else if strings.Contains(petition.Exam, "ECOCARDIOGRAMA") {
-		nameFile = constants.RouteEcocardiograma + c.assemblyFileDate(petition.ServiceID, petition.DNI, "ECOCARDIOGRAMA")
-	} else if strings.Contains(petition.Exam, "PRUEBA ESFUERZO") {
-		nameFile = constants.RoutePruebaEsfuerzo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "PRUEBA ESFUERZO")
-	} else if strings.Contains(petition.Exam, "RIESGO QUIRURGICO") {
-		nameFile = constants.RouteRiesgo + c.assemblyFileDate(petition.ServiceID, petition.DNI, "RIESGO QUIRURGICO")
-	} else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - ADMINISTRADOR") {
-		nameFile = constants.RoutePDF + "MANUAL DE HOLORESULTS - ADMINISTRADOR" + ".pdf"
-	} else if strings.Contains(petition.Exam, "MANUAL DE HOLORESULTS - MEDICO") {
-		nameFile = constants.RoutePDF + "MANUAL DE HOLORESULTS - MEDICO" + ".pdf"
+	if strings.Contains((patient.Exam), "PRUEBA HISOPADO") {
+		filePath = constants.RoutePruebaHisopado + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopado + ".pdf"
+	} else if strings.Contains(patient.Exam, "HOLOELECTRO") {
+		filePath = constants.RouteCardio + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-SERVICIOS-" + constants.IdCardio + ".pdf"
+	} else if strings.Contains(patient.Exam, "HOLTER") {
+		filePath = constants.RouteHolter + c.assemblyFileDate(patient.ServiceID, patient.DNI, "HOLTER")
+	} else if strings.Contains(patient.Exam, "ELECTROCARDIOGRAMA") {
+		filePath = constants.RouteElectro + c.assemblyFileDate(patient.ServiceID, patient.DNI, "ELECTROCARDIOGRAMA")
+	} else if strings.Contains(patient.Exam, "MAPA") {
+		filePath = constants.RouteMapa + c.assemblyFileDate(patient.ServiceID, patient.DNI, "MAPA")
+	} else if strings.Contains(patient.Exam, "ECOCARDIOGRAMA") {
+		filePath = constants.RouteEcocardiograma + c.assemblyFileDate(patient.ServiceID, patient.DNI, "ECOCARDIOGRAMA")
+	} else if strings.Contains(patient.Exam, "PRUEBA ESFUERZO") {
+		filePath = constants.RoutePruebaEsfuerzo + c.assemblyFileDate(patient.ServiceID, patient.DNI, "PRUEBA ESFUERZO")
+	} else if strings.Contains(patient.Exam, "RIESGO QUIRURGICO") {
+		filePath = constants.RouteRiesgo + c.assemblyFileDate(patient.ServiceID, patient.DNI, "RIESGO QUIRURGICO")
+	} else if strings.Contains(patient.Exam, "MANUAL DE HOLORESULTS - ADMINISTRADOR") {
+		filePath = constants.RoutePDF + "MANUAL DE HOLORESULTS - ADMINISTRADOR" + ".pdf"
+	} else if strings.Contains(patient.Exam, "MANUAL DE HOLORESULTS - MEDICO") {
+		filePath = constants.RoutePDF + "MANUAL DE HOLORESULTS - MEDICO" + ".pdf"
 	}
 
-	if len(nameFile) == 0 {
+	if len(filePath) == 0 {
 		return "", errors.New("no aceptado")
 	}
 
-	if _, err := os.Stat(nameFile); err != nil {
-		fmt.Println(nameFile)
+	if _, err := os.Stat(filePath); err != nil {
 		if os.IsNotExist(err) {
-			if strings.Contains((petition.Exam), "PRUEBA HISOPADO") {
-				nameFile = constants.RoutePruebaHisopado + petition.DNI + "-" + formatDate(petition.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopadoAux + ".pdf"
+			if strings.Contains((patient.Exam), "PRUEBA HISOPADO") {
+				filePath = constants.RoutePruebaHisopado + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopadoAux + ".pdf"
 			} else {
 				return "", errors.New("no existe")
 			}
@@ -198,7 +211,7 @@ func (c FileController) assemblyFilePath(petition models.PetitionFile) (string, 
 		}
 
 	}
-	return nameFile, nil
+	return filePath, nil
 
 }
 

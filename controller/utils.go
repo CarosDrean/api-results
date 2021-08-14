@@ -16,6 +16,7 @@ func checkError(err error, ctx string) {
 
 func returnErr(w http.ResponseWriter, err error, operation string) {
 	_, _ = fmt.Fprintln(w, fmt.Sprintf("Hubo un error al %s, error: %s", operation, err.Error()))
+	log.Println(fmt.Sprintf("Hubo un error al %s, error: %s", operation, err.Error()))
 }
 
 func splitDate(r rune) bool {

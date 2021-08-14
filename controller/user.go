@@ -140,7 +140,7 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 
 	data, _ := json.Marshal(mail)
 
-	_ = utils.SendMail(data, constants.RouteNewSystemUser, tokenUser)
+	_, _ = utils.SendMail(data, constants.RouteNewSystemUser, tokenUser)
 
 	_ = json.NewEncoder(w).Encode(idUser)
 }

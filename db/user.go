@@ -170,7 +170,7 @@ func (db UserDB) ValidateLogin(user string, password string, token string) (cons
 				return constants.ErrorUP, "", nil
 			}
 
-			_ = utils.SendMail(data, constants.RouteNewPassword, token)
+			_, _ = utils.SendMail(data, constants.RouteNewPassword, token)
 
 			return constants.PasswordUpdate, "", nil
 		}
