@@ -2,10 +2,10 @@ package constants
 
 const (
 	PORT    = "8000"
-	//ApiMail = "https://api-mail.sa.ngrok.io"
+	ApiMail = "https://api-mail.sa.ngrok.io"
 
 	// anterior api https://api-mail.holosalud.org
-	ApiMail       = "http://localhost:2001"
+	//ApiMail       = "http://localhost:2001"
 
 	RoutePruebaRapida     string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Prueba Rapida\\"
 	RoutePruebaHisopado   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Prueba Rapida\\"
@@ -20,7 +20,7 @@ const (
 	RouteEcocardiograma   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\ECOCARDIOGRAMA\\"
 	RouteHolter           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\HOLTER\\"
 	RoutePruebaEsfuerzo   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\PRUEBA-ESFUERZO\\"
-	RouteRiesgo			  string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\RIESGO-QUIRURGICO\\"
+	RouteRiesgo           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\RIESGO-QUIRURGICO\\"
 	RoutePDF              string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Tecnologia e Informacion\\manuales\\"
 
 	IdNode = 9

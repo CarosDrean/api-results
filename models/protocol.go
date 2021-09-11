@@ -8,7 +8,5 @@ type Protocol struct {
 	EsoType                int    `json:"esoType"`
 	LocationID             string `json:"locationId"`
 	GroupOccupationId      string `json:"groupOccupationId"`
-	IsDeleted              int
-	BusinessName		   string
-	
+	BusinessName           string
 }

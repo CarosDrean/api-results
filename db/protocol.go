@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type ProtocolDB struct {}
+type ProtocolDB struct{}
 
 func (db ProtocolDB) GetAllLocation(id string) ([]models.Protocol, error) {
 	res := make([]models.Protocol, 0)
@@ -23,6 +23,7 @@ func (db ProtocolDB) GetAllLocation(id string) ([]models.Protocol, error) {
 	defer rows.Close()
 	return res, nil
 }
+
 // obtener las empresas
 func (db ProtocolDB) GetAllOrganization(id string) ([]models.Protocol, error) {
 	res := make([]models.Protocol, 0)
@@ -39,6 +40,7 @@ func (db ProtocolDB) GetAllOrganization(id string) ([]models.Protocol, error) {
 	defer rows.Close()
 	return res, nil
 }
+
 // obtener las empresas con su contratista
 func (db ProtocolDB) GetAllOrganizationEmployer(id string) ([]models.Protocol, error) {
 	res := make([]models.Protocol, 0)
@@ -84,7 +86,6 @@ func (db ProtocolDB) Get(id string) (models.Protocol, error) {
 	return res[0], nil
 }
 
-
 func (db ProtocolDB) scan(rows *sql.Rows, err error, res *[]models.Protocol, ctx string, situation string) error {
 	var item models.Protocol
 	if err != nil {
@@ -92,15 +93,15 @@ func (db ProtocolDB) scan(rows *sql.Rows, err error, res *[]models.Protocol, ctx
 		return err
 	}
 	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.OrganizationEmployerID, &item.LocationID, &item.IsDeleted, &item.EsoType, &item.GroupOccupationId)
+		err := rows.Scan(&item.ID, &item.Name, &item.OrganizationID, &item.OrganizationEmployerID, &item.LocationID, &item.EsoType, &item.GroupOccupationId)
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err
-		} else if item.IsDeleted == 0 {
-			item.BusinessName = item.Name
-			item.Name = db.delBusinessName(item.Name)
-			*res = append(*res, item)
 		}
+
+		item.BusinessName = item.Name
+		item.Name = db.delBusinessName(item.Name)
+		*res = append(*res, item)
 	}
 	return nil
 }

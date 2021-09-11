@@ -172,7 +172,7 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
 			&person.Sex, &birth, &person.IsDeleted, &phone,
-			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.OrganizationEmployerID, &protocol.LocationID, &protocol.IsDeleted, &protocol.EsoType,
+			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.OrganizationEmployerID, &protocol.LocationID, &protocol.EsoType,
 			&protocol.GroupOccupationId,
 			&disease)
 		if pass.Valid {
@@ -414,15 +414,13 @@ func (db ServiceDB) GetGesoFilter(idOrganization string, filter models.Filter) (
 			CalendarStatus:   calendar.CalendarStatusID,
 			CircuitStart:     start[0],
 			CircuitEnd:       end[0],
-			Geso:			  e.Geso,
+			Geso:             e.Geso,
 		}
-
 
 		res = append(res, item)
 	}
 	return res, nil
 }
-
 
 func (db ServiceDB) scan(rows *sql.Rows, err error, res *[]models.Service, ctx string, situation string) error {
 	var item models.Service
