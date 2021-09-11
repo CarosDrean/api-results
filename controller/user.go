@@ -106,7 +106,12 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDB, _ := c.DB.GetFromUserName(item.UserName)
+	userDB, err := c.DB.GetFromUserName(item.UserName)
+	if err != nil {
+		returnErr(w, err, "getFromUserName")
+		return
+	}
+
 	if userDB.PersonID != "" && userDB.UserName != "" {
 		_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
 		return
@@ -117,6 +122,7 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, err, "create")
 		return
 	}
+
 	user := models.SystemUser{
 		PersonID:       personID,
 		UserName:       item.UserName,
@@ -125,15 +131,19 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 		OrganizationID: item.OrganizationID,
 		IsDelete:       0,
 	}
+
 	idUser, err := c.DB.Create(user)
-	checkError(err, "Created User")
+	if err != nil {
+		returnErr(w, err, "createdUser")
+		return
+	}
 
 	if user.TypeUser != 1 && user.TypeUser != 5 {
 		createProtocolSystemUser(idUser, item.OrganizationID, item.AccessClient)
 	}
 
 	mail := models.Mail{
-		From:     item.Mail,
+		Email:    item.Mail,
 		User:     item.UserName,
 		Password: item.Password,
 	}
@@ -158,31 +168,34 @@ func (c UserController) permitCreateUser(idOrganization string) bool {
 
 func (c UserController) usersOrganization(idOrganization string) ([]models.UserPerson, error) {
 	res := make([]models.UserPerson, 0)
-	items, err := c.DB.GetAll()
+
+	items, err := c.DB.GetAllByOrganizationID(idOrganization)
 	if err != nil {
 		return res, err
 	}
+
 	for _, e := range items {
-		if e.OrganizationID == idOrganization && e.TypeUser != constants.CodeRoles.InternalAdmin {
-			person, _ := db.PersonDB{}.Get(e.PersonID)
-			item := models.UserPerson{
-				ID:             e.ID,
-				PersonID:       e.PersonID,
-				UserName:       e.UserName,
-				Password:       e.Password,
-				TypeUser:       e.TypeUser,
-				OrganizationID: e.OrganizationID,
-				DNI:            person.DNI,
-				Name:           person.Name,
-				FirstLastName:  person.FirstLastName,
-				SecondLastName: person.SecondLastName,
-				Mail:           person.Mail,
-				Sex:            person.Sex,
-				Birthday:       person.Birthday,
-			}
-			res = append(res, item)
+		person, _ := db.PersonDB{}.Get(e.PersonID)
+		item := models.UserPerson{
+			ID:             e.ID,
+			PersonID:       e.PersonID,
+			UserName:       e.UserName,
+			Password:       e.Password,
+			TypeUser:       e.TypeUser,
+			OrganizationID: e.OrganizationID,
+			DNI:            person.DNI,
+			Name:           person.Name,
+			FirstLastName:  person.FirstLastName,
+			SecondLastName: person.SecondLastName,
+			Mail:           person.Mail,
+			Sex:            person.Sex,
+			Birthday:       person.Birthday,
+			CreatedAt:      e.CreatedAt,
 		}
+
+		res = append(res, item)
 	}
+
 	return res, nil
 }
 

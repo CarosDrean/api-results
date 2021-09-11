@@ -30,7 +30,7 @@ func SendMail(mailData []byte, route string, token string) ([]byte, error) {
 		e := &models.Error{}
 
 		if err := e.Decode(resp.Body); err != nil {
-			return nil, fmt.Errorf("errorResponse.decode(): %w", err)
+			return nil, fmt.Errorf("sendMail.errorResponse.decode(): %w", err)
 		}
 
 		return nil, e

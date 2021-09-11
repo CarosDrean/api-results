@@ -13,16 +13,19 @@ import (
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var user models.UserLogin
+
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		_, _ = fmt.Fprintf(w, "Error al leer el usuario %s\n", err)
 		return
 	}
-	log.Println(user)
+
 	var stateLogin constants.State
 	var id string
+
 	isSystemUser := false
 	isPatientParticular := false
+
 	nameDB := ""
 
 	token := GenerateJWTExternal(models.ClaimResult{
@@ -34,18 +37,40 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	if !user.Particular {
 		stateLogin, id, err, nameDB = patientBusiness(user)
-
+		if err != nil && stateLogin != constants.NotFound {
+			_, _ = fmt.Fprintf(w, "¡Hubo un Error %v", err)
+			log.Println(fmt.Sprintf("Hubo un error %v", err))
+			return
+		}
 
 		if stateLogin == constants.NotFound {
 			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password, token)
+			if err != nil {
+				_, _ = fmt.Fprintf(w, "¡Hubo un Error %v", err)
+				log.Println(fmt.Sprintf("Hubo un error %v", err))
+				return
+			}
+
 			isSystemUser = true
 		}
 	} else {
 		isPatientParticular = true
 		isSystemUser = false
 		stateLogin, id, err, nameDB = patientParticular(user)
+		if err != nil {
+			_, _ = fmt.Fprintf(w, "¡Hubo un Error %v", err)
+			log.Println(fmt.Sprintf("Hubo un error %v", err))
+			return
+		}
+
 		if stateLogin == constants.NotFound {
 			stateLogin, id, err = db.UserDB{}.ValidateLogin(user.User, user.Password, token)
+			if err != nil {
+				_, _ = fmt.Fprintf(w, "¡Hubo un Error %v", err)
+				log.Println(fmt.Sprintf("Hubo un error %v", err))
+				return
+			}
+
 			isSystemUser = true
 		}
 	}
@@ -55,12 +80,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	switch stateLogin {
 	case constants.Accept:
-		userResult := models.ClaimResult{ID: id, Role: getRole(0), NameDB: nameDB}
+		userClaimResult := models.ClaimResult{ID: id, Role: getRole(0), NameDB: nameDB}
+
 		if isSystemUser {
-			systemUser, _ := db.UserDB{}.Get(id)
-			userResult = models.ClaimResult{ID: id, Role: getRole(systemUser.TypeUser), NameDB: nameDB}
+			systemUser, err := db.UserDB{}.Get(id)
+			if err != nil {
+				fmt.Println(w, "Error al obtener el usuario")
+				return
+			}
+
+			userClaimResult = models.ClaimResult{ID: id, Role: getRole(systemUser.TypeUser), NameDB: nameDB}
 		}
-		token := GenerateJWT(userResult)
+
+		token := GenerateJWT(userClaimResult)
 		result := models.ResponseToken{Token: token}
 		jsonResult, err := json.Marshal(result)
 		if err != nil {
@@ -106,8 +138,10 @@ func patientBusiness(user models.UserLogin) (constants.State, string, error, str
 	})
 
 	var nameDB string
+
 	db.DB, nameDB = helper.Get()
 	state, id, err := db.PersonDB{}.ValidateLogin(user.User, user.Password, token)
+
 	return state, id, err, nameDB
 }
 

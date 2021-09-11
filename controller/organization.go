@@ -85,12 +85,12 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 	}
 
 	token := mid.GenerateJWTExternal(claim)
-	URL := constants.ClientURL + "temp/create-external-user/" + token
+	url := constants.ClientURL + "temp/create-external-user/" + token
 
 	organization, _ := c.DB.Get(item.ID)
-	objectMail := models.Mail{
-		From:     item.Mail,
-		Data:     URL,
+	objectMail := models.MailLink{
+		Email:    item.Mail,
+		URL:      url,
 		Business: organization.Name,
 	}
 
@@ -102,7 +102,7 @@ func (c OrganizationController) SendURLTokenForExternalUser(w http.ResponseWrite
 		return
 	}
 	_ = c.updateURLAdminOrMedic(item)
-	_ = json.NewEncoder(w).Encode(URL)
+	_ = json.NewEncoder(w).Encode(url)
 
 }
 

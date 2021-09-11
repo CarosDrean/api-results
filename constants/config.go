@@ -7,8 +7,6 @@ const (
 	// anterior api https://api-mail.holosalud.org
 	ApiMail       = "http://localhost:2001"
 
-	SecretApiMail = "miclavedetokens"
-
 	RoutePruebaRapida     string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Prueba Rapida\\"
 	RoutePruebaHisopado   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Prueba Rapida\\"
 	RouteInterconsulta    string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\INTERCONSULTAS\\"

@@ -12,8 +12,8 @@ const (
 	InvalidCredentials State = "Invalid Credentials"
 	PasswordUpdate     State = "Password Updated"
 
-	RouteNewPassword   = "/api/v1/user/reset-password"
-	RouteNewSystemUser = "/api/v1/user/new"
+	RouteNewPassword   = "api/v1/user/reset-password"
+	RouteNewSystemUser = "api/v1/user/new"
 	RouteUserLink      = "api/v1/url-create-user/send-mail"
 	RouteUploadFile    = "api/v1/file/upload"
 	RouteSendFile      = "api/v1/file/send-mail"

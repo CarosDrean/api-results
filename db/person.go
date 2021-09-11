@@ -121,19 +121,25 @@ func (db PersonDB) ValidateLogin(user string, password string, token string) (co
 		if len(item.Mail) != 0 {
 			newPassword := utils.CreateNewPassword()
 			mail := models.Mail{
-				From:     item.Mail,
+				Email:    item.Mail,
 				User:     user,
 				Password: newPassword,
 			}
 
-			data, _ := json.Marshal(mail)
+			data, err := json.Marshal(mail)
+			if err != nil {
+				return "", "", err
+			}
 
-			_, err := db.UpdatePassword(item.ID, newPassword)
+			_, err = db.UpdatePassword(item.ID, newPassword)
 			if err != nil {
 				return constants.ErrorUP, "", nil
 			}
 
-			_, _ = utils.SendMail(data, constants.RouteNewPassword, token)
+			_, err = utils.SendMail(data, constants.RouteNewPassword, token)
+			if err != nil {
+				return "", "", err
+			}
 
 			return constants.PasswordUpdate, "", nil
 		}

@@ -10,6 +10,7 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 	"github.com/CarosDrean/api-results.git/utils"
 	"strconv"
+	"time"
 )
 
 type UserDB struct{}
@@ -18,60 +19,79 @@ func (db UserDB) GetAll() ([]models.SystemUser, error) {
 	res := make([]models.SystemUser, 0)
 
 	tsql := fmt.Sprintf(query.SystemUser["list"].Q)
-	rows, err := DB.Query(tsql)
 
-	err = db.scan(rows, err, &res, "User DB", "Get")
+	rows, err := DB.Query(tsql)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	defer rows.Close()
-	return res, nil
-}
-
-func (db UserDB) GetAllOrganization(idOrganization string) ([]models.SystemUser, error) {
-	res := make([]models.SystemUser, 0)
-	var item models.SystemUser
-
-	tsql := fmt.Sprintf(query.SystemUser["getOrganization"].Q, idOrganization)
-	rows, err := DB.Query(tsql)
-	if err != nil {
-		checkError(err, "GetAllOrganization", "DB", "Reading rows")
-		return res, err
-	}
 
 	for rows.Next() {
-		err = rows.Scan(&item.TypeUser)
+		item, err := db.scanRow(rows)
 		if err != nil {
-			checkError(err, "GetAllOrganization", "ctx", "Scan rows")
-		} else if item.IsDelete != 1 {
+			return nil, err
+		}
+
+		if item.IsDelete == 0 {
 			res = append(res, item)
 		}
 	}
-	defer rows.Close()
+
 	return res, nil
 }
 
-func (db UserDB) Get(id string) (models.SystemUser, error) {
+func (db UserDB) GetAllByOrganizationID(idOrganization string) ([]models.SystemUser, error) {
 	res := make([]models.SystemUser, 0)
 
-	tsql := fmt.Sprintf(query.SystemUser["get"].Q, id)
-	rows, err := DB.Query(tsql)
+	tsql := fmt.Sprintf(query.SystemUser["getByOrganizationID"].Q, idOrganization)
 
-	err = db.scan(rows, err, &res, "User DB", "Get")
+	rows, err := DB.Query(tsql)
+	if err != nil {
+		return res, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		item, err := db.scanRowOrganization(rows)
+		if err != nil {
+			return res, err
+		}
+
+		res = append(res, item)
+	}
+
+	return res, nil
+}
+
+func (db UserDB) Get(idString string) (models.SystemUser, error) {
+	id, err := strconv.Atoi(idString)
 	if err != nil {
 		return models.SystemUser{}, err
 	}
-	if len(res) == 0 {
+
+	tsql := fmt.Sprintf(query.SystemUser["get"].Q, id)
+
+	row := DB.QueryRow(tsql)
+
+	item, err := db.scanRow(row)
+	if err != nil {
+		return models.SystemUser{}, err
+	}
+
+	if item.IsDelete == 1 {
 		return models.SystemUser{}, nil
 	}
-	defer rows.Close()
-	return res[0], nil
+
+	return item, nil
 }
 
 func (db UserDB) Create(item models.SystemUser) (int64, error) {
 	ctx := context.Background()
+
 	tsql := fmt.Sprintf(query.SystemUser["insert"].Q)
+
 	sequentialID := SequentialDB{}.NextSequentialId(constants.IdNode, constants.IdSystemUserTable)
+
 	item.Password = utils.EncryptMD5(item.Password)
 	item.ID = int64(sequentialID)
 
@@ -83,10 +103,12 @@ func (db UserDB) Create(item models.SystemUser) (int64, error) {
 		sql.Named("v_UserName", item.UserName),
 		sql.Named("v_Password", item.Password),
 		sql.Named("i_SystemUserTypeId", item.TypeUser),
-		sql.Named("i_IsDeleted", 0))
+		sql.Named("i_IsDeleted", 0),
+		sql.Named("d_InsertDate", time.Now()))
 	if err != nil {
 		return -1, err
 	}
+
 	return int64(sequentialID), nil
 }
 
@@ -121,26 +143,26 @@ func (db UserDB) Delete(id string) (int64, error) {
 		tsql,
 		sql.Named("ID", id))
 	if err != nil {
-		fmt.Println(err)
 		return -1, err
 	}
 	return result.RowsAffected()
 }
 
 func (db UserDB) GetFromUserName(userName string) (models.SystemUser, error) {
-	res := make([]models.SystemUser, 0)
 	tsql := fmt.Sprintf(query.SystemUser["getUserName"].Q, userName)
-	rows, err := DB.Query(tsql)
 
-	err = db.scan(rows, err, &res, "User DB", "Get")
+	row := DB.QueryRow(tsql)
+
+	item, err := db.scanRow(row)
 	if err != nil {
 		return models.SystemUser{}, err
 	}
-	if len(res) == 0 {
+
+	if item.IsDelete == 1 {
 		return models.SystemUser{}, nil
 	}
-	defer rows.Close()
-	return res[0], nil
+
+	return item, nil
 }
 
 func (db UserDB) ValidateLogin(user string, password string, token string) (constants.State, string, error) {
@@ -148,6 +170,7 @@ func (db UserDB) ValidateLogin(user string, password string, token string) (cons
 	if err != nil {
 		return constants.NotFound, "", err
 	}
+
 	if item.UserName == "" && item.PersonID == "" {
 		return constants.NotFound, "", nil
 	}
@@ -158,7 +181,7 @@ func (db UserDB) ValidateLogin(user string, password string, token string) (cons
 		if len(person.Mail) != 0 {
 			newPassword := utils.CreateNewPassword()
 			mail := models.Mail{
-				From:     person.Mail,
+				Email:    person.Mail,
 				User:     user,
 				Password: newPassword,
 			}
@@ -170,10 +193,14 @@ func (db UserDB) ValidateLogin(user string, password string, token string) (cons
 				return constants.ErrorUP, "", nil
 			}
 
-			_, _ = utils.SendMail(data, constants.RouteNewPassword, token)
+			_, err = utils.SendMail(data, constants.RouteNewPassword, token)
+			if err != nil {
+				return "", "", err
+			}
 
 			return constants.PasswordUpdate, "", nil
 		}
+
 		return constants.NotFoundMail, "", nil
 	}
 	if utils.ComparePassword(item.Password, password) {
@@ -201,32 +228,57 @@ func validatePasswordSystemUserForReset(password string, patient models.SystemUs
 	return patient.UserName == password
 }
 
-func (db UserDB) scan(rows *sql.Rows, err error, res *[]models.SystemUser, ctx string, situation string) error {
+func (db UserDB) scanRow(row models.RowScanner) (models.SystemUser, error) {
+	var createdAtNull sql.NullTime
+
 	var item models.SystemUser
+
+	err := row.Scan(
+		&item.ID,
+		&item.PersonID,
+		&item.UserName,
+		&item.Password,
+		&item.TypeUser,
+		&item.IsDelete,
+		&createdAtNull,
+	)
 	if err != nil {
-		checkError(err, situation, ctx, "Reading rows")
-		return err
+		return models.SystemUser{}, err
 	}
-	for rows.Next() {
-		err := rows.Scan(&item.ID, &item.PersonID, &item.UserName, &item.Password, &item.TypeUser, &item.IsDelete)
-		protocolSystemUsers, _ := ProtocolSystemUserDB{}.GetAllSystemUserID(strconv.FormatInt(item.ID, 10))
-		item.AccessClient = false
-		if len(protocolSystemUsers) > 0 {
-			protocol, _ := ProtocolDB{}.Get(protocolSystemUsers[0].ProtocolID)
-			organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
-			item.OrganizationID = organization.ID
-			if protocolSystemUsers[0].ApplicationHierarchy == constants.CodeAccessClient {
-				item.AccessClient = true
-			}
-		} else {
-			item.OrganizationID = ""
-		}
-		if err != nil {
-			checkError(err, situation, ctx, "Scan rows")
-			return err
-		} else if item.IsDelete != 1 {
-			*res = append(*res, item)
+
+	protocolSystemUsers, _ := ProtocolSystemUserDB{}.GetAllSystemUserID(strconv.FormatInt(item.ID, 10))
+
+	if len(protocolSystemUsers) > 0 {
+		protocol, _ := ProtocolDB{}.Get(protocolSystemUsers[0].ProtocolID)
+		organization, _ := OrganizationDB{}.Get(protocol.OrganizationID)
+
+		item.OrganizationID = organization.ID
+
+		if protocolSystemUsers[0].ApplicationHierarchy == constants.CodeAccessClient {
+			item.AccessClient = true
 		}
 	}
-	return nil
+
+	return item, nil
+}
+
+func (db UserDB) scanRowOrganization(row models.RowScanner) (models.SystemUser, error) {
+	var createdAtNull sql.NullTime
+
+	var item models.SystemUser
+
+	err := row.Scan(
+		&item.ID,
+		&item.PersonID,
+		&item.UserName,
+		&item.Password,
+		&item.TypeUser,
+		&createdAtNull,
+	)
+	if err != nil {
+		return models.SystemUser{}, err
+	}
+	item.CreatedAt = createdAtNull.Time
+
+	return item, nil
 }

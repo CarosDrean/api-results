@@ -6,7 +6,7 @@ import (
 )
 
 type Mail struct {
-	From     string `json:"from"`
+	Email    string `json:"email"`
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Data     string `json:"data"` // ese elemento es para datos adicionales que se requiera
@@ -23,4 +23,10 @@ type MailFile struct {
 
 func (m *MailFile) Decode(body io.ReadCloser) error {
 	return json.NewDecoder(body).Decode(&m)
+}
+
+type MailLink struct {
+	Email    string `json:"email"`
+	URL      string `json:"url"`
+	Business string `json:"business"`
 }
