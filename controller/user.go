@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -107,10 +108,12 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userDB, err := c.DB.GetFromUserName(item.UserName)
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows){
 		returnErr(w, err, "getFromUserName")
 		return
 	}
+
+
 
 	if userDB.PersonID != "" && userDB.UserName != "" {
 		_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
