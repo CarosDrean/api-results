@@ -108,12 +108,10 @@ func (c UserController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userDB, err := c.DB.GetFromUserName(item.UserName)
-	if err != nil && !errors.Is(err, sql.ErrNoRows){
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		returnErr(w, err, "getFromUserName")
 		return
 	}
-
-
 
 	if userDB.PersonID != "" && userDB.UserName != "" {
 		_, _ = fmt.Fprintf(w, "¡Nombre de Usuario ya existe en la Base de Datos!")
@@ -329,11 +327,17 @@ func (c UserController) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	psuDB, _ := db.ProtocolSystemUserDB{}.GetAllSystemUserID(strconv.Itoa(int(userDB.ID)))
-	if userDB.OrganizationID != item.OrganizationID || !(psuDB[0].ApplicationHierarchy == constants.CodeAccessClient && item.AccessClient) {
-		err = updateProtocolSystemUser(psuDB[0].ID, item.ID, item.OrganizationID, item.AccessClient)
-		if err != nil {
-			returnErr(w, err, "update protocol system user")
+	psuDB, err := db.ProtocolSystemUserDB{}.GetAllSystemUserID(strconv.Itoa(int(userDB.ID)))
+	if err != nil {
+		_, _ = fmt.Fprintf(w, "¡Hubo un error en el proceso!")
+	}
+
+	if len(psuDB) > 0 {
+		if userDB.OrganizationID != item.OrganizationID || !(psuDB[0].ApplicationHierarchy == constants.CodeAccessClient && item.AccessClient) {
+			err = updateProtocolSystemUser(psuDB[0].ID, item.ID, item.OrganizationID, item.AccessClient)
+			if err != nil {
+				returnErr(w, err, "update protocol system user")
+			}
 		}
 	}
 

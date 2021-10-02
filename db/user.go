@@ -10,7 +10,6 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 	"github.com/CarosDrean/api-results.git/utils"
 	"strconv"
-	"time"
 )
 
 type UserDB struct{}
@@ -103,8 +102,7 @@ func (db UserDB) Create(item models.SystemUser) (int64, error) {
 		sql.Named("v_UserName", item.UserName),
 		sql.Named("v_Password", item.Password),
 		sql.Named("i_SystemUserTypeId", item.TypeUser),
-		sql.Named("i_IsDeleted", 0),
-		sql.Named("d_InsertDate", time.Now()))
+		sql.Named("i_IsDeleted", 0))
 	if err != nil {
 		return -1, err
 	}
@@ -156,10 +154,6 @@ func (db UserDB) GetFromUserName(userName string) (models.SystemUser, error) {
 	item, err := db.scanRow(row)
 	if err != nil {
 		return models.SystemUser{}, err
-	}
-
-	if item.IsDelete == 1 {
-		return models.SystemUser{}, nil
 	}
 
 	return item, nil
@@ -229,8 +223,6 @@ func validatePasswordSystemUserForReset(password string, patient models.SystemUs
 }
 
 func (db UserDB) scanRow(row models.RowScanner) (models.SystemUser, error) {
-	var createdAtNull sql.NullTime
-
 	var item models.SystemUser
 
 	err := row.Scan(
@@ -240,7 +232,6 @@ func (db UserDB) scanRow(row models.RowScanner) (models.SystemUser, error) {
 		&item.Password,
 		&item.TypeUser,
 		&item.IsDelete,
-		&createdAtNull,
 	)
 	if err != nil {
 		return models.SystemUser{}, err
