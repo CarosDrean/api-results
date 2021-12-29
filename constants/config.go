@@ -2,9 +2,9 @@ package constants
 
 const (
 	PORT    = "8000"
-	ApiMail = "https://api-mail.sa.ngrok.io"
+	//ApiMail = "https://api-mail.sa.ngrok.io"
 
-	// anterior api https://api-mail.holosalud.org
+	ApiMail = "https://api-mail.holosalud.org"
 	//ApiMail       = "http://localhost:2001"
 
 	RoutePruebaRapida     string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Prueba Rapida\\"
