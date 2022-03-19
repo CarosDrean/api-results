@@ -22,6 +22,7 @@ const (
 	RoutePruebaEsfuerzo   string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\PRUEBA-ESFUERZO\\"
 	RouteRiesgo           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\RIESGO-QUIRURGICO\\"
 	RoutePDF              string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Tecnologia e Informacion\\manuales\\"
+	RoutePDFAdministrative string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\PDF ADMINISTRATIVO\\"
 
 	IdNode = 9
 

@@ -173,7 +173,10 @@ func (c FileController) makeFilePath(patient models.PatientFile) (string, error)
 		filePath = constants.RouteCertificate312 + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "CAP")
 	} else if strings.Contains(patient.Exam, "HISTORIA CLINICA") {
 		filePath = constants.RouteHistory + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "HISTORIA")
+	}else if strings.Contains(patient.Exam, "PDF ADMINISTRATIVO") {
+		filePath = constants.RoutePDFAdministrative + patient.DNI + " - " + formatDate(patient.ServiceDate) + ".pdf"
 	}
+
 	if strings.Contains((patient.Exam), "PRUEBA HISOPADO") {
 		filePath = constants.RoutePruebaHisopado + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-PRUEBA-RAPIDA-HISOPADO-" + constants.IdPruebaHisopado + ".pdf"
 	} else if strings.Contains(patient.Exam, "HOLOELECTRO") {
@@ -246,6 +249,10 @@ func (c FileController) assemblyFileNameExtra(idService string, dni string, pare
 		namePDF = organizationName + "-" + personName + "-" + parent + "-" + td + ".pdf"
 	}
 	if parent == "HISTORIA" {
+		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
+		namePDF = organizationName + " - " + personName + " - " + td + ".pdf"
+	}
+	if parent == "PDF ADMINISTRATIVO" {
 		personName = person.FirstLastName + " " + person.SecondLastName + " " + person.Name
 		namePDF = organizationName + " - " + personName + " - " + td + ".pdf"
 	}
