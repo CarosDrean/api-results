@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-type ResultDB struct {}
+type StatusGenerateBD struct {}
 
-func (db ResultDB) GetService(idService string, idExam string, idResult string) (string, error) {
+func (db StatusGenerateBD) GetStatusGenerate(idService string) (string, error) {
 	item := ""
-	tsql := fmt.Sprintf(query.ResultService["get"].Q, idService, idExam, idResult)
+	tsql := fmt.Sprintf(query.ResultService["getStatusLiquid"].Q, idService)
 	rows, err := DB.Query(tsql)
 
 	if err != nil {
@@ -26,5 +26,4 @@ func (db ResultDB) GetService(idService string, idExam string, idResult string) 
 	defer rows.Close()
 	return item, nil
 }
-
 

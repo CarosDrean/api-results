@@ -29,6 +29,8 @@ type ServicePatient struct {
 	Result  string `json:"result"`
 	Result2 string `json:"result2"`
 
+	GenerateStatus   string `json:"i_StatusLiquidation"`
+
 	OrganizationID         string `json:"organizationId"`
 	Organization           string `json:"organization"`
 	CalendarStatus int    `json:"calendarStatus"`
@@ -76,6 +78,7 @@ type ServicePatientOrganization struct {
 	Phone            string `json:"phone"`
 	Result           string `json:"result"`
 	Result2          string `json:"result2"`
+	GenerateStatus   string `json:"i_StatusLiquidation"`
 }
 
 type ServicePatientExam struct {

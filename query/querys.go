@@ -24,4 +24,7 @@ var ResultService = models.QueryDB{
 		"where  c.i_ServiceTypeId ='%s' and s.i_MasterServiceId = '%s' " +
 		"group by p.v_FirstName, p.v_FirstLastName,  p.v_SecondLastName, o.v_Name, s.d_ServiceDate " +
 		"order by s.d_ServiceDate "},
+
+		"getStatusLiquid" : {Q: "select i_StatusLiquidation = IIF(i_StatusLiquidation is null,0,i_StatusLiquidation)" +
+			"from service where i_IsDeleted = 0 and v_ServiceId = '%s'"},
 }
