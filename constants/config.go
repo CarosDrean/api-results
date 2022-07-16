@@ -24,6 +24,17 @@ const (
 	RoutePDF              string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Tecnologia e Informacion\\manuales\\"
 	RoutePDFAdministrative string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\PDF ADMINISTRATIVO\\"
 
+	RoutePruebaRapidaParticular      string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\Prueba Rapida\\"
+	RouteInterconsultaParticular     string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\INTERCONSULTAS\\"
+	RouteConsultaCardioParticular    string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\CardioCentro\\"
+	RouteHistoryParticular           string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\Historia Clinica\\"
+	RouteElectroParticular           string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\ELECTROCARDIOGRAMA\\"
+	RouteMapaParticular              string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\MAPA\\"
+	RouteEcocardiogramaParticular    string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\ECOCARDIOGRAMA\\"
+	RouteHolterParticular            string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\HOLTER\\"
+	RoutePruebaEsfuerzoParticular    string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\PRUEBA-ESFUERZO\\"
+	RouteRiesgoParticular            string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\RIESGO-QUIRURGICO\\"
+
 	IdNode = 9
 
 	IdPersonTable             = 8

@@ -199,6 +199,30 @@ func (c FileController) makeFilePath(patient models.PatientFile) (string, error)
 		filePath = constants.RoutePDF + "MANUAL DE HOLORESULTS - MEDICO" + ".pdf"
 	}
 
+	if strings.Contains(patient.Exam, "PRUEBA RAPIDA - PARTICULAR") {
+		filePath = constants.RoutePruebaRapidaParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-PRUEBA-RAPIDA-N007-ME000000491.pdf"
+	} else if strings.Contains(patient.Exam, "PRUEBA HISOPADO - PARTICULAR") {
+		filePath = constants.RouteInterconsultaParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-PRUEBA-RAPIDA-N009-ME000000529.pdf"
+	} else if strings.Contains(patient.Exam, "INTERCONSULTA - PARTICULAR") {
+		filePath = constants.RouteInterconsultaParticular + patient.ServiceID + "-" + patient.NameComplet + ".pdf"
+	} else if strings.Contains(patient.Exam, "CONSULTA CARDIOLOGICA - PARTICULAR") {
+		filePath = constants.RouteConsultaCardioParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-CONSULTA-CARDIOLOGICA-N009-ME000000534.pdf"
+	} else if strings.Contains(patient.Exam, "HISTORIA CLINICA - PARTICULAR") {
+		filePath = constants.RouteHistoryParticular + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "HISTORIA")
+	} else if strings.Contains(patient.Exam, "ELECTROCARDIOGRAMA - PARTICULAR") {
+		filePath = constants.RouteElectroParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-ELECTROCARDIOGRAMA-" + patient.ServiceID + ".pdf"
+	} else if strings.Contains(patient.Exam, "HOLTER - PARTICULAR") {
+		filePath = constants.RouteHolterParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-HOLTER-" + patient.ServiceID + ".pdf"
+	} else if strings.Contains(patient.Exam, "ECOCARDIOGRAMA - PARTICULAR") {
+		filePath = constants.RouteEcocardiogramaParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-ECOCARDIOGRAMA-" + patient.ServiceID + ".pdf"
+	}  else if strings.Contains(patient.Exam, "MAPA - PARTICULAR") {
+		filePath = constants.RouteMapaParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-MAPA-" + patient.ServiceID + ".pdf"
+	} else if strings.Contains(patient.Exam, "PRUEBA ESFUERZO - PARTICULAR") {
+		filePath = constants.RoutePruebaEsfuerzoParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-PRUEBA ESFUERZO-" + patient.ServiceID + ".pdf"
+	} else if strings.Contains(patient.Exam, "RIESGO QUIRURGICO - PARTICULAR") {
+		filePath = constants.RouteRiesgoParticular + patient.DNI + "-" + formatDate(patient.ServiceDate) + "-RIESGO QUIRURGICO-" + patient.ServiceID + ".pdf"
+	}
+
 	if len(filePath) == 0 {
 		return "", errors.New("no aceptado")
 	}
