@@ -47,5 +47,5 @@ const (
 	PrefixProtocolSystemUser = "PU"
 	PrefixDisease            = "DD"
 
-	MaxUsersOrganization = 6
+	MaxUsersOrganization = 20
 )
