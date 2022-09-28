@@ -172,7 +172,8 @@ func (c FileController) makeFilePath(patient models.PatientFile) (string, error)
 	} else if strings.Contains(patient.Exam, "CERTIFICADO 312") {
 		filePath = constants.RouteCertificate312 + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "CAP")
 	} else if strings.Contains(patient.Exam, "HISTORIA CLINICA") {
-		filePath = constants.RouteHistory + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "HISTORIA")
+		//filePath = constants.RouteHistory + c.assemblyFileNameExtra(patient.ServiceID, patient.DNI, "HISTORIA")
+		filePath = constants.RouteReportesMedicos + patient.ServiceID + ".pdf"
 	}else if strings.Contains(patient.Exam, "PDF ADMINISTRATIVO") {
 		filePath = constants.RoutePDFAdministrative + patient.DNI + " - " + formatDate(patient.ServiceDate) + ".pdf"
 	}

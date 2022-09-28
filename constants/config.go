@@ -23,6 +23,7 @@ const (
 	RouteRiesgo           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\RIESGO-QUIRURGICO\\"
 	RoutePDF              string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Tecnologia e Informacion\\manuales\\"
 	RoutePDFAdministrative string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\PDF ADMINISTRATIVO\\"
+	RouteReportesMedicos  string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Reportes Medicos\\"
 
 	//PARTICULAR
 	RoutePruebaRapidaParticular      string = "\\\\HOLO-SERVER\\archivos sistema_covid particular\\Prueba Rapida\\"
