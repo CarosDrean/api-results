@@ -7,8 +7,10 @@ var organization = models.TableDB{
 	Fields: []string{"v_OrganizationId", "v_Name", "v_Mail", "v_EmailContacto", "v_EmailMedico", "b_urlAdmin", "b_urlMedic"},
 }
 
+//"list":   {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where i_IsDeleted = 0 order by " + organization.Fields[1] + " asc;"},
+
 var Organization = models.QueryDB{
-	"list":   {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where i_IsDeleted = 0 order by " + organization.Fields[1] + " asc;"},
+	"list":   {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where i_IsDeleted = 0 order by d_InsertDate desc;"},
 	"get":    {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where " + organization.Fields[0] + " = '%s';"},
 	"update": {Q: "update " + organization.Name + " set " + updatesString(organization.Fields) + " where " + organization.Fields[0] + " = @ID;"},
 	"delete": {Q: "update " + organization.Name + " set i_IsDeleted = 1 where " + user.Fields[0] + " = @ID;"},
