@@ -7,6 +7,7 @@ var organization = models.TableDB{
 	Fields: []string{"v_OrganizationId", "v_Name", "v_Mail", "v_EmailContacto", "v_EmailMedico", "b_urlAdmin", "b_urlMedic"},
 }
 
+//ANTIGUO
 //"list":   {Q: "select " + fieldString(organization.Fields) + " from " + organization.Name + " where i_IsDeleted = 0 order by " + organization.Fields[1] + " asc;"},
 
 var Organization = models.QueryDB{
