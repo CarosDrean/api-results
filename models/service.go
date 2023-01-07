@@ -53,6 +53,9 @@ type ServicePatientDiseases struct {
 	Mail             string `json:"mail"`
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
+	Phone      	     string `json:"phone"`
+	Occupation 	     string `json:"ocupation"`
+	Doc              int    `json:"doc"`
 	Disease          string `json:"disease"`
 	Component        string `json:"component"`
 	Consulting       string `json:"consulting"`
@@ -75,7 +78,9 @@ type ServicePatientOrganization struct {
 	Mail             string `json:"mail"`
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
-	Phone            string `json:"phone"`
+	Phone      	     string `json:"phone"`
+	Occupation 	     string `json:"ocupation"`
+	Doc              int    `json:"doc"`
 	Result           string `json:"result"`
 	Result2          string `json:"result2"`
 	GenerateStatus   string `json:"i_StatusLiquidation"`

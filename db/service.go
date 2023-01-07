@@ -53,10 +53,12 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 		var pass sql.NullString
 		var birth sql.NullString
 		var phone sql.NullString
+		var occupation sql.NullString
+		var doc sql.NullInt64
 		err := rows.Scan(&service.ID, &service.PersonID, &service.ProtocolID, &service.ServiceDate, &service.ServiceStatusId,
 			&service.IsDeleted, &service.AptitudeStatusId,
 			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
-			&person.Sex, &birth, &person.IsDeleted, &phone,
+			&person.Sex, &birth, &person.IsDeleted, &phone, &occupation, &doc,
 			&organization.ID, &organization.Name,
 			&protocol.EsoType)
 		person.Password = pass.String
@@ -85,7 +87,9 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 				Sex:              person.Sex,
 				Birthday:         person.Birthday,
 				EsoType:          protocol.EsoType,
-				Phone:            person.Phone,
+				Phone: 			  person.Phone,
+				Occupation: 	  person.Occupation,
+				Doc: 			  person.Doc,
 				Result:           result,
 				Result2:          result2,
 				GenerateStatus:   iStatusliquidation,
@@ -169,11 +173,14 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 		var birth sql.NullString
 		var disease sql.NullString
 		var phone sql.NullString
+		var occupation sql.NullString
+		var doc sql.NullInt64
+		var mail sql.NullString
 		var diseaseString string
 		err := rows.Scan(&service.ID, &service.PersonID, &service.ProtocolID, &service.ServiceDate, &service.ServiceStatusId,
 			&service.IsDeleted, &service.AptitudeStatusId,
-			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &person.Mail,
-			&person.Sex, &birth, &person.IsDeleted, &phone,
+			&person.ID, &person.DNI, &pass, &person.Name, &person.FirstLastName, &person.SecondLastName, &mail,
+			&person.Sex, &birth, &person.IsDeleted, &phone, &occupation, &doc,
 			&protocol.ID, &protocol.Name, &protocol.OrganizationID, &protocol.OrganizationEmployerID, &protocol.LocationID, &protocol.EsoType,
 			&protocol.GroupOccupationId,
 			&disease)
@@ -209,6 +216,9 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 				Mail:             person.Mail,
 				Sex:              person.Sex,
 				Birthday:         person.Birthday,
+				Phone: 			  person.Phone,
+				Occupation: 	  person.Occupation,
+				Doc: 			  person.Doc,
 				Disease:          diseaseString,
 				EsoType:          protocol.EsoType,
 			}

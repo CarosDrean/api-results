@@ -5,7 +5,7 @@ import "github.com/CarosDrean/api-results.git/models"
 var person = models.TableDB{
 	Name: "dbo.person",
 	Fields: []string{"v_PersonId", "v_DocNumber", "v_Password", "v_FirstName", "v_FirstLastName", "v_SecondLastName",
-		"v_Mail", "i_SexTypeId", "d_Birthdate", "i_IsDeleted", "v_TelephoneNumber"},
+		"v_Mail", "i_SexTypeId", "d_Birthdate", "i_IsDeleted", "v_TelephoneNumber", "v_CurrentOccupation", "i_DocTypeId"},
 }
 
 var Person = models.QueryDB{
