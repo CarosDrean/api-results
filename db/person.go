@@ -75,6 +75,8 @@ func (db PersonDB) Create(item models.Person) (string, error) {
 		sql.Named("i_SexTypeId", item.Sex),
 		sql.Named("d_Birthdate", date),
 		sql.Named("v_TelephoneNumber", ""),
+		sql.Named("v_CurrentOccupation", ""),
+		sql.Named("i_DocTypeId", 1),
 		sql.Named("i_IsDeleted", 0))
 	if err != nil {
 		return "", err
