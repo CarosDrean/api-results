@@ -25,3 +25,17 @@ type PetitionProgrammation struct {
 	PetitionStatus  		int	      `json:"v_PetitionStatus"`
 	Comentary  				string    `json:"v_Comentary"`
 }
+
+type MailConsultaCardiologica struct {
+	Email       string `json:"mail"`
+	Dni			string `json:"dni"`
+	Nombre   	string `json:"nombre"`
+	Apepaterno  string `json:"apepaterno"`
+	Apematerno  string `json:"apematerno"`
+	Telefono    string `json:"telefono"`
+	Direccion   string `json:"direccion"`
+	Sexo        string `json:"sexo"`
+	Dob 		string `json:"dob"`
+	Fecha		string `json:"fecha"`
+	Mensaje 	string `json:"mensaje"`
+}

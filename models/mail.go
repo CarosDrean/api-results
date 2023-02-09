@@ -13,6 +13,13 @@ type Mail struct {
 	Business string `json:"business"`
 }
 
+type MailFeedback struct {
+	 Email   string `json:"mail"`
+	 User    string `json:"user"`
+	 Type 	 string `json:"type"`
+	 Message string `json:"message"`
+}
+
 type MailFile struct {
 	Email           string `json:"email"`
 	FilenameUpload  string `json:"filenameUpload"`

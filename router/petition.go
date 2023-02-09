@@ -10,4 +10,5 @@ import (
 func petitionRoutes(s *mux.Router) {
 	ctrl := petition.PetitionController{DB: db.PetitionDB{}}
 	s.HandleFunc("/", mid.RoleInternalAdminOrTemp(ctrl.Create)).Methods("POST")
+	s.HandleFunc("/send-mail", ctrl.CreateCita).Methods("POST")
 }

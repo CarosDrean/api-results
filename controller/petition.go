@@ -25,6 +25,7 @@ import (
 
 type PetitionController struct {
 	DB db.PetitionDB
+	DBB db.CitaDB
 }
 
 func (c PetitionController) Create(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +63,35 @@ func (c PetitionController) Create(w http.ResponseWriter, r *http.Request) {
 	result, err := c.DB.Create(petit)
 	if err != nil {
 		returnErr(w, err, "createdPetition")
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(result)
+}
+
+func (c PetitionController) CreateCita(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var item models.MailConsultaCardiologica
+	_ = json.NewDecoder(r.Body).Decode(&item)
+
+	cita := models.MailConsultaCardiologica{
+		Nombre: item.Nombre,
+		Apepaterno: item.Apepaterno,
+		Apematerno: item.Apematerno,
+		Dni: item.Dni,
+		Email: item.Email,
+		Telefono: item.Telefono,
+		Direccion: item.Direccion,
+		Dob: item.Dob,
+		Fecha: item.Fecha,
+		Sexo: item.Sexo,
+		Mensaje: item.Mensaje,
+	}
+
+	result, err := c.DBB.CreateCita(cita)
+	if err != nil {
+		returnErr(w, err, "createdCita")
 		return
 	}
 

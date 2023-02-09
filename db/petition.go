@@ -19,6 +19,8 @@ import (
 
 type PetitionDB struct{}
 
+type CitaDB struct{}
+
 func (db PetitionDB) Create(item models.PetitionProgrammation) (int64, error) {
 	ctx := context.Background()
 
@@ -50,6 +52,32 @@ func (db PetitionDB) Create(item models.PetitionProgrammation) (int64, error) {
 		sql.Named("d_deleted", item.Deleted),
 		sql.Named("v_PetitionStatus", item.PetitionStatus),
 		sql.Named("v_Comentary", item.Comentary))
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}
+
+func (db CitaDB) CreateCita(item models.MailConsultaCardiologica) (int64, error) {
+	ctx := context.Background()
+
+	tsql := fmt.Sprintf(query.Citas["insert"].Q)
+
+	var result, err = DB.ExecContext(
+		ctx,
+		tsql,
+		sql.Named("v_Name", item.Nombre),
+		sql.Named("v_ApePaterno", item.Apepaterno),
+		sql.Named("v_ApeMaterno", item.Apematerno),
+		sql.Named("v_Doc", item.Dni),
+		sql.Named("v_email", item.Email),
+		sql.Named("v_telefono", item.Telefono),
+		sql.Named("v_direccion", item.Direccion),
+		sql.Named("v_dob", item.Dob),
+		sql.Named("v_fechaConsulta", item.Fecha),
+		sql.Named("v_procedimiento", "Consulta Cardiologica"),
+		sql.Named("v_mensaje", ""),
+		sql.Named("v_sex", item.Sexo))
 	if err != nil {
 		return -1, err
 	}

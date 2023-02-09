@@ -10,6 +10,16 @@ var petit = models.TableDB{
 			"v_NombreProyecto", "v_OrganizationId", "v_ProtocolId", "d_deleted", "v_PetitionStatus", "v_Comentary"},
 }
 
+var cita = models.TableDB{
+	Name:   "dbo.ProcedimientosCardiologicos",
+	Fields: []string{"v_Name", "v_ApePaterno", "v_ApeMaterno", "v_Doc", "v_email", "v_telefono", "v_direccion", "v_dob",
+		"v_fechaConsulta", "v_procedimiento", "v_mensaje", "v_sex"},
+}
+
 var Petition = models.QueryDB{
 	"insert":         {Q: "insert into " + petit.Name + " (" + fieldString(petit.Fields) + ", d_DateInsert) values (" + valuesStringNoID(petit.Fields) + ", GETDATE());"},
+}
+
+var Citas = models.QueryDB{
+	"insert":         {Q: "insert into " + cita.Name + " (" + fieldString(cita.Fields) + ", v_fechaInsercion) values (" + valuesStringNoID(cita.Fields) + ", GETDATE());"},
 }

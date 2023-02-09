@@ -15,6 +15,7 @@ const (
 	RouteNewPassword   = "api/v1/user/reset-password"
 	RouteNewSystemUser = "api/v1/user/new"
 	RouteUserLink      = "api/v1/url-create-user/send-mail"
+	RouteFeedback      = "api/v1/feedback/send-mail"
 	RouteUploadFile    = "api/v1/file/upload"
 	RouteSendFile      = "api/v1/file/send-mail"
 
