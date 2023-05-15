@@ -6,9 +6,9 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type StatisticDB struct {}
+type StatisticDB struct{}
 
-func (db StatisticDB) GetServiceDiseaseByProtocol(filter models.Filter)([]models.ServicePatientDiseases, error) {
+func (db StatisticDB) GetServiceDiseaseByProtocol(filter models.Filter) ([]models.ServicePatientDiseases, error) {
 	res := make([]models.ServicePatientDiseases, 0)
 	var item models.ServicePatientDiseases
 

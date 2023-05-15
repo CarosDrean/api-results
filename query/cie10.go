@@ -8,7 +8,7 @@ var cie10 = models.TableDB{
 }
 
 var CIE10 = models.QueryDB{
-	"list":     {Q: "select " + fieldString(cie10.Fields) + " from " + cie10.Name + ";"},
-	"insert":   {Q: "insert into " + cie10.Name + " (" + fieldString(cie10.Fields) + ") values (" + valuesStringNoID(cie10.Fields) + ");"},
-	"update":   {Q: "update " + cie10.Name + " set " + updatesString(cie10.Fields) + " where " + cie10.Fields[0] + " = @ID;"},
+	"list":   {Q: "select " + fieldString(cie10.Fields) + " from " + cie10.Name + ";"},
+	"insert": {Q: "insert into " + cie10.Name + " (" + fieldString(cie10.Fields) + ") values (" + valuesStringNoID(cie10.Fields) + ");"},
+	"update": {Q: "update " + cie10.Name + " set " + updatesString(cie10.Fields) + " where " + cie10.Fields[0] + " = @ID;"},
 }

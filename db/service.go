@@ -70,7 +70,7 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 
 			result, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 			result2, _ := ResultDB{}.GetService(service.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
-			iStatusliquidation, _ :=  StatusGenerateBD{}.GetStatusGenerate(service.ID)
+			iStatusliquidation, _ := StatusGenerateBD{}.GetStatusGenerate(service.ID)
 			item := models.ServicePatientOrganization{
 				ID:               service.ID,
 				ServiceDate:      service.ServiceDate,
@@ -87,9 +87,9 @@ func (db ServiceDB) GetAllDate(filter models.Filter) ([]models.ServicePatientOrg
 				Sex:              person.Sex,
 				Birthday:         person.Birthday,
 				EsoType:          protocol.EsoType,
-				Phone: 			  person.Phone,
-				Occupation: 	  person.Occupation,
-				Doc: 			  person.Doc,
+				Phone:            person.Phone,
+				Occupation:       person.Occupation,
+				Doc:              person.Doc,
 				Result:           result,
 				Result2:          result2,
 				GenerateStatus:   iStatusliquidation,
@@ -216,9 +216,9 @@ func (db ServiceDB) GetAllDiseaseFilterDate(filter models.Filter) []models.Servi
 				Mail:             person.Mail,
 				Sex:              person.Sex,
 				Birthday:         person.Birthday,
-				Phone: 			  person.Phone,
-				Occupation: 	  person.Occupation,
-				Doc: 			  person.Doc,
+				Phone:            person.Phone,
+				Occupation:       person.Occupation,
+				Doc:              person.Doc,
 				Disease:          diseaseString,
 				EsoType:          protocol.EsoType,
 			}
@@ -331,7 +331,7 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 		patient, _ := PersonDB{}.Get(e.PersonID)
 		result, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 		result2, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
-		iStatusliquidation, _ :=  StatusGenerateBD{}.GetStatusGenerate(e.ID)
+		iStatusliquidation, _ := StatusGenerateBD{}.GetStatusGenerate(e.ID)
 		calendar, _ := CalendarDB{}.GetService(e.ID)
 		// para quitar la zona horaria
 		start := strings.Split(calendar.CircuitStart, ".")
@@ -344,17 +344,17 @@ func (db ServiceDB) GetAllPatientsWithProtocolFilter(idProtocol string, filter m
 			Birthday:         patient.Birthday,
 			AptitudeStatusId: e.AptitudeStatusId,
 			DNI:              patient.DNI,
-			Name:           patient.Name,
-			FirstLastName:  patient.FirstLastName,
-			SecondLastName: patient.SecondLastName,
-			Mail:           patient.Mail,
-			Sex:            patient.Sex,
-			Result:         result,
-			Result2:        result2,
-			CalendarStatus: calendar.CalendarStatusID,
-			CircuitStart:   start[0],
-			CircuitEnd:     end[0],
-			GenerateStatus: iStatusliquidation,
+			Name:             patient.Name,
+			FirstLastName:    patient.FirstLastName,
+			SecondLastName:   patient.SecondLastName,
+			Mail:             patient.Mail,
+			Sex:              patient.Sex,
+			Result:           result,
+			Result2:          result2,
+			CalendarStatus:   calendar.CalendarStatusID,
+			CircuitStart:     start[0],
+			CircuitEnd:       end[0],
+			GenerateStatus:   iStatusliquidation,
 		}
 		if needOrganization {
 			protocol, _ := ProtocolDB{}.Get(e.ProtocolID)
@@ -406,7 +406,7 @@ func (db ServiceDB) GetGesoFilter(idOrganization string, filter models.Filter) (
 		patient, _ := PersonDB{}.Get(e.PersonID)
 		result, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaRapida, constants.IdResultPruebaRapida)
 		result2, _ := ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
-		iStatusliquidation, _ :=  StatusGenerateBD{}.GetStatusGenerate(e.ID)
+		iStatusliquidation, _ := StatusGenerateBD{}.GetStatusGenerate(e.ID)
 		calendar, _ := CalendarDB{}.GetService(e.ID)
 		// para quitar la zona horaria
 		start := strings.Split(calendar.CircuitStart, ".")
@@ -426,7 +426,7 @@ func (db ServiceDB) GetGesoFilter(idOrganization string, filter models.Filter) (
 			Sex:              patient.Sex,
 			Result:           result,
 			Result2:          result2,
-			GenerateStatus: iStatusliquidation,
+			GenerateStatus:   iStatusliquidation,
 			CalendarStatus:   calendar.CalendarStatusID,
 			CircuitStart:     start[0],
 			CircuitEnd:       end[0],

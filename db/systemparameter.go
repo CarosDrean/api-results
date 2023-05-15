@@ -8,7 +8,7 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type SystemParameterDB struct {}
+type SystemParameterDB struct{}
 
 func (db SystemParameterDB) GetAllByGroupID(idGroup string) ([]models.SystemParameter, error) {
 	res := make([]models.SystemParameter, 0)
@@ -54,7 +54,7 @@ func (db SystemParameterDB) Create(item models.SystemParameter) (int64, error) {
 	return result.RowsAffected()
 }
 
-func (db SystemParameterDB) Update(item models.SystemParameter)(int64, error){
+func (db SystemParameterDB) Update(item models.SystemParameter) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.SystemParameter["update"].Q)
 	result, err := DB.ExecContext(

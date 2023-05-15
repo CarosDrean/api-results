@@ -9,9 +9,9 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type DiseaseDB struct {}
+type DiseaseDB struct{}
 
-func (db DiseaseDB) GetAll()([]models.Disease, error) {
+func (db DiseaseDB) GetAll() ([]models.Disease, error) {
 	res := make([]models.Disease, 0)
 
 	tsql := fmt.Sprintf(query.Disease["list"].Q)
@@ -28,7 +28,7 @@ func (db DiseaseDB) GetAll()([]models.Disease, error) {
 func (db DiseaseDB) Create(item models.Disease) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.Disease["insert"].Q)
-	sqdb :=SequentialDB{}
+	sqdb := SequentialDB{}
 	sequentialID := sqdb.NextSequentialId(constants.IdNode, constants.IdDiseaseTable)
 	newId := sqdb.NewID(constants.IdNode, sequentialID, constants.PrefixDisease)
 	item.ID = newId
@@ -45,7 +45,7 @@ func (db DiseaseDB) Create(item models.Disease) (int64, error) {
 	return result.RowsAffected()
 }
 
-func (db DiseaseDB) Update(id string, item models.Disease)(int64, error){
+func (db DiseaseDB) Update(id string, item models.Disease) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.Sequential["update"].Q)
 	result, err := DB.ExecContext(

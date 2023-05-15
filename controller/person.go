@@ -76,4 +76,3 @@ func (c PersonController) GetFromDNI(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewEncoder(w).Encode(item)
 }
-

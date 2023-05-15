@@ -31,7 +31,6 @@ func (c ExamController) GetAllPerson(w http.ResponseWriter, r *http.Request) {
 			result2, _ := db.ResultDB{}.GetService(e.ID, constants.IdPruebaHisopado, constants.IdResultPruebaHisopado)
 			protocol, _ := db.ProtocolDB{}.Get(e.ProtocolID)
 
-
 			if calendar.CalendarStatusID != 4 { // 4 = cancelado
 				item.ID = strconv.Itoa(i)
 				item.ServiceDate = e.ServiceDate

@@ -7,9 +7,9 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type CIE10DB struct {}
+type CIE10DB struct{}
 
-func (db CIE10DB) GetAll()([]models.CIE10, error) {
+func (db CIE10DB) GetAll() ([]models.CIE10, error) {
 	res := make([]models.CIE10, 0)
 
 	tsql := fmt.Sprintf(query.CIE10["list"].Q)

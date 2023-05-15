@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-type StatusGenerateBD struct {}
+type StatusGenerateBD struct{}
 
 func (db StatusGenerateBD) GetStatusGenerate(idService string) (string, error) {
 	item := ""
@@ -26,4 +26,3 @@ func (db StatusGenerateBD) GetStatusGenerate(idService string) (string, error) {
 	defer rows.Close()
 	return item, nil
 }
-

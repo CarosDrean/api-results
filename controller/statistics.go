@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type StatisticController struct {}
+type StatisticController struct{}
 
 func (c StatisticController) GetServiceDiseaseByProtocol(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -20,7 +20,5 @@ func (c StatisticController) GetServiceDiseaseByProtocol(w http.ResponseWriter, 
 		return
 	}
 
-
 	_ = json.NewEncoder(w).Encode(items)
 }
-

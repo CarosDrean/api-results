@@ -8,7 +8,7 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type OrganizationDB struct {}
+type OrganizationDB struct{}
 
 func (db OrganizationDB) GetAll() ([]models.Organization, error) {
 	res := make([]models.Organization, 0)

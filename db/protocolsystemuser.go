@@ -9,9 +9,9 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type ProtocolSystemUserDB struct {}
+type ProtocolSystemUserDB struct{}
 
-func (db ProtocolSystemUserDB) GetAllSystemUserID(id string) ([]models.ProtocolSystemUser, error){
+func (db ProtocolSystemUserDB) GetAllSystemUserID(id string) ([]models.ProtocolSystemUser, error) {
 	res := make([]models.ProtocolSystemUser, 0)
 
 	tsql := fmt.Sprintf(query.ProtocolSystemUser["getSystemUserID"].Q, id)
@@ -25,7 +25,7 @@ func (db ProtocolSystemUserDB) GetAllSystemUserID(id string) ([]models.ProtocolS
 	return res, nil
 }
 
-func (db ProtocolSystemUserDB) Get(id string) (models.ProtocolSystemUser, error){
+func (db ProtocolSystemUserDB) Get(id string) (models.ProtocolSystemUser, error) {
 	res := make([]models.ProtocolSystemUser, 0)
 
 	tsql := fmt.Sprintf(query.ProtocolSystemUser["get"].Q, id)
@@ -121,4 +121,3 @@ func (db ProtocolSystemUserDB) scan(rows *sql.Rows, err error, res *[]models.Pro
 	}
 	return nil
 }
-

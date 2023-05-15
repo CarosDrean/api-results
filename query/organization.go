@@ -26,5 +26,4 @@ var Organization = models.QueryDB{
 		"inner join organization o on p2.v_WorkingOrganizationId = o.v_OrganizationId " +
 		"where psu.i_SystemUserId = %s " +
 		"group by o.v_OrganizationId, o.v_Name"},
-
 }

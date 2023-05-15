@@ -8,7 +8,7 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type ProfessionalDB struct {}
+type ProfessionalDB struct{}
 
 func (db ProfessionalDB) GetAll() ([]models.Professional, error) {
 	res := make([]models.Professional, 0)

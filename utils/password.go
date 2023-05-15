@@ -10,10 +10,11 @@ import (
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 var seededRand *rand.Rand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
-func CreateNewPassword() string{
+func CreateNewPassword() string {
 	return stringPassword(8)
 }
 

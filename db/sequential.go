@@ -8,7 +8,7 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type SequentialDB struct {}
+type SequentialDB struct{}
 
 func (db SequentialDB) NewID(nodeId int, sequentialId int, prefix string) string {
 	return fmt.Sprintf("N%03d-%s%09d", nodeId, prefix, sequentialId)
@@ -67,7 +67,7 @@ func (db SequentialDB) Create(nodeId int, tableId int) (int64, error) {
 	return result.RowsAffected()
 }
 
-func (db SequentialDB) Update(item models.Sequential)(int64, error){
+func (db SequentialDB) Update(item models.Sequential) (int64, error) {
 	ctx := context.Background()
 	tsql := fmt.Sprintf(query.Sequential["update"].Q, item.NodeID, item.TableID)
 	result, err := DB.ExecContext(
@@ -99,4 +99,3 @@ func (db SequentialDB) scan(rows *sql.Rows, err error, res *[]models.Sequential,
 	}
 	return nil
 }
-

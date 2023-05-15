@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-type ResultDB struct {}
+type ResultDB struct{}
 
 func (db ResultDB) GetService(idService string, idExam string, idResult string) (string, error) {
 	item := ""
@@ -26,5 +26,3 @@ func (db ResultDB) GetService(idService string, idExam string, idResult string) 
 	defer rows.Close()
 	return item, nil
 }
-
-

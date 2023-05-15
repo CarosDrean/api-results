@@ -9,5 +9,4 @@ type Calendar struct {
 	CircuitStart     string
 	CircuitEnd       string
 	Date             string
-
 }

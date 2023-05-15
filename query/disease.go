@@ -8,8 +8,8 @@ var disease = models.TableDB{
 }
 
 var Disease = models.QueryDB{
-	"list":     {Q: "select " + fieldString(disease.Fields) + " from " + disease.Name + ";"},
-	"insert":   {Q: "insert into " + disease.Name + " (" + fieldString(disease.Fields) + ") values (" + valuesStringNoID(disease.Fields) + ");"},
-	"update":   {Q: "update " + disease.Name + " set " + updatesString(disease.Fields) + " where " + disease.Fields[0] + " = @ID;"},
-	"delete":   {Q: "update " + disease.Name + " set " + disease.Fields[3] + " = 1 where " + disease.Fields[0] + " = @ID;"},
+	"list":   {Q: "select " + fieldString(disease.Fields) + " from " + disease.Name + ";"},
+	"insert": {Q: "insert into " + disease.Name + " (" + fieldString(disease.Fields) + ") values (" + valuesStringNoID(disease.Fields) + ");"},
+	"update": {Q: "update " + disease.Name + " set " + updatesString(disease.Fields) + " where " + disease.Fields[0] + " = @ID;"},
+	"delete": {Q: "update " + disease.Name + " set " + disease.Fields[3] + " = 1 where " + disease.Fields[0] + " = @ID;"},
 }

@@ -14,4 +14,3 @@ var ProtocolComponent = models.QueryDB{
 		" where p.v_ProtocolId = '%s' and p.i_IsDeleted = 0 and co.i_IsDeleted = 0 " +
 		" group by co.v_Name, co.v_ComponentId, c.r_Price"},
 }
-

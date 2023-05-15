@@ -12,6 +12,4 @@ func componentRoutes(s *mux.Router) {
 	s.HandleFunc("/all/{id}", mid.CheckSecurity(ctrl.GetAllCategoryId)).Methods("GET")
 	s.HandleFunc("/all-component-protocol/{idProtocol}", mid.CheckSecurity(ctrl.GetComponentProtocolId)).Methods("GET")
 
-
 }
-

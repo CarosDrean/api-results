@@ -7,9 +7,9 @@ import (
 	"github.com/CarosDrean/api-results.git/query"
 )
 
-type LocationDB struct {}
+type LocationDB struct{}
 
-func (db LocationDB) GetAllOrganizationID(id string) ([]models.Location, error){
+func (db LocationDB) GetAllOrganizationID(id string) ([]models.Location, error) {
 	res := make([]models.Location, 0)
 
 	tsql := fmt.Sprintf(query.Location["getOrganizationID"].Q, id)
@@ -24,7 +24,7 @@ func (db LocationDB) GetAllOrganizationID(id string) ([]models.Location, error){
 	return res, nil
 }
 
-func (db LocationDB) Get(id string) (models.Location, error){
+func (db LocationDB) Get(id string) (models.Location, error) {
 	res := make([]models.Location, 0)
 
 	tsql := fmt.Sprintf(query.Location["get"].Q, id)
@@ -49,10 +49,9 @@ func (db LocationDB) scan(rows *sql.Rows, err error, res *[]models.Location, ctx
 		if err != nil {
 			checkError(err, situation, ctx, "Scan rows")
 			return err
-		} else if item.IsDeleted != 1{
+		} else if item.IsDeleted != 1 {
 			*res = append(*res, item)
 		}
 	}
 	return nil
 }
-

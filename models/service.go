@@ -29,10 +29,10 @@ type ServicePatient struct {
 	Result  string `json:"result"`
 	Result2 string `json:"result2"`
 
-	GenerateStatus   string `json:"i_StatusLiquidation"`
+	GenerateStatus string `json:"i_StatusLiquidation"`
 
-	OrganizationID         string `json:"organizationId"`
-	Organization           string `json:"organization"`
+	OrganizationID string `json:"organizationId"`
+	Organization   string `json:"organization"`
 	CalendarStatus int    `json:"calendarStatus"`
 	CircuitStart   string `json:"circuitStart"`
 	CircuitEnd     string `json:"circuitEnd"`
@@ -53,8 +53,8 @@ type ServicePatientDiseases struct {
 	Mail             string `json:"mail"`
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
-	Phone      	     string `json:"phone"`
-	Occupation 	     string `json:"ocupation"`
+	Phone            string `json:"phone"`
+	Occupation       string `json:"ocupation"`
 	Doc              int    `json:"doc"`
 	Disease          string `json:"disease"`
 	Component        string `json:"component"`
@@ -78,8 +78,8 @@ type ServicePatientOrganization struct {
 	Mail             string `json:"mail"`
 	Sex              int    `json:"sex"`
 	Birthday         string `json:"birthday"`
-	Phone      	     string `json:"phone"`
-	Occupation 	     string `json:"ocupation"`
+	Phone            string `json:"phone"`
+	Occupation       string `json:"ocupation"`
 	Doc              int    `json:"doc"`
 	Result           string `json:"result"`
 	Result2          string `json:"result2"`

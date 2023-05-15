@@ -24,7 +24,7 @@ import (
 )
 
 type PetitionController struct {
-	DB db.PetitionDB
+	DB  db.PetitionDB
 	DBB db.CitaDB
 }
 
@@ -35,29 +35,29 @@ func (c PetitionController) Create(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
 	petit := models.PetitionProgrammation{
-		PersonId:       		item.PersonId,
-		DocType:        		item.DocType,
-		DocNumber:       		item.DocNumber,
-		FirstName:       		item.FirstName,
-		FirstLastName: 			item.FirstLastName,
-		SecondLastName:     	item.SecondLastName,
-		SexTypeId: 				item.SexTypeId,
-		Birthdate: 				item.Birthdate,
-		TelephoneNumber: 		item.TelephoneNumber,
-		CurrentOccupation: 		item.CurrentOccupation,
-		DateProgramming: 		item.DateProgramming,
-		ServiceTypeId: 			item.ServiceTypeId,
-		PersonProgramming: 		item.PersonProgramming,
+		PersonId:               item.PersonId,
+		DocType:                item.DocType,
+		DocNumber:              item.DocNumber,
+		FirstName:              item.FirstName,
+		FirstLastName:          item.FirstLastName,
+		SecondLastName:         item.SecondLastName,
+		SexTypeId:              item.SexTypeId,
+		Birthdate:              item.Birthdate,
+		TelephoneNumber:        item.TelephoneNumber,
+		CurrentOccupation:      item.CurrentOccupation,
+		DateProgramming:        item.DateProgramming,
+		ServiceTypeId:          item.ServiceTypeId,
+		PersonProgramming:      item.PersonProgramming,
 		ResponsableProgramming: item.ResponsableProgramming,
-		CalendarId_2: 			item.CalendarId_2,
-		WorkersCondition: 		item.WorkersCondition,
-		FactCR:				 	item.FactCR,
-		NombreProyecto: 		item.NombreProyecto,
-		OrganizationId: 		item.OrganizationId,
-		ProtocolId: 			item.ProtocolId,
-		Deleted: 				item.Deleted,
-		PetitionStatus: 		item.PetitionStatus,
-		Comentary: 				item.Comentary,
+		CalendarId_2:           item.CalendarId_2,
+		WorkersCondition:       item.WorkersCondition,
+		FactCR:                 item.FactCR,
+		NombreProyecto:         item.NombreProyecto,
+		OrganizationId:         item.OrganizationId,
+		ProtocolId:             item.ProtocolId,
+		Deleted:                item.Deleted,
+		PetitionStatus:         item.PetitionStatus,
+		Comentary:              item.Comentary,
 	}
 
 	result, err := c.DB.Create(petit)
@@ -76,17 +76,17 @@ func (c PetitionController) CreateCita(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&item)
 
 	cita := models.MailConsultaCardiologica{
-		Nombre: item.Nombre,
+		Nombre:     item.Nombre,
 		Apepaterno: item.Apepaterno,
 		Apematerno: item.Apematerno,
-		Dni: item.Dni,
-		Email: item.Email,
-		Telefono: item.Telefono,
-		Direccion: item.Direccion,
-		Dob: item.Dob,
-		Fecha: item.Fecha,
-		Sexo: item.Sexo,
-		Mensaje: item.Mensaje,
+		Dni:        item.Dni,
+		Email:      item.Email,
+		Telefono:   item.Telefono,
+		Direccion:  item.Direccion,
+		Dob:        item.Dob,
+		Fecha:      item.Fecha,
+		Sexo:       item.Sexo,
+		Mensaje:    item.Mensaje,
 	}
 
 	result, err := c.DBB.CreateCita(cita)

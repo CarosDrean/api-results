@@ -28,7 +28,6 @@ func formatDate(date string) string {
 	return data[2] + data[1] + data[0]
 }
 
-
 func getMonth(month string) string {
 	switch month {
 	case "January":

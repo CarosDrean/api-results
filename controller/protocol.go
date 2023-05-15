@@ -23,7 +23,7 @@ func (c ProtocolController) Get(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(protocol)
 }
 
-func (c ProtocolController) GetAllLocation(w http.ResponseWriter, r *http.Request){
+func (c ProtocolController) GetAllLocation(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idLocation"]
@@ -37,11 +37,10 @@ func (c ProtocolController) GetAllLocation(w http.ResponseWriter, r *http.Reques
 	_ = json.NewEncoder(w).Encode(protocols)
 }
 
-func (c ProtocolController) GetAllOrganization(w http.ResponseWriter, r *http.Request){
+func (c ProtocolController) GetAllOrganization(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idOrganization"]
-
 
 	protocols, err := c.DB.GetAllOrganization(id)
 	if err != nil {
@@ -52,7 +51,7 @@ func (c ProtocolController) GetAllOrganization(w http.ResponseWriter, r *http.Re
 	_ = json.NewEncoder(w).Encode(protocols)
 }
 
-func (c ProtocolController) GetAllOrganizationEmployer(w http.ResponseWriter, r *http.Request){
+func (c ProtocolController) GetAllOrganizationEmployer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var params = mux.Vars(r)
 	id, _ := params["idOrganization"]
@@ -65,4 +64,3 @@ func (c ProtocolController) GetAllOrganizationEmployer(w http.ResponseWriter, r 
 
 	_ = json.NewEncoder(w).Encode(protocols)
 }
-

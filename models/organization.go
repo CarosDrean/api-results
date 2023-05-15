@@ -15,5 +15,3 @@ type OrganizationForMailCreateUser struct {
 	Mail     string `json:"mail"`
 	TypeUser string `json:"typeUser"`
 }
-
-

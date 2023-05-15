@@ -26,7 +26,7 @@ func main() {
 	api()
 }
 
-func hideConsole(){
+func hideConsole() {
 	console := w32.GetConsoleWindow()
 	if console != 0 {
 		_, consoleProcID := w32.GetWindowThreadProcessId(console)
@@ -36,7 +36,7 @@ func hideConsole(){
 	}
 }
 
-func api(){
+func api() {
 	r := mux.NewRouter()
 
 	db.DB, _ = helper.Get()
@@ -49,7 +49,7 @@ func api(){
 	routes.Routes(s)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{
+		AllowedOrigins: []string{
 			"http://localhost:4200",
 			"http://192.241.159.224",
 			"http://resultados.holosalud.org",

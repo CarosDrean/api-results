@@ -83,5 +83,3 @@ func updatesStringNoID(fields []string) string {
 	}
 	return values
 }
-
-
