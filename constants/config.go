@@ -14,6 +14,7 @@ const (
 	RouteCertificateSinDX  string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CERTIFICADOS\\CAMOSINDX\\"
 	RouteCertificate312    string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CERTIFICADOS\\CAMO312\\"
 	RouteHistory           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Historia Clinica\\"
+	RouteHistoryAudity     string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\Historias Auditadas\\"
 	RouteCardio            string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\"
 	RouteElectro           string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\ELECTROCARDIOGRAMA\\"
 	RouteMapa              string = "\\\\HOLO-SERVIDOR\\archivos sistema_2\\CardioCentro\\MAPA\\"
