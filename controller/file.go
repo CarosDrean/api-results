@@ -3485,14 +3485,13 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		if PerCaderaV == "" {
 			PerCaderaV = "NO APLICA"
-		
+		}
 
 		//----------------------------------------------------------------
 
 		//---------- TEST EPWORTH ----------
 		TestEpworth, _ := c.DB.GetDxSingle(e.VServiceid, "N009-ME000000216")
 		TestEpworthV := ""
-		i := 0
 
 		for _, TestEpworthx := range TestEpworth {
 			TestEpworthV = TestEpworthx.Name
@@ -3535,7 +3534,7 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 				GoldbergAnsiedadDefinitivo, GoldbergDepresionDefinitivo, PercepcionRiesgoV, ConclusionConductorV, AuditDefinitivo, NeurologicoV, AlturaEstructuralV,
 				TestImpulsividadV, AcrofobiaV, TestAgorafobiaV, EvaNeurologicaNeurologoV, ElectroEncefaloGramaV, ManipuladorAlimentosV, ClinicaV, DoctorAcargoV,
 				FRMedicoV, FRMOV, LevantamientoMedicoV, LevantamientoFRV, CobreV, MolibdenoV, PlomoV, CadmioV, SatisfaccionUsuarioV, ProyectoTrabajadorV,
-				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV, 
+				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV,
 				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, eco, alti, acuFilter1)
 
 		} else if cantidadNombres > 1 {
@@ -3560,7 +3559,7 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 				GoldbergAnsiedadDefinitivo, GoldbergDepresionDefinitivo, PercepcionRiesgoV, ConclusionConductorV, AuditDefinitivo, NeurologicoV, AlturaEstructuralV,
 				TestImpulsividadV, AcrofobiaV, TestAgorafobiaV, EvaNeurologicaNeurologoV, ElectroEncefaloGramaV, ManipuladorAlimentosV, ClinicaV, DoctorAcargoV,
 				FRMedicoV, FRMOV, LevantamientoMedicoV, LevantamientoFRV, CobreV, MolibdenoV, PlomoV, CadmioV, SatisfaccionUsuarioV, ProyectoTrabajadorV,
-				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV, 
+				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV,
 				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, eco, alti, acuFilter1)
 		}
 
@@ -3603,4 +3602,5 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 	}
 
 	return filePath, nil
+
 }
