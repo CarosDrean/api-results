@@ -3212,7 +3212,295 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		//----------------------------------------------------------------
 
-		//---------- RPR ----------
+		//---------- TRABAJOS EN ALTURA ESTRUCTURAL 1.8 ----------
+
+		//AUDIT
+		Audit, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000532", "N009-MF000005078")
+		AuditV := ""
+
+		for _, Auditx := range Audit {
+			AuditV = Auditx.Value1
+		}
+
+		AuditDefinitivo := ""
+
+		if AuditV == "" {
+			AuditDefinitivo = "NO APLICA"
+		} else {
+			AuditDefinitivo = "TEST DE AUDIT: " + AuditV
+		}
+
+		//EVALUACION NEUROLOGICA
+		Neurologico, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000022", "N009-MF000000619")
+		NeurologicoV := ""
+
+		for _, Neurologicox := range Neurologico {
+			NeurologicoV = Neurologicox.Value1
+		}
+
+		//APTITUD ALTURA ESTRUCTURAL
+		AlturaEstructural, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000015", "N009-MF000000357")
+		AlturaEstructuralV := ""
+
+		for _, AlturaEstructuralx := range AlturaEstructural {
+			AlturaEstructuralV = AlturaEstructuralx.Value1
+		}
+
+		//TEST DE IMPULSIVIDAD
+		TestImpulsividadV := ""
+
+		//TEST DE ACROFOBIA
+		Acrofobia, _ := c.DB.GetDxSingle(e.VServiceid, "N009-ME000000618")
+		AcrofobiaV := ""
+		i := 0
+
+		for _, Acrofobiax := range Acrofobia {
+			if i == 0 {
+				AcrofobiaV = Acrofobiax.Name
+			} else {
+				AcrofobiaV = Acrofobiax.Name + ", " + Acrofobiax.Name
+			}
+			i++
+		}
+
+		if AcrofobiaV == "" {
+			AcrofobiaV = "NO APLICA"
+		}
+
+		//TEST DE AGORAFOBIA
+		TestAgorafobiaV := "NO APLICA"
+
+		//----------------------------------------------------------------
+
+		//---------- EVALUACION NEUROLOGICA POR MEDICO NEUROLOGO ----------
+		EvaNeurologicaNeurologoV := "NO APLICA"
+
+		//----------------------------------------------------------------
+
+		//---------- EEG ----------
+		ElectroEncefaloGramaV := "NO APLICA"
+
+		//----------------------------------------------------------------
+
+		//---------- MANIPULADOR DE ALIMENTOS Y RESIDUOS ----------
+		ManipuladorAlimentosV := "- - -"
+
+		//----------------------------------------------------------------
+
+		//---------- DATOS DEL CMA ----------
+		ClinicaV := "CENTRO MEDICO HOLOSALUD"
+
+		DoctorAcargoV := "DORA ESTELA CANALES GUILLEN"
+
+		//----------------------------------------------------------------
+
+		//---------- DATOS DEL UMC ----------
+		FRMedicoV := "- - -"
+
+		FRMOV := "- - -"
+
+		LevantamientoMedicoV := "- - -"
+
+		LevantamientoFRV := "- - -"
+
+		//----------------------------------------------------------------
+
+		//---------- METALES PESADOS ----------
+
+		//COBRE
+		Cobre, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000426", "N009-MF000003222")
+		CobreV := ""
+
+		for _, Cobrex := range Cobre {
+			CobreV = Cobrex.Value1
+		}
+
+		if CobreV == "" {
+			CobreV = "NA"
+		}
+
+		//MOLIBDENO
+		MolibdenoV := "NA"
+
+		//PLOMO
+		Plomo, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000060", "N009-MF000001158")
+		PlomoV := ""
+
+		for _, Plomox := range Plomo {
+			PlomoV = Plomox.Value1
+		}
+
+		if PlomoV == "" {
+			PlomoV = "NA"
+		}
+
+		//CADMIO
+		Cadmio, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N010-ME000000395", "N009-MF000005370")
+		CadmioV := ""
+
+		for _, Cadmiox := range Cadmio {
+			CadmioV = Cadmiox.Value1
+		}
+
+		if CadmioV == "" {
+			CadmioV = "NA"
+		}
+
+		//----------------------------------------------------------------
+
+		//---------- SATISFACCION DEL USUARIO ----------
+
+		SatisfaccionUsuarioV := ""
+
+		ProyectoTrabajadorV := e.Location
+
+		ClinicaOrigenV := "CENTRO MEDICO HOLOSALUD"
+
+		//----------------------------------------------------------------
+
+		//---------- MANIPULADOR DE ALIMENTOS ----------
+
+		//PARASITOLOGICO
+		Parasitologico, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000049", "N009-MF000003261")
+		ParasitologicoV := ""
+
+		for _, Parasitologicox := range Parasitologico {
+			ParasitologicoV = Parasitologicox.Value1
+		}
+
+		if ParasitologicoV == "" {
+			ParasitologicoV = "NO APLICA"
+		}
+
+		//COPROCULTIVO
+		Coprocultivo, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000658", "N009-MF000005431")
+		CoprocultivoV := ""
+
+		for _, Coprocultivox := range Coprocultivo {
+			CoprocultivoV = Coprocultivox.Value1
+		}
+
+		if CoprocultivoV == "" {
+			CoprocultivoV = "NO APLICA"
+		}
+
+		//HISOPADO NASOFARINGEO
+		HisopadoNasofaringeo, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000118", "N009-MF000002030")
+		HisopadoNasofaringeoV := ""
+
+		for _, HisopadoNasofaringeox := range HisopadoNasofaringeo {
+			HisopadoNasofaringeoV = HisopadoNasofaringeox.Value1
+		}
+
+		if HisopadoNasofaringeoV == "" {
+			HisopadoNasofaringeoV = "NO APLICA"
+		}
+
+		//BK ESPUTO
+		BKEsputo, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000081", "N009-MF000001373")
+		BKEsputoV := ""
+
+		for _, BKEsputox := range BKEsputo {
+			BKEsputoV = BKEsputox.Value1
+		}
+
+		if BKEsputoV == "" {
+			BKEsputoV = "NO APLICA"
+		}
+
+		//VDRL
+		VDRL, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000003", "N009-MF000000269")
+		VDRLV := ""
+
+		for _, VDRLx := range VDRL {
+			VDRLV = VDRLx.Value1
+		}
+
+		if VDRLV == "" {
+			VDRLV = "NO APLICA"
+		}
+
+		//----------------------------------------------------------------
+
+		//---------- HISTORIA OCUPACIONAL ----------
+
+		//FECHA INICIO - FECHA FIN
+		FechaIniFechaFinV := e.ServiceDate + " - " + e.ExpirationDate
+
+		//EMPRESA
+		EmpresaOrgV := e.OrgName
+
+		//CARGO
+		CargoV := e.PersonOcupation
+
+		//----------------------------------------------------------------
+
+		//---------- EVA. ESPACIOS CONFINADOS ----------
+		EspaciosConfinadosApto, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000436", "N009-MF000003359")
+		EspaciosConfinadosAptoV := ""
+
+		for _, EspaciosConfinadosAptox := range EspaciosConfinadosApto {
+			EspaciosConfinadosAptoV = EspaciosConfinadosAptox.Value1
+		}
+
+		EspaciosConfinadosNoApto, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000436", "N009-MF000003360")
+		EspaciosConfinadosNoAptoV := ""
+
+		for _, EspaciosConfinadosNoAptox := range EspaciosConfinadosNoApto {
+			EspaciosConfinadosNoAptoV = EspaciosConfinadosNoAptox.Value1
+		}
+
+		EspaciosAptitudDefnitivo := ""
+
+		if EspaciosConfinadosAptoV == "" || EspaciosConfinadosNoAptoV == "" {
+			EspaciosAptitudDefnitivo = "NO APLICA"
+		} else if EspaciosConfinadosAptoV != "0" {
+			EspaciosAptitudDefnitivo = "APTO"
+		} else if EspaciosConfinadosNoAptoV != "0" {
+			EspaciosAptitudDefnitivo = "NO APTO"
+		}
+		//----------------------------------------------------------------
+
+		//---------- EVA. ANTROPOMETRICA ----------
+
+		//CINTURA
+		IndiceCintura, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000002", "N002-MF000000012")
+		IndiceCinturaV := ""
+
+		for _, IndiceCinturax := range IndiceCintura {
+			IndiceCinturaV = IndiceCinturax.Value1
+		}
+
+		if IndiceCinturaV == "" {
+			IndiceCinturaV = "NO APLICA"
+		}
+
+		//CADERA
+		PerCadera, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000002", "N002-MF000000011")
+		PerCaderaV := ""
+
+		for _, PerCaderax := range PerCadera {
+			PerCaderaV = PerCaderax.Value1
+		}
+
+		if PerCaderaV == "" {
+			PerCaderaV = "NO APLICA"
+		
+
+		//----------------------------------------------------------------
+
+		//---------- TEST EPWORTH ----------
+		TestEpworth, _ := c.DB.GetDxSingle(e.VServiceid, "N009-ME000000216")
+		TestEpworthV := ""
+		i := 0
+
+		for _, TestEpworthx := range TestEpworth {
+			TestEpworthV = TestEpworthx.Name
+		}
+
+		if TestEpworthV == "" {
+			TestEpworthV = "NO APLICA"
+		}
 
 		//----------------------------------------------------------------
 
@@ -3244,7 +3532,11 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 				EsteroscopicaDefinitivo, PesoV, TallaV, IMCV, DxNutricionalV, FasciogramaV, HallazgosAnteV, DxPersonalV, AnteOcupacionalV, AlergiasSI,
 				AlergiasNO, TetanosDefinitivo, FiebreTifoideaV, HepatitisADefinitivo, HepatitisBDefinitivo, InfluenzaV, primeraDosis, segundaDosis, terceraDosis,
 				cuartaDosis, quintaDosis, CuadroClinicoSRV, BaciloscopiaV, MiniTestPsiquiatricoV, OtrosTestV, PsicosensometricoV, SASDefinitivo, EstresDefinitivo,
-				GoldbergAnsiedadDefinitivo, GoldbergDepresionDefinitivo, PercepcionRiesgoV, ConclusionConductorV, eco, alti, acuFilter1)
+				GoldbergAnsiedadDefinitivo, GoldbergDepresionDefinitivo, PercepcionRiesgoV, ConclusionConductorV, AuditDefinitivo, NeurologicoV, AlturaEstructuralV,
+				TestImpulsividadV, AcrofobiaV, TestAgorafobiaV, EvaNeurologicaNeurologoV, ElectroEncefaloGramaV, ManipuladorAlimentosV, ClinicaV, DoctorAcargoV,
+				FRMedicoV, FRMOV, LevantamientoMedicoV, LevantamientoFRV, CobreV, MolibdenoV, PlomoV, CadmioV, SatisfaccionUsuarioV, ProyectoTrabajadorV,
+				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV, 
+				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, eco, alti, acuFilter1)
 
 		} else if cantidadNombres > 1 {
 
@@ -3265,7 +3557,11 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 				EsteroscopicaDefinitivo, PesoV, TallaV, IMCV, DxNutricionalV, FasciogramaV, HallazgosAnteV, DxPersonalV, AnteOcupacionalV, AlergiasSI,
 				AlergiasNO, TetanosDefinitivo, FiebreTifoideaV, HepatitisADefinitivo, HepatitisBDefinitivo, InfluenzaV, primeraDosis, segundaDosis, terceraDosis,
 				cuartaDosis, quintaDosis, CuadroClinicoSRV, BaciloscopiaV, MiniTestPsiquiatricoV, OtrosTestV, PsicosensometricoV, SASDefinitivo, EstresDefinitivo,
-				GoldbergAnsiedadDefinitivo, GoldbergDepresionDefinitivo, PercepcionRiesgoV, ConclusionConductorV, eco, alti, acuFilter1)
+				GoldbergAnsiedadDefinitivo, GoldbergDepresionDefinitivo, PercepcionRiesgoV, ConclusionConductorV, AuditDefinitivo, NeurologicoV, AlturaEstructuralV,
+				TestImpulsividadV, AcrofobiaV, TestAgorafobiaV, EvaNeurologicaNeurologoV, ElectroEncefaloGramaV, ManipuladorAlimentosV, ClinicaV, DoctorAcargoV,
+				FRMedicoV, FRMOV, LevantamientoMedicoV, LevantamientoFRV, CobreV, MolibdenoV, PlomoV, CadmioV, SatisfaccionUsuarioV, ProyectoTrabajadorV,
+				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV, 
+				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, eco, alti, acuFilter1)
 		}
 
 		if err := streamWriter.SetRow(ss, RowCellValue, excelize.RowOpts{StyleID: styleID}); err != nil {

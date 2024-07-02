@@ -4,13 +4,14 @@ import "github.com/CarosDrean/api-results.git/models"
 
 var ExcelFile = models.QueryDB{
 	"getDataFile": {Q: `select per.v_PersonId, ser.v_ServiceId, CONCAT(per.v_FirstLastName, ' ' ,per.v_SecondLastName, ' ', per.v_FirstName) V_NombrePersona, per.v_FirstLastName, per.v_SecondLastName, per.v_FirstName, per.v_DocNumber, per.i_SexTypeId, 
-		per.v_BirthPlace ,per.v_AdressLocation, per.d_Birthdate, syspara.v_Value1, org.v_Name as v_OrgName, ser.d_GlobalExpirationDate,
+		per.v_BirthPlace ,per.v_AdressLocation, per.d_Birthdate, syspara.v_Value1, org.v_Name as v_OrgName, ser.d_GlobalExpirationDate, loc.v_Name as v_Location,
 		proto.v_Name, ser.d_ServiceDate, per.v_CurrentOccupation, (select syspad.v_Value1 from systemparameter syspad where syspad.i_ParameterId = ser.i_AptitudeStatusId  and syspad.i_GroupId = '124') V_Aptitude
 		from service ser join person per on ser.v_PersonId = per.v_PersonId
 		join calendar ca on ser.v_ServiceId = ca.v_ServiceId 
 		join protocol proto on ser.v_ProtocolId = proto.v_ProtocolId
 		join systemparameter syspara on proto.i_EsoTypeId = syspara.i_ParameterId
 		join organization org on proto.v_CustomerOrganizationId = org.v_OrganizationId
+		join location loc on proto.v_CustomerLocationId = loc.v_LocationId
 		where ser.d_ServiceDate >= '%s' and  ser.d_ServiceDate <= '%s' and syspara.i_GroupId = '118' and proto.i_EsoTypeId != 4 and proto.i_EsoTypeId != 6 
 		and ca.i_CalendarStatusId != 4 and proto.v_EmployerOrganizationId = '%s' order by ser.d_ServiceDate desc;`},
 

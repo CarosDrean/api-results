@@ -31,6 +31,7 @@ type ExcelMatrizFile struct {
 	EsoName         string `json:"v_Value1"`
 	OrgName         string `json:"v_OrgName"`
 	ExpirationDate  string `json:"d_GlobalExpirationDate"`
+	Location        string `json:"v_Location"`
 	ProtocolName    string `json:"v_Name"`
 	ServiceDate     string `json:"d_ServiceDate"`
 	PersonOcupation string `json:"v_CurrentOccupation"`
