@@ -247,7 +247,6 @@ func (c FileController) makeFilePath(patient models.PatientFile) (string, error)
 
 	}
 	return filePath, nil
-
 }
 
 func (c FileController) assemblyFileNameExtra(idService string, dni string, parent string) string {
@@ -997,35 +996,35 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		//---PROCESO-ALTURA-APTITUD---
 
-		al, _ := c.DB.GetAlturaAptitud(e.VServiceid)
-		alti := "---"
+		// al, _ := c.DB.GetAlturaAptitud(e.VServiceid)
+		// alti := "---"
 
-		for _, k := range al {
-			if len(k.AptitudName) > 0 {
-				alti = k.AptitudName
-			} else {
-				alti = "---"
-			}
-		}
+		// for _, k := range al {
+		// 	if len(k.AptitudName) > 0 {
+		// 		alti = k.AptitudName
+		// 	} else {
+		// 		alti = "---"
+		// 	}
+		// }
 
 		//----------------------------
 
 		//---PROCESO-ESPACIOS-CONFINADOS-APTITUD---
 
-		ec, _ := c.DB.GetAptitudEspaciosConfi(e.VServiceid)
-		eco := "---"
+		// ec, _ := c.DB.GetAptitudEspaciosConfi(e.VServiceid)
+		// eco := "---"
 
-		for _, cc := range ec {
-			if len(cc.AptitudName) > 0 {
-				if cc.AptitudName == "1" {
-					eco = "APTO"
-				} else {
-					eco = "NO APTO"
-				}
-			} else {
-				eco = "---"
-			}
-		}
+		// for _, cc := range ec {
+		// 	if len(cc.AptitudName) > 0 {
+		// 		if cc.AptitudName == "1" {
+		// 			eco = "APTO"
+		// 		} else {
+		// 			eco = "NO APTO"
+		// 		}
+		// 	} else {
+		// 		eco = "---"
+		// 	}
+		// }
 
 		//---PARTICION NOMBRE----
 
@@ -1814,6 +1813,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			anfetaminaDefine = anfetaminaParameterx.Value1
 		}
 
+		if anfetaminaDefine == "" {
+			anfetaminaDefine = "NO APLICA"
+		}
+
 		//METANFETAMINA
 		metanfetamina, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000419", "N009-MF000003215")
 		metanfetaminaV := ""
@@ -1827,6 +1830,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		for _, metanfetaminaParameterx := range metanfetaminaParameter {
 			metanfetaminaDefine = metanfetaminaParameterx.Value1
+		}
+
+		if metanfetaminaDefine == "" {
+			metanfetaminaDefine = "NO APLICA"
 		}
 
 		//METADONA
@@ -1844,6 +1851,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			metadonaDefine = metadonaParameterx.Value1
 		}
 
+		if metadonaDefine == "" {
+			metadonaDefine = "NO APLICA"
+		}
+
 		//MORFINA
 		morfina, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000420", "N009-MF000003216")
 		morfinaV := ""
@@ -1857,6 +1868,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		for _, morfinaParameterx := range morfinaParameter {
 			morfinaDefine = morfinaParameterx.Value1
+		}
+
+		if morfinaDefine == "" {
+			morfinaDefine = "NO APLICA"
 		}
 
 		//FENCICLIDINA
@@ -1874,6 +1889,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			fenciclidinaDefine = fenciclidinaParameterx.Value1
 		}
 
+		if fenciclidinaDefine == "" {
+			fenciclidinaDefine = "NO APLICA"
+		}
+
 		//BARBITURICOS
 		barbituricos, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000417", "N009-MF000003213")
 		barbituricosV := ""
@@ -1887,6 +1906,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		for _, barbituricosParameterx := range barbituricosParameter {
 			barbituricosDefine = barbituricosParameterx.Value1
+		}
+
+		if barbituricosDefine == "" {
+			barbituricosDefine = "NO APLICA"
 		}
 
 		//BENZODIACEPINAS
@@ -1939,6 +1962,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		for _, pruebaEmbarazoParameterx := range pruebaEmbarazoParameter {
 			pruebaEmbarazoDefine = pruebaEmbarazoParameterx.Value1
+		}
+
+		if pruebaEmbarazoDefine == "" {
+			pruebaEmbarazoDefine = "NO APLICA"
 		}
 
 		//----------------------------------------------------------------
@@ -2897,18 +2924,26 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		//ALERGIAS
 		Alergias, _ := c.DB.GetCheckDx(e.VServiceid, "N009-DD000000633")
 
+		AlergiasDefine := ""
+
 		AlergiasSI := ""
 		AlergiasNO := ""
 
 		for _, Alergiasx := range Alergias {
-			if Alergiasx.Name == "" {
-				AlergiasNO = "NO"
-			} else {
-				AlergiasSI = "SI"
-			}
-
+			AlergiasDefine = Alergiasx.Name
 		}
 
+		if AlergiasDefine == "" {
+			AlergiasSI = ""
+		} else {
+			AlergiasSI = "X"
+		}
+
+		if AlergiasDefine == "" {
+			AlergiasNO = "X"
+		} else {
+			AlergiasNO = ""
+		}
 		//----------------------------------------------------------------
 
 		//---------- INMUNIZACIONES ----------
@@ -3046,7 +3081,11 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		partes := strings.Split(COVIDV, "\n")
 
 		// Extraer las fechas y almacenarlas en variables
-		var primeraDosis, segundaDosis, terceraDosis, cuartaDosis, quintaDosis string
+		primeraDosis := "- - -"
+		segundaDosis := "- - -"
+		terceraDosis := "- - -"
+		cuartaDosis := "- - -"
+		quintaDosis := "- - -"
 
 		for _, parte := range partes {
 			if strings.Contains(parte, "/") {
@@ -3105,7 +3144,7 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		//---------- PSICOLOGIA ----------
 
 		//MINI TEST PSIQUIATRICO
-		MiniTestPsiquiatricoV := ""
+		MiniTestPsiquiatricoV := "NO APLICA"
 
 		//OTROS TEST
 		OtrosTest, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000033", "N002-MF000000278")
@@ -3129,6 +3168,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		for _, Psicosensometricox := range Psicosensometrico {
 			PsicosensometricoV = Psicosensometricox.Name
+		}
+
+		if PsicosensometricoV == "" {
+			PsicosensometricoV = "NO APLICA"
 		}
 
 		//FICHA SAHS
@@ -3205,7 +3248,7 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		}
 
 		//PERCEPCION DE RIESGO
-		PercepcionRiesgoV := ""
+		PercepcionRiesgoV := "NO APLICA"
 
 		//CONCLUSION
 		ConclusionConductorV := "NINGUNA"
@@ -3238,6 +3281,10 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			NeurologicoV = Neurologicox.Value1
 		}
 
+		if NeurologicoV == "" {
+			NeurologicoV = "NO APLICA"
+		}
+
 		//APTITUD ALTURA ESTRUCTURAL
 		AlturaEstructural, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000015", "N009-MF000000357")
 		AlturaEstructuralV := ""
@@ -3246,8 +3293,12 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			AlturaEstructuralV = AlturaEstructuralx.Value1
 		}
 
+		if AlturaEstructuralV == "" {
+			AlturaEstructuralV = "NO APLICA"
+		}
+
 		//TEST DE IMPULSIVIDAD
-		TestImpulsividadV := ""
+		TestImpulsividadV := "NO APLICA"
 
 		//TEST DE ACROFOBIA
 		Acrofobia, _ := c.DB.GetDxSingle(e.VServiceid, "N009-ME000000618")
@@ -3503,20 +3554,158 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		//----------------------------------------------------------------
 
-		//---------- RPR ----------
+		//---------- APTITUD OSTEOMUSCULAR ----------
+		AptitudOsteomuscular, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000046", "N009-MF000001994")
+		AptitudOsteomuscularV := ""
+
+		for _, AptitudOsteomuscularx := range AptitudOsteomuscular {
+			AptitudOsteomuscularV = AptitudOsteomuscularx.Value1
+		}
+
+		if AptitudOsteomuscularV == "" {
+			AptitudOsteomuscularV = "NO APLICA"
+		}
 
 		//----------------------------------------------------------------
 
-		//---------- RPR ----------
+		//---------- DERMATOLOGICO ----------
+		Dermatologico, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000044", "N009-MF000002156")
+		DermatologicoV := ""
+
+		for _, Dermatologicox := range Dermatologico {
+			DermatologicoV = Dermatologicox.Value1
+		}
+
+		if DermatologicoV == "0" {
+			DermatologicoV = "ANORMAL"
+		} else if DermatologicoV == "1" {
+			DermatologicoV = "NORMAL"
+		} else if DermatologicoV == "" {
+			DermatologicoV = "NO APLICA"
+		}
+
+		//----------------------------------------------------------------
+
+		//---------- OTOSCOPIA ----------
+
+		//OD
+		OtoscopiaOD, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000129", "N009-OTO00000024")
+		OtoscopiaODV := ""
+
+		for _, OtoscopiaODx := range OtoscopiaOD {
+			OtoscopiaODV = OtoscopiaODx.Value1
+		}
+
+		if OtoscopiaODV == "" {
+			AudioOtoscoOD, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000005", "N009-OTO00000024")
+			AudioOtoscoODV := ""
+
+			for _, AudioOtoscoODx := range AudioOtoscoOD {
+				AudioOtoscoODV = AudioOtoscoODx.Value1
+			}
+
+			if AudioOtoscoODV == "" {
+				EFOtoscoOD, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000022", "N009-OTO00000024")
+				EFOtoscoODV := ""
+
+				for _, EFOtoscoODx := range EFOtoscoOD {
+					EFOtoscoODV = EFOtoscoODx.Value1
+				}
+
+				if EFOtoscoODV == "" {
+					OtoscopiaODV = "NO APLICA, NO APLICA"
+				} else {
+					OtoscopiaODV = EFOtoscoODV
+				}
+			} else {
+				OtoscopiaODV = AudioOtoscoODV
+			}
+		}
+
+		cadenaOtoscopiaODV := OtoscopiaODV
+		partesOtoscopiaODV := strings.Split(cadenaOtoscopiaODV, ",")
+
+		//OI
+		OtoscopiaOI, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000129", "N009-OTO00000025")
+		OtoscopiaOIV := ""
+
+		for _, OtoscopiaOIx := range OtoscopiaOI {
+			OtoscopiaOIV = OtoscopiaOIx.Value1
+		}
+
+		if OtoscopiaOIV == "" {
+			AudioOtoscoOI, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000005", "N009-OTO00000025")
+			AudioOtoscoOIV := ""
+
+			for _, AudioOtoscoOIx := range AudioOtoscoOI {
+				AudioOtoscoOIV = AudioOtoscoOIx.Value1
+			}
+
+			if AudioOtoscoOIV == "" {
+				EFOtoscoOI, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000022", "N009-OTO00000025")
+				EFOtoscoOIV := ""
+
+				for _, EFOtoscoOIx := range EFOtoscoOI {
+					EFOtoscoOIV = EFOtoscoOIx.Value1
+				}
+
+				if EFOtoscoOIV == "" {
+					OtoscopiaOIV = "NO APLICA, NO APLICA"
+				} else {
+					OtoscopiaOIV = EFOtoscoOIV
+				}
+			} else {
+				OtoscopiaOIV = AudioOtoscoOIV
+			}
+		}
+
+		cadenaOtoscopiaOIV := OtoscopiaOIV
+		partesOtoscopiaOIV := strings.Split(cadenaOtoscopiaOIV, ",")
+
+		//----------------------------------------------------------------
+
+		//---------- SQR ----------
+		Autoevaluacion, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N002-ME000000033", "N002-MF000000278")
+		AutoevaluacionV := ""
+
+		for _, Autoevaluacionx := range Autoevaluacion {
+			AutoevaluacionV = Autoevaluacionx.Value1
+		}
+
+		AutoConfirm, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000310", "N009-MF000002750")
+		AutoConfirmV := ""
+
+		for _, AutoConfirmx := range AutoConfirm {
+			AutoConfirmV = AutoConfirmx.Value1
+		}
+
+		autoevaluacionSQR := ""
+
+		if AutoConfirmV == "" {
+			AutoevaluacionV = "NO APLICA"
+		} else {
+			parrafoSQR := AutoevaluacionV
+			partesSQR := strings.Split(parrafoSQR, "\n")
+
+			// Recorrer la rebanada
+			for _, lineaSQR := range partesSQR {
+				// Identificar la línea de autoevaluación
+				if strings.Contains(lineaSQR, "AUTOEVALUACION") {
+					// Extraer la autoevaluacion
+					autoevaluacionSQR = strings.TrimSpace(lineaSQR[strings.Index(lineaSQR, ":")+1:])
+				}
+			}
+		}
 
 		//----------------------------------------------------------------
 
 		//RowCellValue = append(make([]interface{}, 0), strconv.Itoa(x), e.DocNumber, e.Ape2, e.Ape1, e.Name, e.Name, strconv.Itoa(Age(ages)), e.EsoName, e.ProtocolName, e.ServiceDate[0:10], e.PersonOcupation, e.Aptitude, acuFilter1, "NO APLICA", "1", arr1[0], arr2[0], "1", arr1[1], arr2[1], "1", arr1[2], arr2[2], alti, eco, "EVALUADO")
 
+		//eco, alti, acuFilter1
 		if cantidadNombres == 1 {
 			RowCellValue = append(make([]interface{}, 0), strconv.Itoa(x), e.DocNumber, e.Ape2, e.Ape1, partesNombre[0], "", e.Bithdate,
 				strconv.Itoa(Age(ages)), sex, e.Birthplace, e.Direccion, e.OrgName, e.PersonOcupation, e.EsoName, e.ServiceDate[0:10], e.Aptitude, e.ExpirationDate[0:10],
-				"", "", "", "", primeraR, segundaR, terceraR, cuartaR, quintaR, sextaR, leuV, hematiV, hemoglV, hematoV, neutroV, neutro2V, plaqueV, vcmV, hcmV,
+				"- - -", "- - -", "- - -", "", primeraR, segundaR, terceraR, cuartaR, quintaR, sextaR, leuV, hematiV, hemoglV, hematoV, neutroV, neutro2V, plaqueV, vcmV, hcmV,
 				ccmhV, rdwV, vpmV, bastonesV, linfoV, monoV, eosiV, basoV, metamielocitosV, mielocitosV, promieV, blastosV, bastones2V, linfo2V, mono2V, eosi2V,
 				baso2V, mielocitos2V, metamielocitos2V, promie2V, blastos2V, rplaquetasV, grupoDefine+" - "+factorDefine, glucosaV, hemoglicoV, rprV,
 				colorDefine, aspectoDefine, densidadV, phV, glucosaOrinaV, bilirrubinaV, cuerposCetoDefine, proteinasDefine, urobiliDefine, nitritoDefine,
@@ -3535,7 +3724,8 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 				TestImpulsividadV, AcrofobiaV, TestAgorafobiaV, EvaNeurologicaNeurologoV, ElectroEncefaloGramaV, ManipuladorAlimentosV, ClinicaV, DoctorAcargoV,
 				FRMedicoV, FRMOV, LevantamientoMedicoV, LevantamientoFRV, CobreV, MolibdenoV, PlomoV, CadmioV, SatisfaccionUsuarioV, ProyectoTrabajadorV,
 				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV,
-				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, eco, alti, acuFilter1)
+				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, AptitudOsteomuscularV, DermatologicoV, partesOtoscopiaODV[1],
+				partesOtoscopiaODV[0], partesOtoscopiaOIV[1], partesOtoscopiaOIV[0], autoevaluacionSQR)
 
 		} else if cantidadNombres > 1 {
 
@@ -3560,7 +3750,8 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 				TestImpulsividadV, AcrofobiaV, TestAgorafobiaV, EvaNeurologicaNeurologoV, ElectroEncefaloGramaV, ManipuladorAlimentosV, ClinicaV, DoctorAcargoV,
 				FRMedicoV, FRMOV, LevantamientoMedicoV, LevantamientoFRV, CobreV, MolibdenoV, PlomoV, CadmioV, SatisfaccionUsuarioV, ProyectoTrabajadorV,
 				ClinicaOrigenV, ParasitologicoV, CoprocultivoV, HisopadoNasofaringeoV, BKEsputoV, VDRLV, FechaIniFechaFinV, EmpresaOrgV, CargoV,
-				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, eco, alti, acuFilter1)
+				EspaciosAptitudDefnitivo, IndiceCinturaV, PerCaderaV, TestEpworthV, AptitudOsteomuscularV, DermatologicoV, partesOtoscopiaODV[1],
+				partesOtoscopiaODV[0], partesOtoscopiaOIV[1], partesOtoscopiaOIV[0], autoevaluacionSQR)
 		}
 
 		if err := streamWriter.SetRow(ss, RowCellValue, excelize.RowOpts{StyleID: styleID}); err != nil {
