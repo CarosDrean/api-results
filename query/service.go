@@ -16,7 +16,7 @@ var Service = models.QueryDB{
 		" = '%s' and d_ServiceDate is not null order by " + service.Fields[3] + " desc;"},
 	"getProtocolFilter": {Q: "select " + fieldStringPrefix(service.Fields, "s") + " from " + service.Name +
 		" s inner join calendar c on s.v_ServiceId = c.v_ServiceId and c.i_CalendarStatusId != 4" +
-		" inner join  protocol p on s.v_ProtocolId = p.v_ProtocolId " +
+		" inner join  protocol p on s.v_ProtocolId = p.v_ProtocolId and p.i_EsoTypeId != 19" +
 		" where s." + service.Fields[2] +
 		" = '%s' and CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] + " as date) <= CAST('%s' as date) and s." + service.Fields[3] +
 		" is not null order by s." + service.Fields[3] + " desc;"},
@@ -24,7 +24,7 @@ var Service = models.QueryDB{
 		fieldStringPrefix(protocol.Fields, "p") +
 		", d.v_Name from dbo.service s " +
 		"inner join person pe on s.v_PersonId = pe.v_PersonId " +
-		"inner join protocol p on s.v_ProtocolId = p.v_ProtocolId " +
+		"inner join protocol p on s.v_ProtocolId = p.v_ProtocolId and p.i_EsoTypeId != 19" +
 		"left join diagnosticrepository dr on s.v_ServiceId = dr.v_ServiceId " +
 		"left join diseases d on dr.v_DiseasesId = d.v_DiseasesId where CAST(s." +
 		service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] + " as date) <= CAST('%s' as date) " +
@@ -33,7 +33,7 @@ var Service = models.QueryDB{
 	"get": {Q: "select " + fieldString(service.Fields) + " from " + service.Name + " where " + service.Fields[0] + " = '%s';"},
 	"listDate": {Q: "select " + fieldStringPrefix(service.Fields, "s") + ", " + fieldStringPrefix(person.Fields, "pe") +
 		", o.v_OrganizationId, o.v_Name, p.i_EsoTypeId from service s " +
-		"inner join protocol p on s.v_ProtocolId = p.v_ProtocolId " +
+		"inner join protocol p on s.v_ProtocolId = p.v_ProtocolId and p.i_EsoTypeId != 19" +
 		"inner join person pe on s.v_PersonId = pe.v_PersonId " +
 		"inner join organization o on p.v_CustomerOrganizationId = o.v_OrganizationId " +
 		" where CAST(s." + service.Fields[3] + " as date) >= CAST('%s' as date) and CAST(s." + service.Fields[3] +
@@ -45,7 +45,7 @@ var Service = models.QueryDB{
 		"pc.r_Price, c.v_Name, sc.r_Price, pr.v_Name, p.v_Mail, p.i_SexTypeId, s.i_AptitudeStatusId, pr.i_EsoTypeId " +
 		"from service s " +
 		"inner join servicecomponent sc on s.v_ServiceId = sc.v_ServiceId and sc.r_Price > 0 " +
-		"inner join person p on s.v_PersonId = p.v_PersonId " +
+		"inner join person p on s.v_PersonId = p.v_PersonId and p.i_EsoTypeId != 19" +
 		"inner join protocol pr on s.v_ProtocolId = pr.v_ProtocolId " +
 		"inner join protocolcomponent pc on pr.v_ProtocolId = pc.v_ProtocolId and pc.r_Price > 0 " +
 		"inner join component c on pc.v_ComponentId = c.v_ComponentId " +
@@ -55,7 +55,7 @@ var Service = models.QueryDB{
 		"where CAST(s.d_ServiceDate as date) >= CAST('%s' as date) and CAST(s.d_ServiceDate as date) <= CAST('%s' as date)"},
 	"getAllCovid": {Q: "select s.d_ServiceDate, p.v_FirstName, p.v_FirstLastName, p.v_SecondLastName, p.v_DocNumber, p.d_Birthdate, p.i_SexTypeId, g.v_Name, p.v_CurrentOccupation, c.v_Name, scfv.v_Value1 from service s " +
 		"inner join person p on s.v_PersonId = p.v_PersonId " +
-		"inner join protocol pr on s.v_ProtocolId = pr.v_ProtocolId and pr.i_IsDeleted = 0 " +
+		"inner join protocol pr on s.v_ProtocolId = pr.v_ProtocolId and pr.i_IsDeleted = 0 and p.i_EsoTypeId != 19" +
 		"inner join groupoccupation g on pr.v_GroupOccupationId = g.v_GroupOccupationId " +
 		"inner join protocolcomponent pc on s.v_ProtocolId = pc.v_ProtocolId and " +
 		"(pc.v_ComponentId= 'N007-ME000000491' or pc.v_ComponentId= 'N009-ME000000567') and pc.i_IsDeleted = 0 " +
@@ -69,7 +69,7 @@ var Service = models.QueryDB{
 	"getGesoFilter": {Q: "SELECT s.v_ServiceId, s.d_ServiceDate, p3.v_PersonId, p.v_ProtocolId, s.i_AptitudeStatusId, p3.v_DocNumber, " +
 		"p3.v_FirstName, p3.v_FirstLastName, p3.v_SecondLastName,  p3.v_Mail, p3.i_SexTypeId, p3.d_Birthdate, " +
 		"c.i_CalendarStatusId, c.d_CircuitStartDate, c.d_SalidaCM, gp.v_Name FROM organization o " +
-		"INNER JOIN protocol p ON o.v_OrganizationId = p.v_EmployerOrganizationId " +
+		"INNER JOIN protocol p ON o.v_OrganizationId = p.v_EmployerOrganizationId and p.i_EsoTypeId != 19" +
 		"INNER JOIN service s ON p.v_ProtocolId = s.v_ProtocolId AND s.i_IsDeleted != 1 AND s.d_ServiceDate IS NOT NULL " +
 		"INNER JOIN person p3 ON s.v_PersonId = p3.v_PersonId " +
 		"INNER JOIN calendar c ON s.v_ServiceId = c.v_ServiceId AND c.i_CalendarStatusId != 4 " +
@@ -81,7 +81,7 @@ var Service = models.QueryDB{
 		"p3.v_FirstName, p3.v_FirstLastName, p3.v_SecondLastName,  p3.v_Mail, p3.i_SexTypeId, p3.d_Birthdate, " +
 		"c.i_CalendarStatusId, c.d_CircuitStartDate, c.d_SalidaCM, gp.v_Name FROM organization o " +
 		"INNER JOIN protocol p ON o.v_OrganizationId = p.v_EmployerOrganizationId " +
-		"INNER JOIN service s ON p.v_ProtocolId = s.v_ProtocolId AND s.i_IsDeleted != 1 AND s.d_ServiceDate IS NOT NULL " +
+		"INNER JOIN service s ON p.v_ProtocolId = s.v_ProtocolId AND s.i_IsDeleted != 1 and p.i_EsoTypeId != 19 AND s.d_ServiceDate IS NOT NULL " +
 		"INNER JOIN person p3 ON s.v_PersonId = p3.v_PersonId " +
 		"INNER JOIN calendar c ON s.v_ServiceId = c.v_ServiceId AND c.i_CalendarStatusId != 4 " +
 		"INNER JOIN groupoccupation gp ON p.v_GroupOccupationId = gp.v_GroupOccupationId " +

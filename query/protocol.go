@@ -8,8 +8,8 @@ var protocol = models.TableDB{
 }
 
 var Protocol = models.QueryDB{
-	"getLocation":             {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[4] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%'"},
-	"getOrganization":         {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[2] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%'"},// AND i_IsActive = 1
-	"getOrganizationEmployer": {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[3] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%'"},
-	"get":                     {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[0] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%'"},
+	"getLocation":             {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[4] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND (v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%' OR v_Name NOT LIKE '%%INTERCONSULTAS%%')"},
+	"getOrganization":         {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[2] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND (v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%' OR v_Name NOT LIKE '%%INTERCONSULTAS%%')"}, // AND i_IsActive = 1
+	"getOrganizationEmployer": {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[3] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND (v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%' OR v_Name NOT LIKE '%%INTERCONSULTAS%%')"},
+	"get":                     {Q: "select " + fieldString(protocol.Fields) + " from " + protocol.Name + " where " + protocol.Fields[0] + " = '%s' AND (i_IsDeleted = 0 OR i_IsDeleted IS NULL) AND (v_Name NOT LIKE '%%CAMBIO ADMINISTRATIVO%%' OR v_Name NOT LIKE '%%INTERCONSULTAS%%')"},
 }
