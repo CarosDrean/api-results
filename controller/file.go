@@ -3070,7 +3070,7 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		//----------------------------------------------------------------
 
 		//---------- COVID ----------
-		COVID, _ := c.DB.GetCheckAntePer(e.VPersonId, "N009-DD000001698")
+		/*COVID, _ := c.DB.GetCheckAntePer(e.VPersonId, "N009-DD000001698")
 		COVIDV := ""
 
 		for _, COVIDx := range COVID {
@@ -3078,39 +3078,42 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		}
 
 		// Separar por ":"
-		partes := strings.Split(COVIDV, "\n")
+		partes := strings.Split(COVIDV, "\n")*/
 
 		// Extraer las fechas y almacenarlas en variables
-		primeraDosis := "- - -"
-		segundaDosis := "- - -"
-		terceraDosis := "- - -"
-		cuartaDosis := "- - -"
-		quintaDosis := "- - -"
+		primeraDosis := "NO APLICA"
+		segundaDosis := "NO APLICA"
+		terceraDosis := "NO APLICA"
+		cuartaDosis := "NO APLICA"
+		quintaDosis := "NO APLICA"
 
-		for _, parte := range partes {
-			if strings.Contains(parte, "/") {
-				partesDosisFecha := strings.Split(parte, ":")
-				if len(partesDosisFecha) == 2 { // Ensure there are two parts after split
-					dosis := strings.TrimSpace(partesDosisFecha[0])
-					fecha := strings.TrimSpace(partesDosisFecha[1])
+		/*
+			for _, parte := range partes {
+				if strings.Contains(parte, "/") {
+					partesDosisFecha := strings.Split(parte, ":")
+					if len(partesDosisFecha) == 2 { // Ensure there are two parts after split
+						dosis := strings.TrimSpace(partesDosisFecha[0])
+						fecha := strings.TrimSpace(partesDosisFecha[1])
 
-					switch dosis {
-					case "1° DOSIS", "1ERA DOSIS":
-						primeraDosis = fecha
-					case "2° DOSIS", "2DA DOSIS":
-						segundaDosis = fecha
-					case "3° DOSIS", "3ERA DOSIS":
-						terceraDosis = fecha
-					case "4° DOSIS", "4TA DOSIS":
-						cuartaDosis = fecha
-					case "5° DOSIS", "5TA DOSIS":
-						quintaDosis = fecha
+						switch dosis {
+						case "1° DOSIS", "1ERA DOSIS":
+							primeraDosis = fecha
+						case "2° DOSIS", "2DA DOSIS":
+							segundaDosis = fecha
+						case "3° DOSIS", "3ERA DOSIS":
+							terceraDosis = fecha
+						case "4° DOSIS", "4TA DOSIS":
+							cuartaDosis = fecha
+						case "5° DOSIS", "5TA DOSIS":
+							quintaDosis = fecha
+						}
+					} else {
+						fmt.Println("Warning: Invalid format in line:", parte)
 					}
-				} else {
-					fmt.Println("Warning: Invalid format in line:", parte)
 				}
 			}
-		}
+		*/
+
 		//----------------------------------------------------------------
 
 		//---------- DESCARTE TBC ----------
