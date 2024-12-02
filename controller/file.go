@@ -1731,7 +1731,7 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		}
 
 		cocainaParameter, _ := c.DB.GetValueFromParameterV1("305", cocainaV)
-		cocainaDefine := ""
+		cocainaDefine := "NO APLICA"
 
 		for _, cocainaParameterx := range cocainaParameter {
 			cocainaDefine = cocainaParameterx.Value1
@@ -1745,17 +1745,18 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 		}
 
 		toxcocainaParameter, _ := c.DB.GetValueFromParameterV1("305", toxcocainaV)
-		toxcocainaDefine := ""
+		toxcocainaDefine := "NO APLICA"
 
 		for _, toxcocainaParameterx := range toxcocainaParameter {
 			toxcocainaDefine = toxcocainaParameterx.Value1
 		}
 
-		CocainaDefinitiva := ""
+		CocainaDefinitiva := "NO APLICA"
 
 		if cocainaDefine == "" {
 			CocainaDefinitiva = toxcocainaDefine
 		}
+
 		if toxcocainaDefine == "" {
 			CocainaDefinitiva = cocainaDefine
 		}
@@ -1789,7 +1790,7 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			toxmarihuanaDefine = toxmarihuanaParameterx.Value1
 		}
 
-		MarihuanaDefinitiva := ""
+		MarihuanaDefinitiva := "NO APLICA"
 
 		if marihuanaDefine == "" {
 			MarihuanaDefinitiva = toxmarihuanaDefine
@@ -2073,49 +2074,49 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		//OD
 		OD500, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000001")
-		OD500V := ""
+		OD500V := "- - -"
 
 		for _, OD500x := range OD500 {
 			OD500V = OD500x.Value1
 		}
 
 		OD1000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000002")
-		OD1000V := ""
+		OD1000V := "- - -"
 
 		for _, OD1000x := range OD1000 {
 			OD1000V = OD1000x.Value1
 		}
 
 		OD2000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000003")
-		OD2000V := ""
+		OD2000V := "- - -"
 
 		for _, OD2000x := range OD2000 {
 			OD2000V = OD2000x.Value1
 		}
 
 		OD3000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000004")
-		OD3000V := ""
+		OD3000V := "- - -"
 
 		for _, OD3000x := range OD3000 {
 			OD3000V = OD3000x.Value1
 		}
 
 		OD4000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000005")
-		OD4000V := ""
+		OD4000V := "- - -"
 
 		for _, OD4000x := range OD4000 {
 			OD4000V = OD4000x.Value1
 		}
 
 		OD6000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000006")
-		OD6000V := ""
+		OD6000V := "- - -"
 
 		for _, OD6000x := range OD6000 {
 			OD6000V = OD6000x.Value1
 		}
 
 		OD8000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000007")
-		OD8000V := ""
+		OD8000V := "- - -"
 
 		for _, OD8000x := range OD8000 {
 			OD8000V = OD8000x.Value1
@@ -2141,49 +2142,49 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 
 		//OI
 		OI500, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000015")
-		OI500V := ""
+		OI500V := "- - -"
 
 		for _, OI500x := range OI500 {
 			OI500V = OI500x.Value1
 		}
 
 		OI1000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000016")
-		OI1000V := ""
+		OI1000V := "- - -"
 
 		for _, OI1000x := range OI1000 {
 			OI1000V = OI1000x.Value1
 		}
 
 		OI2000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000017")
-		OI2000V := ""
+		OI2000V := "- - -"
 
 		for _, OI2000x := range OI2000 {
 			OI2000V = OI2000x.Value1
 		}
 
 		OI3000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000018")
-		OI3000V := ""
+		OI3000V := "- - -"
 
 		for _, OI3000x := range OI3000 {
 			OI3000V = OI3000x.Value1
 		}
 
 		OI4000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000019")
-		OI4000V := ""
+		OI4000V := "- - -"
 
 		for _, OI4000x := range OI4000 {
 			OI4000V = OI4000x.Value1
 		}
 
 		OI6000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000020")
-		OI6000V := ""
+		OI6000V := "- - -"
 
 		for _, OI6000x := range OI6000 {
 			OI6000V = OI6000x.Value1
 		}
 
 		OI8000, _ := c.DB.GetValueCustomerV2(e.VServiceid, "N002-ME000000005", "N002-AUD00000021")
-		OI8000V := ""
+		OI8000V := "- - -"
 
 		for _, OI8000x := range OI8000 {
 			OI8000V = OI8000x.Value1
@@ -2493,13 +2494,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			CercaODSCCDefine = CercaODSCCCercaODSCCrameterx.Value1
 		}
 
+		//CERCA ODSC - AGUDEZA VISUAL
+		CercaODSCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005462")
+		CercaODSCAV := ""
+
+		for _, CercaODSCAx := range CercaODSCA {
+			CercaODSCAV = CercaODSCAx.Value1
+		}
+
+		CercaODSCACercaODSCCrameter, _ := c.DB.GetValueFromParameterV1("290", CercaODSCAV)
+		CercaODSCADefine := ""
+
+		for _, CercaODSCACercaODSCCrameterx := range CercaODSCACercaODSCCrameter {
+			CercaODSCADefine = CercaODSCACercaODSCCrameterx.Value1
+		}
+
 		//CERCA ODSC - DEFINITIVO
-		CercaODSC := ""
+		CercaODSC := "NO APLICA"
 
 		if CercaODSCSDefine == "" {
 			CercaODSC = CercaODSCCDefine
-		} else {
+		} else if CercaODSCCDefine == "" {
 			CercaODSC = CercaODSCSDefine
+		} else {
+			CercaODSC = CercaODSCADefine
 		}
 
 		//CERCA OISC - SIMPLE
@@ -2532,13 +2550,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			CercaOISCCDefine = CercaOISCCCercaOISCCrameterx.Value1
 		}
 
+		//CERCA OISC - AGUDEZA
+		CercaOISCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005463")
+		CercaOISCAV := ""
+
+		for _, CercaOISCAx := range CercaOISCA {
+			CercaOISCAV = CercaOISCAx.Value1
+		}
+
+		CercaOISCACercaOISCCrameter, _ := c.DB.GetValueFromParameterV1("290", CercaOISCAV)
+		CercaOISCADefine := ""
+
+		for _, CercaOISCACercaOISCCrameterx := range CercaOISCACercaOISCCrameter {
+			CercaOISCADefine = CercaOISCACercaOISCCrameterx.Value1
+		}
+
 		//CERCA OISC - DEFINITIVO
-		CercaOISC := ""
+		CercaOISC := "NO APLICA"
 
 		if CercaOISCSDefine == "" {
 			CercaOISC = CercaOISCCDefine
-		} else {
+		} else if CercaOISCCDefine == "" {
 			CercaOISC = CercaOISCSDefine
+		} else {
+			CercaOISC = CercaOISCADefine
 		}
 
 		//CERCA ODCC - SIMPLE
@@ -2571,13 +2606,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			CercaODCCCDefine = CercaODCCCCercaODCCCrameterx.Value1
 		}
 
+		//CERCA ODCC - AGUDEZA
+		CercaODCCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005464")
+		CercaODCCAV := ""
+
+		for _, CercaODCCAx := range CercaODCCA {
+			CercaODCCAV = CercaODCCAx.Value1
+		}
+
+		CercaODCCACercaODCCCrameter, _ := c.DB.GetValueFromParameterV1("290", CercaODCCAV)
+		CercaODCCADefine := ""
+
+		for _, CercaODCCACercaODCCCrameterx := range CercaODCCACercaODCCCrameter {
+			CercaODCCADefine = CercaODCCACercaODCCCrameterx.Value1
+		}
+
 		//CERCA ODCC - DEFINITIVO
-		CercaODCC := ""
+		CercaODCC := "NO APLICA"
 
 		if CercaODCCSDefine == "" {
 			CercaODCC = CercaODCCCDefine
-		} else {
+		} else if CercaODCCCDefine == "" {
 			CercaODCC = CercaODCCSDefine
+		} else {
+			CercaODCC = CercaODCCADefine
 		}
 
 		//CERCA OICC - SIMPLE
@@ -2610,13 +2662,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			CercaOICCCDefine = CercaOICCCCercaOICCCrameterx.Value1
 		}
 
+		//CERCA OICC - AGUDEZA
+		CercaOICCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005465")
+		CercaOICCAV := ""
+
+		for _, CercaOICCAx := range CercaOICCA {
+			CercaOICCAV = CercaOICCAx.Value1
+		}
+
+		CercaOICCACercaOICCCrameter, _ := c.DB.GetValueFromParameterV1("290", CercaOICCAV)
+		CercaOICCADefine := ""
+
+		for _, CercaOICCACercaOICCCrameterx := range CercaOICCACercaOICCCrameter {
+			CercaOICCADefine = CercaOICCACercaOICCCrameterx.Value1
+		}
+
 		//CERCA OICC - DEFINITIVO
-		CercaOICC := ""
+		CercaOICC := "NO APLICA"
 
 		if CercaOICCSDefine == "" {
 			CercaOICC = CercaOICCCDefine
-		} else {
+		} else if CercaOICCCDefine == "" {
 			CercaOICC = CercaOICCSDefine
+		} else {
+			CercaOICC = CercaOICCADefine
 		}
 
 		//LEJOS ODSC - SIMPLE
@@ -2649,13 +2718,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			LejosODSCCDefine = LejosODSCCLejosODSCCrameterx.Value1
 		}
 
+		//LEJOS ODSC - AGUDEZA
+		LejosODSCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005466")
+		LejosODSCAV := ""
+
+		for _, LejosODSCAx := range LejosODSCA {
+			LejosODSCAV = LejosODSCAx.Value1
+		}
+
+		LejosODSCALejosODSCCrameter, _ := c.DB.GetValueFromParameterV1("287", LejosODSCAV)
+		LejosODSCADefine := ""
+
+		for _, LejosODSCALejosODSCCrameterx := range LejosODSCALejosODSCCrameter {
+			LejosODSCADefine = LejosODSCALejosODSCCrameterx.Value1
+		}
+
 		//LEJOS ODSC - DEFINITIVO
-		LejosODSC := ""
+		LejosODSC := "NO APLICA"
 
 		if LejosODSCSDefine == "" {
 			LejosODSC = LejosODSCCDefine
-		} else {
+		} else if LejosODSCCDefine == "" {
 			LejosODSC = LejosODSCSDefine
+		} else {
+			LejosODSC = LejosODSCADefine
 		}
 
 		//LEJOS OISC - SIMPLE
@@ -2688,13 +2774,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			LejosOISCCDefine = LejosOISCCLejosOISCCrameterx.Value1
 		}
 
+		//LEJOS OISC - AGUDEZA
+		LejosOISCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005467")
+		LejosOISCAV := ""
+
+		for _, LejosOISCAx := range LejosOISCA {
+			LejosOISCAV = LejosOISCAx.Value1
+		}
+
+		LejosOISCALejosOISCCrameter, _ := c.DB.GetValueFromParameterV1("287", LejosOISCAV)
+		LejosOISCADefine := ""
+
+		for _, LejosOISCALejosOISCCrameterx := range LejosOISCALejosOISCCrameter {
+			LejosOISCADefine = LejosOISCALejosOISCCrameterx.Value1
+		}
+
 		//LEJOS OISC - DEFINITIVO
-		LejosOISC := ""
+		LejosOISC := "NO APLICA"
 
 		if LejosOISCSDefine == "" {
 			LejosOISC = LejosOISCCDefine
-		} else {
+		} else if LejosOISCCDefine == "" {
 			LejosOISC = LejosOISCSDefine
+		} else {
+			LejosOISC = LejosOISCADefine
 		}
 
 		//LEJOS ODCC - SIMPLE
@@ -2727,13 +2830,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			LejosODCCCDefine = LejosODCCCLejosODCCCrameterx.Value1
 		}
 
+		//LEJOS ODCC - AGUDEZA
+		LejosODCCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005468")
+		LejosODCCAV := ""
+
+		for _, LejosODCCAx := range LejosODCCA {
+			LejosODCCAV = LejosODCCAx.Value1
+		}
+
+		LejosODCCALejosODCCCrameter, _ := c.DB.GetValueFromParameterV1("287", LejosODCCAV)
+		LejosODCCADefine := ""
+
+		for _, LejosODCCALejosODCCCrameterx := range LejosODCCALejosODCCCrameter {
+			LejosODCCADefine = LejosODCCALejosODCCCrameterx.Value1
+		}
+
 		//LEJOS ODCC - DEFINITIVO
-		LejosODCC := ""
+		LejosODCC := "NO APLICA"
 
 		if LejosODCCSDefine == "" {
 			LejosODCC = LejosODCCCDefine
-		} else {
+		} else if LejosODCCCDefine == "" {
 			LejosODCC = LejosODCCSDefine
+		} else {
+			LejosODCC = LejosODCCADefine
 		}
 
 		//LEJOS OICC - SIMPLE
@@ -2766,13 +2886,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			LejosOICCCDefine = LejosOICCCLejosOICCCrameterx.Value1
 		}
 
+		//LEJOS OICC - AGUDEZA
+		LejosOICCA, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000667", "N009-MF000005469")
+		LejosOICCAV := ""
+
+		for _, LejosOICCAx := range LejosOICCA {
+			LejosOICCAV = LejosOICCAx.Value1
+		}
+
+		LejosOICCALejosOICCCrameter, _ := c.DB.GetValueFromParameterV1("287", LejosOICCAV)
+		LejosOICCADefine := ""
+
+		for _, LejosOICCALejosOICCCrameterx := range LejosOICCALejosOICCCrameter {
+			LejosOICCADefine = LejosOICCALejosOICCCrameterx.Value1
+		}
+
 		//LEJOS OICC - DEFINITIVO
-		LejosOICC := ""
+		LejosOICC := "NO APLICA"
 
 		if LejosOICCSDefine == "" {
 			LejosOICC = LejosOICCCDefine
-		} else {
+		} else if LejosOICCCDefine == "" {
 			LejosOICC = LejosOICCSDefine
+		} else {
+			LejosOICC = LejosOICCADefine
 		}
 
 		//AGUDEZA BINOCULAR
@@ -2810,13 +2947,30 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			ISHIHARACDefine = ISHIHARACISHIHARACrameterx.Value1
 		}
 
+		//ISHIHARA VISION DE COLORES
+		ISHIHARAV, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000447", "N009-MF000003573")
+		ISHIHARAVV := ""
+
+		for _, ISHIHARAVx := range ISHIHARAV {
+			ISHIHARAVV = ISHIHARAVx.Value1
+		}
+
+		ISHIHARAVISHIHARACrameter, _ := c.DB.GetValueFromParameterV1("217", ISHIHARAVV)
+		ISHIHARAVDefine := ""
+
+		for _, ISHIHARAVISHIHARACrameterx := range ISHIHARAVISHIHARACrameter {
+			ISHIHARAVDefine = ISHIHARAVISHIHARACrameterx.Value1
+		}
+
 		//ISHIHARA DEFINE
-		ISHIHARADefinitivo := ""
+		ISHIHARADefinitivo := "NO APLICA"
 
 		if ISHIHARASDefine == "" {
 			ISHIHARADefinitivo = ISHIHARACDefine
-		} else {
+		} else if ISHIHARACDefine == "" {
 			ISHIHARADefinitivo = ISHIHARASDefine
+		} else {
+			ISHIHARADefinitivo = ISHIHARAVDefine
 		}
 
 		//ESTEROSCOPICA SIMPLE
@@ -2842,13 +2996,23 @@ func (c FileController) ExcelMatrizGrande(exs models.ExcelPetitionMatrizFile) (s
 			EsteroscopiaCV = EsteroscopiaCx.Value1
 		}
 
+		//ESTEROSCOPICA ESTEREOPSIS
+		EsteroscopiaE, _ := c.DB.GetValueCustomerV1(e.VServiceid, "N009-ME000000672", "N009-MF000005474")
+		EsteroscopiaEV := ""
+
+		for _, EsteroscopiaEx := range EsteroscopiaE {
+			EsteroscopiaEV = EsteroscopiaEx.Value1
+		}
+
 		//ESTEROSCOPICA DEFINITVO
-		EsteroscopicaDefinitivo := ""
+		EsteroscopicaDefinitivo := "NO APLICA"
 
 		if EsteroscopiaSDefine == "" {
 			EsteroscopicaDefinitivo = EsteroscopiaCV
-		} else {
+		} else if EsteroscopiaCV == "" {
 			EsteroscopicaDefinitivo = EsteroscopiaSDefine
+		} else {
+			EsteroscopicaDefinitivo = EsteroscopiaEV
 		}
 
 		//CAMPOS VISUALES
