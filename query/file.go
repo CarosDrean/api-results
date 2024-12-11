@@ -12,7 +12,7 @@ var ExcelFile = models.QueryDB{
 		join systemparameter syspara on proto.i_EsoTypeId = syspara.i_ParameterId
 		join organization org on proto.v_CustomerOrganizationId = org.v_OrganizationId
 		join location loc on proto.v_CustomerLocationId = loc.v_LocationId
-		where ser.d_ServiceDate >= '%s' and  ser.d_ServiceDate <= '%s' and syspara.i_GroupId = '118' and proto.i_EsoTypeId != 4 and proto.i_EsoTypeId != 6 
+		where ser.d_ServiceDate >= CONCAT('%s', ' 00:00:00.0000000') and  ser.d_ServiceDate <= CONCAT('%s', ' 23:59:59.9999999') and syspara.i_GroupId = '118' and proto.i_EsoTypeId != 4 and proto.i_EsoTypeId != 6 
 		and ca.i_CalendarStatusId != 4 and proto.v_EmployerOrganizationId = '%s' order by ser.d_ServiceDate desc;`},
 
 	"getInterconsultas": {Q: `select mres.v_Name, res.v_ServiceId, res.v_DiagnosticRepositoryId from restriction res 
